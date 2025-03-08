@@ -28,9 +28,21 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "resizeMode": "cover",
+          "backgroundColor": "#ffffff",
+          "enableFullScreenImage_legacy": true
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/NotoKufiArabic-Light.ttf",
+            "./assets/fonts/NotoKufiArabic-Regular.ttf",
+            "./assets/fonts/NotoKufiArabic-SemiBold.ttf",
+            "./assets/fonts/NotoKufiArabic-Bold.ttf",
+            "./assets/fonts/NotoKufiArabic-ExtraBold.ttf"
+          ]
         }
       ]
     ],
