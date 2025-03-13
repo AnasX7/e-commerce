@@ -4,7 +4,7 @@
     "slug": "e-commerce",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,9 +13,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/images/app-adaptive-icon.png",
+        "backgroundColor": "#4e148c"
+      },
+      "package": "com.anasx7.ecommerce"
     },
     "web": {
       "bundler": "metro",
@@ -27,9 +28,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/app-splash-icon.png",
           "resizeMode": "cover",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#4e148c",
           "enableFullScreenImage_legacy": true
         }
       ],
@@ -44,10 +45,19 @@
             "./assets/fonts/NotoKufiArabic-ExtraBold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9a6c3f26-71d0-4c7a-a537-1722d1e582c8"
+      }
     }
   }
 }

@@ -21,8 +21,8 @@ module.exports = {
         background: 'oklch(var(--background))',
         foreground: 'oklch(var(--foreground))',
         primary: {
-          DEFAULT: 'oklch(var(--primary))',
-          foreground: 'oklch(var(--primary-foreground))',
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
         },
         secondary: {
           DEFAULT: 'oklch(var(--secondary))',
