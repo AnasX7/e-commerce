@@ -24,7 +24,7 @@ const Carousel = ({
   autoPlay = true,
   autoPlayInterval = 3500,
   showDots = true,
-  onItemPress = () => {},
+  onItemPress = () => {}
 }: CarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const flatListRef = useRef<FlashList<CarouselItem>>(null)
@@ -61,24 +61,26 @@ const Carousel = ({
 
   const renderItem = ({ item, index }: any) => (
     <TouchableOpacity
-      className='rounded-2xl overflow-hidden bg-white shadow-md'
+      className="rounded-2xl overflow-hidden bg-white shadow-md"
       style={{ width: ITEM_WIDTH, marginHorizontal: ITEM_SPACING / 2 }}
       onPress={() => onItemPress(item, index)}
-      activeOpacity={0.9}>
+      activeOpacity={0.9}
+    >
       <View
         style={{ width: ITEM_WIDTH }}
-        className='h-48 overflow-hidden bg-primary'>
+        className="h-48 overflow-hidden bg-primary"
+      >
         <Image
           source={{ uri: item.imageUrl }}
           style={{ width: '100%', height: '100%' }}
-          contentFit='cover'
+          contentFit="cover"
         />
       </View>
     </TouchableOpacity>
   )
 
   return (
-    <View className='my-4'>
+    <View className="my-4">
       <FlashList
         ref={flatListRef}
         data={items}
@@ -88,15 +90,14 @@ const Carousel = ({
         estimatedItemSize={ITEM_WIDTH}
         showsHorizontalScrollIndicator={false}
         snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-        snapToAlignment='center'
-        decelerationRate='fast'
+        snapToAlignment="center"
+        decelerationRate="fast"
         onScroll={handleScroll}
         contentContainerStyle={{ paddingHorizontal: ITEM_SPACING * 2 }}
-        inverted
       />
 
       {showDots && items.length > 1 && (
-        <View className='flex-row justify-center mt-4'>
+        <View className="flex-row justify-center mt-4">
           {items.map((_, index) => (
             <TouchableOpacity
               key={`dot-${index}`}

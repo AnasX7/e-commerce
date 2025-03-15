@@ -13,20 +13,24 @@ const queryClient = new QueryClient()
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  const shouldBeRTL = false
+  // const shouldBeRTL = true
 
-  if (shouldBeRTL !== I18nManager.isRTL && Platform.OS !== 'web') {
-    I18nManager.allowRTL(shouldBeRTL)
-    I18nManager.forceRTL(shouldBeRTL)
-    Updates.reloadAsync()
-  }
+  // useEffect(() => {
+  //   // Only run on native (skip web) and if the current layout doesn't match
+  //   if (Platform.OS !== 'web' && shouldBeRTL !== I18nManager.isRTL) {
+  //     I18nManager.allowRTL(shouldBeRTL)
+  //     I18nManager.forceRTL(shouldBeRTL)
+  //     // Reload the app to apply changes
+  //     Updates.reloadAsync()
+  //   }
+  // }, [])
 
   const [fontsLoaded] = useFonts({
     'NotoKufiArabic-Light': require('../assets/fonts/NotoKufiArabic-Light.ttf'),
     'NotoKufiArabic-Regular': require('../assets/fonts/NotoKufiArabic-Regular.ttf'),
     'NotoKufiArabic-SemiBold': require('../assets/fonts/NotoKufiArabic-SemiBold.ttf'),
     'NotoKufiArabic-Bold': require('../assets/fonts/NotoKufiArabic-Bold.ttf'),
-    'NotoKufiArabic-ExtraBold': require('../assets/fonts/NotoKufiArabic-ExtraBold.ttf'),
+    'NotoKufiArabic-ExtraBold': require('../assets/fonts/NotoKufiArabic-ExtraBold.ttf')
   })
 
   useEffect(() => {
@@ -39,12 +43,12 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style='dark' />
+      <StatusBar style="dark" />
       <Stack>
-        <Stack.Screen name='welcome' options={{ headerShown: false }} />
-        <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-        <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
       </Stack>
     </QueryClientProvider>
   )

@@ -19,50 +19,50 @@ const STORES_DATA: StoreCard[] = [
     id: '1',
     imageURL: 'https://picsum.photos/200/300',
     name: 'RH Home',
-    productsCount: 324,
+    productsCount: 324
   },
   {
     id: '2',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Pottery Barn',
-    productsCount: 156,
+    productsCount: 156
   },
   {
     id: '3',
     imageURL: 'https://picsum.photos/200/300',
     name: 'West Elm',
-    productsCount: 218,
+    productsCount: 218
   },
   {
     id: '4',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Crate & Barrel',
-    productsCount: 192,
+    productsCount: 192
   },
   {
     id: '5',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Crate & Barrel',
-    productsCount: 192,
+    productsCount: 192
   },
   {
     id: '6',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Crate & Barrel',
-    productsCount: 192,
+    productsCount: 192
   },
   {
     id: '7',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Crate & Barrel',
-    productsCount: 192,
+    productsCount: 192
   },
   {
     id: '8',
     imageURL: 'https://picsum.photos/200/300',
     name: 'Crate & Barrel',
-    productsCount: 192,
-  },
+    productsCount: 192
+  }
 ]
 
 interface StoresProps {
@@ -74,7 +74,7 @@ interface StoresProps {
 const Stores = ({
   title = 'المتاجر',
   isLoading = false,
-  storesData = STORES_DATA,
+  storesData = STORES_DATA
 }: StoresProps) => {
   const router = useRouter()
 
@@ -82,7 +82,7 @@ const Stores = ({
     (store: StoreCard) => {
       router.push({
         pathname: '/store/[id]',
-        params: { id: store.id },
+        params: { id: store.id }
       })
     },
     [router]
@@ -93,24 +93,25 @@ const Stores = ({
     <TouchableOpacity
       onPress={() => handleStorePress(item)}
       activeOpacity={0.8}
-      className={`mx-2 items-center`}>
-      <View
-        className={`w-20 h-20 rounded-xl overflow-hidden shadow-sm`}>
+      className={`mx-2 items-center`}
+    >
+      <View className={`w-20 h-20 rounded-xl overflow-hidden shadow-sm`}>
         <Image
           source={item.imageURL}
-          contentFit='cover'
+          contentFit="cover"
           style={{ width: '100%', height: '100%' }}
           transition={300}
         />
       </View>
       <Text
-        className='text-xs font-notoKufiArabic-semiBold text-center mt-1 text-gray-800'
+        className="text-xs font-notoKufiArabic-semiBold text-center mt-1 text-gray-800"
         numberOfLines={1}
-        ellipsizeMode='tail'>
+        ellipsizeMode="tail"
+      >
         {item.name}
       </Text>
       {item.productsCount && (
-        <Text className='text-xs font-notoKufiArabic text-gray-500'>
+        <Text className="text-xs font-notoKufiArabic text-gray-500">
           {item.productsCount} منتج
         </Text>
       )}
@@ -119,26 +120,26 @@ const Stores = ({
 
   // Generate empty state for when there are no stores
   const EmptyComponent = () => (
-    <View className='items-center justify-center h-32 w-full'>
-      <Text className='font-notoKufiArabic-semiBold text-gray-500'>
+    <View className="items-center justify-center h-32 w-full">
+      <Text className="font-notoKufiArabic-semiBold text-gray-500">
         لا توجد متاجر متاحة
       </Text>
     </View>
   )
 
   return (
-    <View className='my-3'>
+    <View className="my-3">
       {/* Section header with title and "View All" option */}
-      <View className='flex-row-reverse justify-between items-center px-4 mb-2'>
-        <Text className='text-lg font-notoKufiArabic-bold text-gray-800'>
+      <View className="flex-row justify-between items-center px-4 mb-2">
+        <Text className="text-lg font-notoKufiArabic-bold text-gray-800">
           {title}
         </Text>
       </View>
 
       {/* Stores list */}
       {isLoading ? (
-        <View className='h-24 items-center justify-center'>
-          <ActivityIndicator size='small' color='#3b82f6' />
+        <View className="h-24 items-center justify-center">
+          <ActivityIndicator size="small" color="#3b82f6" />
         </View>
       ) : (
         <FlashList
@@ -148,9 +149,8 @@ const Stores = ({
           estimatedItemSize={80}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName='py-2 px-2'
+          contentContainerClassName="py-2 px-2"
           ListEmptyComponent={EmptyComponent}
-          inverted
         />
       )}
     </View>
