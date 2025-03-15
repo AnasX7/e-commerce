@@ -3,7 +3,7 @@ import { I18nManager, Platform } from 'react-native'
 import { SplashScreen, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useFonts } from 'expo-font'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as Updates from 'expo-updates'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,9 +36,10 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style={'dark'} />
+      <StatusBar style='dark' />
       <Stack>
         <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='(onboard)' options={{ headerShown: false }} />
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
       </Stack>
