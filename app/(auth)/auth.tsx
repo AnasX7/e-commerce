@@ -8,11 +8,11 @@ export default function LoginScreen() {
   const router = useRouter()
 
   const handleLogin = () => {
-    router.push('/(onboard)/login')
+    router.push('/(auth)/login')
   }
 
   const handleRegister = () => {
-    router.push('/(onboard)/register')
+    router.push('/(auth)/register')
   }
 
   const handleSkip = () => {
