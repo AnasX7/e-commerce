@@ -16,8 +16,11 @@ const queryClient = new QueryClient({
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
-const RootLayout = () => {
+export default function RootLayout() {
   const shouldBeRTL = true
+
+  useOnlineManager()
+  useAppState()
 
   useEffect(() => {
     if (Platform.OS !== 'web' && shouldBeRTL !== I18nManager.isRTL) {
@@ -43,9 +46,6 @@ const RootLayout = () => {
 
   if (!fontsLoaded) return null
 
-  useOnlineManager();
-  useAppState();
-
   return (
     <QueryClientProvider client={queryClient}>
       <StatusBar style='dark' />
@@ -59,5 +59,3 @@ const RootLayout = () => {
     </QueryClientProvider>
   )
 }
-
-export default RootLayout
