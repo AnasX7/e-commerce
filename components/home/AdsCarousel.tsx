@@ -7,9 +7,9 @@ import NotFound from './NotFound'
 const { width } = Dimensions.get('window')
 
 const SAMPLE_ITEMS: CarouselItemType[] = [
-  // { id: '1', imageUrl: 'https://picsum.photos/200/300' },
-  // { id: '2', imageUrl: 'https://picsum.photos/200/301' },
-  // { id: '3', imageUrl: 'https://picsum.photos/200/302' },
+  { id: '1', imageUrl: 'https://picsum.photos/200/300' },
+  { id: '2', imageUrl: 'https://picsum.photos/200/301' },
+  { id: '3', imageUrl: 'https://picsum.photos/200/302' },
 ]
 
 type CarouselItemType = {

@@ -1,23 +1,23 @@
-// app/onboarding/register.tsx
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
-
-export default function RegisterScreen() {
+const RegisterScreen = () => {
   const router = useRouter()
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <View className='pt-4 px-4'>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className='w-10 h-10 items-center justify-center'>
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
+      {Platform.OS !== 'ios' && (
+        <View className='pt-4 px-4'>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className='w-10 h-10 items-center justify-center'>
+            <Ionicons name='arrow-forward' size={24} color='#333' />
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View className='flex-1 justify-center items-center px-4'>
         <Text className='text-2xl font-bold text-gray-800 mb-4'>
@@ -36,3 +36,5 @@ export default function RegisterScreen() {
     </SafeAreaView>
   )
 }
+
+export default RegisterScreen

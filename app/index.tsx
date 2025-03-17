@@ -29,7 +29,7 @@ const WelcomeScreen = () => {
 
   const handleContinue = async () => {
     await AsyncStorage.setItem('hasSeenWelcome', 'true')
-    router.replace('/(auth)/auth')
+    router.push('/(auth)/auth')
   }
 
   useEffect(() => {
@@ -39,9 +39,9 @@ const WelcomeScreen = () => {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome')
-      if (hasSeenWelcome) {
-        router.replace('/(tabs)/home')
-      }
+      // if (hasSeenWelcome) {
+      //   router.replace('/(tabs)/home')
+      // }
       setLoading(false)
     }
 

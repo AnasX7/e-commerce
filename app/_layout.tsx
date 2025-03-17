@@ -12,7 +12,7 @@ const queryClient = new QueryClient()
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
-export default function RootLayout() {
+const RootLayout = () => {
   const shouldBeRTL = true
 
   useEffect(() => {
@@ -54,3 +54,5 @@ export default function RootLayout() {
     </QueryClientProvider>
   )
 }
+
+export default RootLayout

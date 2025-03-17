@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, StatusBar, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, StatusBar } from 'react-native'
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated'
 
-export default function LoginScreen() {
+const AuthScreen = () => {
   const router = useRouter()
 
   const handleLogin = () => {
@@ -98,3 +98,5 @@ export default function LoginScreen() {
     </SafeAreaView>
   )
 }
+
+export default AuthScreen
