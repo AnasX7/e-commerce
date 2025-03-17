@@ -1,10 +1,15 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native'
 import { useRouter } from 'expo-router'
 
-import { FlashList } from '@shopify/flash-list'
-import { StoreProducts } from '@/service/product'
+import { StoreProducts } from '@/services/product'
 import ProductCard from '@/components/ProductCard'
-import NotFound from './NotFound'
+import NotFound from '@/components/home/NotFound'
 
 const SAMPLE_PRODUCTS: StoreProducts[] = [
   {
@@ -16,7 +21,7 @@ const SAMPLE_PRODUCTS: StoreProducts[] = [
     price: 1299.99,
     currency: '$',
     category: 'Furniture',
-    isLiked: true
+    isLiked: true,
   },
   {
     id: '2',
@@ -27,7 +32,7 @@ const SAMPLE_PRODUCTS: StoreProducts[] = [
     price: 1299.99,
     currency: '$',
     category: 'Furniture',
-    isLiked: true
+    isLiked: true,
   },
   {
     id: '3',
@@ -38,7 +43,7 @@ const SAMPLE_PRODUCTS: StoreProducts[] = [
     price: 1299.99,
     currency: '$',
     category: 'Furniture',
-    isLiked: true
+    isLiked: true,
   },
   {
     id: '4',
@@ -49,8 +54,8 @@ const SAMPLE_PRODUCTS: StoreProducts[] = [
     price: 1299.99,
     currency: '$',
     category: 'Furniture',
-    isLiked: true
-  }
+    isLiked: true,
+  },
 ]
 
 interface ProductsProps {
@@ -64,25 +69,25 @@ const Prouducts = ({
   title = 'منتجات',
   onLikePress,
   isLoading = false,
-  productsData = SAMPLE_PRODUCTS
+  productsData = SAMPLE_PRODUCTS,
 }: ProductsProps) => {
   const router = useRouter()
 
   return (
-    <View className="my-4">
+    <View className='my-4'>
       {/* Section header */}
-      <View className="flex-row justify-between items-center px-4 mb-2">
-        <Text className="text-lg font-notoKufiArabic-bold text-gray-800">
+      <View className='flex-row justify-between items-center px-4 mb-2'>
+        <Text className='text-lg font-notoKufiArabic-bold text-gray-800'>
           {title}
         </Text>
         <TouchableOpacity
           onPress={() =>
-            router.replace({
-              pathname: '/(tabs)/search'
+            router.push({
+              pathname: '/search',
+              params: { title },
             })
-          }
-        >
-          <Text className="text-sm font-notoKufiArabic-semiBold text-blue-600">
+          }>
+          <Text className='text-sm font-notoKufiArabic-semiBold text-primary'>
             عرض الكل
           </Text>
         </TouchableOpacity>
@@ -90,20 +95,20 @@ const Prouducts = ({
 
       {/* Products list */}
       {isLoading ? (
-        <View className="h-64 items-center justify-center">
-          <ActivityIndicator size="small" color="#3b82f6" />
+        <View className='h-64 items-center justify-center'>
+          <ActivityIndicator size='small' color='#3b82f6' />
         </View>
-      ) : (
-        <FlashList
+      ) : productsData.length > 0 ? (
+        <FlatList
           data={productsData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <ProductCard item={item} />}
-          estimatedItemSize={240}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName="py-2 px-2"
-          ListEmptyComponent={<NotFound message="لا توجد منتجات متاحة" />}
+          contentContainerClassName='py-2 px-2'
         />
+      ) : (
+        <NotFound message='لا توجد منتجات متاحة' />
       )}
     </View>
   )

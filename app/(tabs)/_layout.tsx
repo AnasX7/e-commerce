@@ -11,64 +11,63 @@ const Tabslayout = () => {
         headerShown: false,
         tabBarPosition: Platform.OS === 'web' ? 'top' : 'bottom',
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? 84 : 64
+          height: Platform.OS === 'ios' ? 84 : 64,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontFamily: 'NotoKufiArabic-Bold'
-        }
-      }}
-    >
+          fontFamily: 'NotoKufiArabic-Bold',
+        },
+      }}>
       <Tabs.Screen
-        name="home"
+        name='home'
         options={{
           title: 'الرئيسية',
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name="home" size={24} color={color} />
+              <Ionicons name='home' size={24} color={color} />
             ) : (
-              <Ionicons name="home-outline" size={24} color={color} />
-            )
+              <Ionicons name='home-outline' size={24} color={color} />
+            ),
         }}
       />
 
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: 'المفضلة',
-          tabBarIcon: ({ focused, color }) =>
-            focused ? (
-              <Ionicons name="heart" size={24} color={color} />
-            ) : (
-              <Ionicons name="heart-outline" size={24} color={color} />
-            )
-        }}
-      />
-
-      <Tabs.Screen
-        name="search"
+      {/* <Tabs.Screen
+        name='search'
         options={{
           title: 'البحث',
           headerShown: true,
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name="search" size={24} color={color} />
+              <Ionicons name='search' size={24} color={color} />
             ) : (
-              <Ionicons name="search-outline" size={24} color={color} />
-            )
+              <Ionicons name='search-outline' size={24} color={color} />
+            ),
+        }}
+      /> */}
+
+      <Tabs.Screen
+        name='favorites'
+        options={{
+          title: 'المفضلة',
+          tabBarIcon: ({ focused, color }) =>
+            focused ? (
+              <Ionicons name='heart' size={24} color={color} />
+            ) : (
+              <Ionicons name='heart-outline' size={24} color={color} />
+            ),
         }}
       />
 
       <Tabs.Screen
-        name="account"
+        name='account'
         options={{
           title: 'الحساب',
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name="person" size={24} color={color} />
+              <Ionicons name='person' size={24} color={color} />
             ) : (
-              <Ionicons name="person-outline" size={24} color={color} />
-            )
+              <Ionicons name='person-outline' size={24} color={color} />
+            ),
         }}
       />
     </Tabs>

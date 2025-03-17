@@ -3,80 +3,18 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Pressable
+  Pressable,
 } from 'react-native'
 import { useState, useEffect } from 'react'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Images } from '@/constants/images'
-import Carousel from '@/components/home/Carousel'
 import Stores from '@/components/home/Stores'
 import Prouducts from '@/components/home/Prouducts'
-
-const carouselItems = [
-  {
-    id: '1',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '2',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '1',
-
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '2',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '1',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '2',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '1',
-    imageUrl: 'https://picsum.photos/200/300'
-  },
-  {
-    id: '2',
-    imageUrl: 'https://picsum.photos/200/300'
-  }
-  // Add more items as needed
-]
-
-// const categories = [
-//   { id: 1, name: 'All', icon: '🛍️' },
-//   { id: 2, name: 'Electronics', icon: '📱' },
-//   { id: 3, name: 'Fashion', icon: '👕' },
-//   { id: 4, name: 'Home', icon: '🏠' },
-//   { id: 5, name: 'Beauty', icon: '💄' },
-// ]
-
-// const featuredProducts = [
-//   {
-//     id: 1,
-//     name: 'Wireless Earbuds',
-//     price: '$129',
-//     image:
-//       'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=400',
-//   },
-//   {
-//     id: 2,
-//     name: 'Smart Watch',
-//     price: '$299',
-//     image:
-//       'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=400',
-//   },
-//   // Add more products...
-// ]
+import AdsCarousel from '@/components/home/AdsCarousel'
+import { Images } from '@/constants/images'
+import { Colors } from '@/constants/colors'
 
 const Home = () => {
   const router = useRouter()
@@ -94,19 +32,19 @@ const Home = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className='flex-1 bg-white'>
         {/* Header */}
-        <View className="mx-4 mt-5 mb-4 gap-4">
-          <View className="flex-row justify-between">
-            <View className="flex-row items-center gap-3">
+        <View className='mx-4 mt-4 mb-3 gap-2'>
+          <View className='flex-row-reverse justify-between items-center'>
+            <View className='flex-row-reverse items-center gap-3'>
               {/* App logo */}
-              <View className="w-16 h-16 border border-gray-200 rounded-2xl overflow-hidden">
+              <View className='w-14 h-14 border border-gray-200 rounded-2xl overflow-hidden'>
                 <Image
                   source={Images.appIcon}
                   style={{ width: '100%', height: '100%' }}
                 />
               </View>
-              <Text className="font-notoKufiArabic-bold text-[2rem] text-primary">
+              <Text className='font-notoKufiArabic-bold text-[30px] text-primary'>
                 سلة
               </Text>
             </View>
@@ -114,63 +52,69 @@ const Home = () => {
             <TouchableOpacity
               onPress={() => {
                 alert('TODO: implement location picker screen')
-              }}
-            >
-              <View className="justify-center items-center">
-                <View className="flex-row items-center gap-1">
-                  <Ionicons name="chevron-down" size={16} color="black" />
-                  <Text className="font-notoKufiArabic-semiBold">
+              }}>
+              <View className='justify-center items-start'>
+                <View className='flex-row items-center gap-1'>
+                  <Ionicons
+                    name='location-sharp'
+                    size={18}
+                    color={Colors.text.primary}
+                  />
+                  <Text className='text-sm text-gray-800 font-notoKufiArabic-semiBold leading-relaxed'>
                     الموقع الحالي
                   </Text>
+                  <Ionicons
+                    name='chevron-down'
+                    size={14}
+                    color={Colors.text.primary}
+                  />
                 </View>
-                <Text className="font-notoKufiArabic-semiBold">
+                <Text className='text-sm pl-4 text-gray-800 font-notoKufiArabic leading-relaxed'>
                   {/* TODO: fetch User location  */}
-                  Abu Dhabi, UAE
+                  ابوظبي، بني ياس
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
           {/* Search bar */}
-          <View className="flex-row gap-4">
+          <View className='flex-row-reverse gap-4'>
             <Pressable
               onPress={() => alert('TODO: implement filter Model')}
-              className="p-3 justify-center items-center rounded-2xl border border-gray-300"
-            >
-              <Ionicons name="filter-outline" size={24} color="gray" />
+              className='p-3 justify-center items-center rounded-xl border border-gray-300'>
+              <Ionicons name='filter-outline' size={20} color={Colors.text.quaternary} />
             </Pressable>
             <Pressable
               onPress={() => {
-                router.replace('/(tabs)/search')
+                router.push('/search')
                 alert('TODO: implement search screen')
               }}
-              className="flex-row flex-1 px-3 justify-end items-center gap-4 rounded-2xl border border-gray-300"
-            >
-              <View className="flex-row">
-                <Text className="font-notoKufiArabic text-gray-500">
+              className='flex-row-reverse flex-1 px-3 justify-end items-center gap-3 rounded-xl border border-gray-300'>
+              <View className='flex-row'>
+                <Text className='font-notoKufiArabic text-gray-400'>
                   ابحث عن
                 </Text>
-                <Text className="font-notoKufiArabic text-gray-500">
+                <Text className='font-notoKufiArabic text-gray-400'>
                   {' '}
                   {word}
                 </Text>
               </View>
-              <Ionicons name="search-outline" size={24} color="gray" />
+              <Ionicons name='search-outline' size={22} color={Colors.text.quaternary} />
             </Pressable>
           </View>
         </View>
 
-        <ScrollView className="flex-1">
+        <ScrollView className='flex-1'>
           {/* Slider */}
-          <Carousel items={carouselItems} />
+          <AdsCarousel />
 
           {/* Stores */}
           <Stores />
 
           {/* Popular products */}
-          <Prouducts title="المنتجات الشائعة" />
+          <Prouducts title='المنتجات الشائعة' />
 
           {/* New arrival products */}
-          <Prouducts title="المنتجات حديثة الوصول" />
+          <Prouducts title='المنتجات حديثة الوصول' />
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
