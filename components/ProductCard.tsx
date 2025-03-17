@@ -1,65 +1,18 @@
-import React, { useCallback } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Image } from 'expo-image'
-import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { StoreProducts } from '@/services/product'
 
-const ProductCard = ({
-  item,
-  onLikePress,
-}: {
+type ProductProps = {
   item: StoreProducts
-  onLikePress?: (product: StoreProducts, isLiked: boolean) => void
-}) => {
-  const router = useRouter()
-  // const [likedProducts, setLikedProducts] = useState<Record<string, boolean>>(
-  //   Object.fromEntries(
-  //     productsData.map((product) => [product.id, product.isLiked || false])
-  //   )
-  // )
+  onPress: (item: StoreProducts) => void
+  onLikePress?: () => void
+}
 
-  const handleProductPress = useCallback(
-    (product: StoreProducts) => {
-      router.push({
-        pathname: '/product/[id]',
-        params: { id: product.id },
-      })
-    },
-    [router]
-  )
-
-  // const handleLikePress = useCallback(
-  //   (product: Product) => {
-  //     const newLikedState = !likedProducts[product.id]
-
-  //     // Update local state
-  //     setLikedProducts((prev) => ({
-  //       ...prev,
-  //       [product.id]: newLikedState
-  //     }))
-
-  //     // Call the callback if provided
-  //     if (onLikePress) {
-  //       onLikePress(product, newLikedState)
-  //     }
-  //   },
-  //   [likedProducts, onLikePress]
-  // )
-
-  // Render the star rating
-  const renderRating = (rating: number) => {
-    return (
-      <View className='flex-row items-center'>
-        <Text className='text-amber-500'>★</Text>
-        <Text className='text-xs text-gray-700 ml-1'>{rating.toFixed(1)}</Text>
-      </View>
-    )
-  }
-
+const ProductCard = ({ item, onPress, onLikePress }: ProductProps) => {
   return (
     <TouchableOpacity
-      onPress={() => handleProductPress(item)}
+      onPress={() => onPress(item)}
       activeOpacity={0.9}
       className='mx-2 mb-1'>
       <View className='w-40 bg-white rounded-lg overflow-hidden shadow-sm'>
@@ -74,14 +27,9 @@ const ProductCard = ({
 
           {/* Like Button */}
           <TouchableOpacity
-            // onPress={() => handleLikePress(item)}
+            onPress={onLikePress}
             className='absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 items-center justify-center'
             hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-            {/* <Heart
-            size={18}
-            color={likedProducts[item.id] ? '#ef4444' : '#9ca3af'}
-            fill={likedProducts[item.id] ? '#ef4444' : 'none'}
-          /> */}
             <Ionicons name='heart' size={18} color={'#ef4444'} />
           </TouchableOpacity>
         </View>
@@ -110,7 +58,12 @@ const ProductCard = ({
               {item.currency || '$'}
               {item.price.toFixed(2)}
             </Text>
-            {renderRating(item.rating)}
+            <View className='flex-row items-center'>
+              <Text className='text-amber-500'>★</Text>
+              <Text className='text-xs text-gray-700 ml-1'>
+                {item.rating.toFixed(1)}
+              </Text>
+            </View>
           </View>
         </View>
       </View>

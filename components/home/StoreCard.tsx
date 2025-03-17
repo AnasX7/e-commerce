@@ -1,22 +1,16 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { useRouter } from 'expo-router'
 import { Image } from 'expo-image'
-import { StoreCardType } from '@/types/Store'
+import type { StoreCardType } from '@/components/home/Stores'
 
-const StoreCard = ({ item }: { item: StoreCardType }) => {
-  const router = useRouter()
+type StoresProps = {
+  item: StoreCardType
+  onPress: (item: StoreCardType) => void
+}
 
-  const handleStorePress = (store: StoreCardType) => {
-    router.push({
-      pathname: '/store/[id]',
-      params: { id: store.id },
-    })
-  }
-
+const StoreCard = ({ item, onPress }: StoresProps) => {
   return (
     <TouchableOpacity
-      onPress={() => handleStorePress(item)}
+      onPress={() => onPress(item)}
       activeOpacity={0.8}
       className='mx-2 items-center'>
       <View className='w-20 h-20 rounded-xl overflow-hidden shadow-sm'>

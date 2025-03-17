@@ -5,6 +5,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native'
+import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 
 import { StoreProducts } from '@/services/product'
@@ -58,7 +59,7 @@ const SAMPLE_PRODUCTS: StoreProducts[] = [
   },
 ]
 
-interface ProductsProps {
+type ProductsProps = {
   title?: string
   onLikePress?: (product: StoreProducts, isLiked: boolean) => void
   isLoading?: boolean
@@ -67,11 +68,20 @@ interface ProductsProps {
 
 const Prouducts = ({
   title = 'منتجات',
-  onLikePress,
   isLoading = false,
   productsData = SAMPLE_PRODUCTS,
 }: ProductsProps) => {
   const router = useRouter()
+
+  const handleItemPress = useCallback(
+    (item: StoreProducts) => {
+      router.push({
+        pathname: '/product/[id]',
+        params: { id: item.id },
+      })
+    },
+    [router]
+  )
 
   return (
     <View className='my-4'>
@@ -102,7 +112,9 @@ const Prouducts = ({
         <FlatList
           data={productsData}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ProductCard item={item} />}
+          renderItem={({ item }) => (
+            <ProductCard item={item} onPress={handleItemPress} />
+          )}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerClassName='py-2 px-2'

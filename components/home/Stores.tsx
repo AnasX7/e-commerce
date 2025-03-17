@@ -1,9 +1,8 @@
 import { View, Text, ActivityIndicator, FlatList } from 'react-native'
-import { StoreCardType } from '@/types/Store'
+import { useRouter } from 'expo-router'
 import StoreCard from '@/components/home/StoreCard'
 import NotFound from '@/components/home/NotFound'
 
-// Sample data with placeholder images
 const STORES_DATA: StoreCardType[] = [
   {
     id: '1',
@@ -54,7 +53,12 @@ const STORES_DATA: StoreCardType[] = [
     productsCount: 192,
   },
 ]
-
+export type StoreCardType = {
+  id: string
+  name: string
+  imageURL: string
+  productsCount?: number
+}
 interface StoresProps {
   title?: string
   isLoading?: boolean
@@ -66,6 +70,15 @@ const Stores = ({
   isLoading = false,
   storesData = STORES_DATA,
 }: StoresProps) => {
+  const router = useRouter()
+
+  const handleStorePress = (store: StoreCardType) => {
+    router.push({
+      pathname: '/store/[id]',
+      params: { id: store.id },
+    })
+  }
+
   return (
     <View className='my-3'>
       <View className='flex-row justify-between items-center px-4 mb-2'>
@@ -82,7 +95,9 @@ const Stores = ({
         <FlatList
           data={storesData}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <StoreCard item={item} />}
+          renderItem={({ item }) => (
+            <StoreCard item={item} onPress={handleStorePress} />
+          )}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerClassName='py-2 px-2'

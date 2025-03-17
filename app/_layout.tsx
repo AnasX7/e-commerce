@@ -3,11 +3,15 @@ import { I18nManager, Platform } from 'react-native'
 import { SplashScreen, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useFonts } from 'expo-font'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import * as Updates from 'expo-updates'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useOnlineManager } from '@/hooks/useOnlineManager'
+import { useAppState } from '@/hooks/useAppState'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 2 } },
+})
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -16,11 +20,9 @@ const RootLayout = () => {
   const shouldBeRTL = true
 
   useEffect(() => {
-    // Only run on native (skip web) and if the current layout doesn't match
     if (Platform.OS !== 'web' && shouldBeRTL !== I18nManager.isRTL) {
       I18nManager.allowRTL(shouldBeRTL)
       I18nManager.forceRTL(shouldBeRTL)
-      // Reload the app to apply changes
       Updates.reloadAsync()
     }
   }, [])
@@ -40,6 +42,9 @@ const RootLayout = () => {
   }, [fontsLoaded])
 
   if (!fontsLoaded) return null
+
+  useOnlineManager();
+  useAppState();
 
   return (
     <QueryClientProvider client={queryClient}>
