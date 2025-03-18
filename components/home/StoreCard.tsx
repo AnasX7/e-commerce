@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import { Image } from 'expo-image'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import type { StoreCardType } from '@/components/home/Stores'
 
 type StoresProps = {
@@ -11,8 +12,7 @@ const StoreCard = ({ item, onPress }: StoresProps) => {
   return (
     <TouchableOpacity
       onPress={() => onPress(item)}
-      activeOpacity={0.8}
-      className='mx-2 items-center'>
+      activeOpacity={0.8}>
       <View className='w-20 h-20 rounded-xl overflow-hidden shadow-sm'>
         <Image
           source={item.imageURL}
@@ -21,17 +21,19 @@ const StoreCard = ({ item, onPress }: StoresProps) => {
           transition={300}
         />
       </View>
-      <Text
-        className='text-xs font-notoKufiArabic-semiBold leading-relaxed text-center mt-1 text-gray-800'
-        numberOfLines={1}
-        ellipsizeMode='tail'>
-        {item.name}
-      </Text>
-      {item.productsCount && (
-        <Text className='text-xs font-notoKufiArabic leading-relaxed text-gray-500'>
-          {item.productsCount} منتج
+      <View className='items-center mt-1'>
+        <Text
+          className='text-xs font-notoKufiArabic-semiBold leading-relaxed text-center text-gray-800'
+          numberOfLines={1}
+          ellipsizeMode='tail'>
+          {item.name}
         </Text>
-      )}
+        {item.productsCount && (
+          <Text className='text-xs font-notoKufiArabic leading-relaxed text-gray-500'>
+            {item.productsCount} منتج
+          </Text>
+        )}
+      </View>
     </TouchableOpacity>
   )
 }

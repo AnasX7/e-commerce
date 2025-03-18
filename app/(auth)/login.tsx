@@ -10,11 +10,11 @@ const RegisterScreen = () => {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       {Platform.OS !== 'ios' && (
-        <View className='pt-4 px-4'>
+        <View className='flex-row-reverse pt-4 px-4'>
           <TouchableOpacity
             onPress={() => router.back()}
             className='w-10 h-10 items-center justify-center'>
-            <Ionicons name='arrow-forward' size={24} color='#333' />
+            <Ionicons name='arrow-back' size={24} color='#333' />
           </TouchableOpacity>
         </View>
       )}

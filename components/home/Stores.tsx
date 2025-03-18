@@ -1,4 +1,5 @@
 import { View, Text, ActivityIndicator, FlatList } from 'react-native'
+import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 import StoreCard from '@/components/home/StoreCard'
 import NotFound from '@/components/home/NotFound'
@@ -59,7 +60,7 @@ export type StoreCardType = {
   imageURL: string
   productsCount?: number
 }
-interface StoresProps {
+type StoresProps = {
   title?: string
   isLoading?: boolean
   storesData?: StoreCardType[]
@@ -72,12 +73,22 @@ const Stores = ({
 }: StoresProps) => {
   const router = useRouter()
 
-  const handleStorePress = (store: StoreCardType) => {
-    router.push({
-      pathname: '/store/[id]',
-      params: { id: store.id },
-    })
-  }
+  const handleStorePress = useCallback(
+    (store: StoreCardType) => {
+      router.push({
+        pathname: '/store/[id]',
+        params: { id: store.id },
+      })
+    },
+    [router]
+  )
+
+  const renderItem = useCallback(
+    ({ item }: { item: StoreCardType }) => (
+      <StoreCard key={item.id} item={item} onPress={handleStorePress} />
+    ),
+    [handleStorePress]
+  )
 
   return (
     <View className='my-3'>
@@ -95,12 +106,10 @@ const Stores = ({
         <FlatList
           data={storesData}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <StoreCard item={item} onPress={handleStorePress} />
-          )}
+          renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName='py-2 px-2'
+          contentContainerClassName='py-2 px-2 gap-3'
         />
       ) : (
         <NotFound message='لا توجد متاجر متاحة' />

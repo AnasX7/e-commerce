@@ -1,10 +1,6 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, FlatList, ActivityIndicator } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+
 import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 
@@ -83,6 +79,13 @@ const Prouducts = ({
     [router]
   )
 
+  const renderItem = useCallback(
+    ({ item }: { item: StoreProducts }) => (
+      <ProductCard item={item} onPress={handleItemPress} />
+    ),
+    [handleItemPress]
+  )
+
   return (
     <View className='my-4'>
       {/* Section header */}
@@ -112,12 +115,10 @@ const Prouducts = ({
         <FlatList
           data={productsData}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ProductCard item={item} onPress={handleItemPress} />
-          )}
+          renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName='py-2 px-2'
+          contentContainerClassName='py-2 px-2 gap-3'
         />
       ) : (
         <NotFound message='لا توجد منتجات متاحة' />
