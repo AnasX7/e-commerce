@@ -39,9 +39,9 @@ const WelcomeScreen = () => {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome')
-      if (hasSeenWelcome) {
-        router.replace('/(tabs)/home')
-      }
+      // if (hasSeenWelcome) {
+      //   router.replace('/(tabs)/home')
+      // }
       setLoading(false)
     }
 

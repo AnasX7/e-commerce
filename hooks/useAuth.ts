@@ -1,23 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios, { isAxiosError } from '@/lib/axios'
+import { axios, isAxiosError } from '@/lib/axios'
 import { useEffect } from 'react'
-import { router } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
-// Type definitions for authentication data
-type User = {
-  id: number
-  name: string
-  email: string
-  // email_verified_at: string | null
-  [key: string]: any
-}
-
-type AuthState = {
-  user: User | null
-  token: string | null
-}
 
 type RegisterData = {
   name: string
@@ -29,7 +15,6 @@ type RegisterData = {
 type LoginData = {
   email: string
   password: string
-  remember?: boolean
 }
 
 type ResetPasswordData = {
@@ -40,17 +25,21 @@ type ResetPasswordData = {
 }
 
 type ErrorHandler = {
-  setErrors: (errors: Record<string, string[]>) => void
+  setErrors: (errors: Record<string, string>) => void
   setStatus?: (status: string | null) => void
+  setLoading?: (loading: boolean) => void
 }
 
-export const useLaravelAuth = ({
-  middleware,
-  redirectIfAuthenticated,
-}: {
+type useAuthProps = {
   middleware?: 'auth' | 'guest'
   redirectIfAuthenticated?: string
-} = {}) => {
+}
+
+export const useAuth = ({
+  middleware,
+  redirectIfAuthenticated,
+}: useAuthProps) => {
+  const router = useRouter()
   const queryClient = useQueryClient()
 
   // Store token in AsyncStorage
@@ -60,10 +49,10 @@ export const useLaravelAuth = ({
   }
 
   // Remove token from AsyncStorage
-  const removeToken = async () => {
-    await AsyncStorage.removeItem('auth_token')
-    delete axios.defaults.headers.common['Authorization']
-  }
+  // const removeToken = async () => {
+  //   await AsyncStorage.removeItem('auth_token')
+  //   delete axios.defaults.headers.common['Authorization']
+  // }
 
   // Load token from AsyncStorage on startup
   useEffect(() => {
@@ -79,27 +68,23 @@ export const useLaravelAuth = ({
   }, [])
 
   // CSRF protection
-  const csrf = async () => {
-    await axios.get('/sanctum/csrf-cookie')
-  }
+  // const csrf = async () => {
+  //   await axios.get('/sanctum/csrf-cookie')
+  // }
 
-  // User data query
-  const {
-    data: user,
-    error: userError,
-    isLoading: isLoadingUser,
-    refetch: refetchUser,
-  } = useQuery({
+  // Query to fetch the authenticated user.
+  const { data: user, error: userError } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       try {
         const response = await axios.get('/user')
         return response.data
-      } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 409) {
-          // router.push('/verify-email')
-        }
-        throw error
+      } catch (err) {
+        // if (err.response?.status === 409) {
+        //   router.push('/verify-email')
+        //   return null
+        // }
+        throw err
       }
     },
     retry: false,
@@ -108,141 +93,76 @@ export const useLaravelAuth = ({
 
   // Register mutation
   const registerMutation = useMutation({
-    mutationFn: async ({
-      setErrors,
-      ...props
-    }: RegisterData & ErrorHandler) => {
-      await csrf()
-      setErrors({})
-      return axios.post('/register', props)
+    mutationFn: async (data: RegisterData) => {
+      // await csrf();
+      return axios.post('/register', data)
     },
     onSuccess: async (response) => {
       if (response.data.token) {
         await storeToken(response.data.token)
       }
       queryClient.invalidateQueries({ queryKey: ['user'] })
-    },
-    onError: (error) => {
-      if (isAxiosError(error) && error.response?.status === 422) {
-        throw error.response.data.errors
-      }
-      throw error
     },
   })
 
   // Login mutation
   const loginMutation = useMutation({
-    mutationFn: async ({
-      setErrors,
-      setStatus,
-      ...props
-    }: LoginData & ErrorHandler) => {
-      await csrf()
-      setErrors({})
-      if (setStatus) setStatus(null)
-      return axios.post('/login', props)
+    mutationFn: async (data: LoginData) => {
+      console.log('Login request data:', data)
+      // await csrf();
+      return axios.post('/login', data)
     },
     onSuccess: async (response) => {
+      console.log('Login success response:', response.data)
       if (response.data.token) {
         await storeToken(response.data.token)
       }
       queryClient.invalidateQueries({ queryKey: ['user'] })
     },
-    onError: (error) => {
-      if (isAxiosError(error) && error.response?.status === 422) {
-        throw error.response.data.errors
-      }
-      throw error
+    onError: (error: any) => {
+      console.warn('Login error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      })
     },
   })
 
-  // Forgot password mutation
   const forgotPasswordMutation = useMutation({
-    mutationFn: async ({
-      setErrors,
-      setStatus,
-      email,
-    }: {
-      email: string
-    } & ErrorHandler) => {
-      await csrf()
-      setErrors({})
-      if (setStatus) setStatus(null)
+    mutationFn: async ({ email }: { email: string }) => {
+      // await csrf();
       return axios.post('/forgot-password', { email })
-    },
-    onSuccess: (response, variables) => {
-      if (variables.setStatus) {
-        variables.setStatus(response.data.status)
-      }
-    },
-    onError: (error, variables) => {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 422 &&
-        variables.setErrors
-      ) {
-        variables.setErrors(error.response.data.errors)
-      }
-      throw error
     },
   })
 
   // Reset password mutation
   const resetPasswordMutation = useMutation({
-    mutationFn: async ({
-      setErrors,
-      setStatus,
-      token,
-      ...props
-    }: ResetPasswordData & ErrorHandler & { token: string }) => {
-      await csrf()
-      setErrors({})
-      if (setStatus) setStatus(null)
-      return axios.post('/reset-password', { token, ...props })
+    mutationFn: async ({ token, ...data }: ResetPasswordData) => {
+      // await csrf()
+      return axios.post('/reset-password', { token, ...data })
     },
+
     onSuccess: (response) => {
       router.push({
         pathname: '/(auth)/login',
         params: { reset: btoa(response.data.status) },
       })
     },
-    onError: (error, variables) => {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 422 &&
-        variables.setErrors
-      ) {
-        variables.setErrors(error.response.data.errors)
-      }
-      throw error
-    },
   })
 
   // Resend email verification mutation
   const resendEmailVerificationMutation = useMutation({
-    mutationFn: async () => {
-      return axios.post('/email/verification-notification')
-    },
-    onSuccess: (
-      response,
-      variables: { setStatus: (status: string) => void }
-    ) => {
-      if (variables.setStatus) {
-        variables.setStatus(response.data.status)
-      }
-    },
+    mutationFn: async () => axios.post('/email/verification-notification'),
   })
 
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
       if (!userError) {
-        return axios.post('/logout')
+        await axios.post('/logout')
       }
-      return null
     },
-    onSuccess: async () => {
-      await removeToken()
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] })
       queryClient.clear()
 
@@ -254,91 +174,151 @@ export const useLaravelAuth = ({
     },
   })
 
-  // Authentication navigation logic
-  useEffect(() => {
-    const handleAuthNavigation = async () => {
-      if (middleware === 'guest' && redirectIfAuthenticated && user) {
-        router.replace(redirectIfAuthenticated as any)
-      }
+  const register = async ({
+    setErrors,
+    setStatus,
+    setLoading,
+    ...data
+  }: ErrorHandler & RegisterData) => {
+    setErrors({})
+    if (setStatus) setStatus(null)
+    if (setLoading) setLoading(true)
 
-      // if (middleware === 'auth' && !user?.email_verified_at) {
-      //   router.replace('/verify-email');
-      // }
-
-      // const path = router.canGoBack()
-      //   ? router.getCurrentOptions()?.path
-      //   : '';
-
-      // if (path === '/verify-email' && user?.email_verified_at && redirectIfAuthenticated) {
-      //   router.replace(redirectIfAuthenticated);
-      // }
-
-      if (middleware === 'auth' && userError) {
-        await logoutMutation.mutateAsync()
-      }
-    }
-
-    handleAuthNavigation()
-  }, [user, userError, middleware, redirectIfAuthenticated])
-
-  // Public methods
-  const register = async (data: RegisterData & ErrorHandler) => {
     try {
       await registerMutation.mutateAsync(data)
-    } catch (error) {
-      if (typeof error === 'object' && error !== null) {
-        data.setErrors(error as Record<string, string[]>)
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setErrors(err.response.data.errors)
+      } else {
+        throw err
       }
+    } finally {
+      if (setLoading) setLoading(false)
     }
   }
 
-  const login = async (data: LoginData & ErrorHandler) => {
+  const login = async ({
+    setErrors,
+    setStatus,
+    setLoading,
+    ...data
+  }: ErrorHandler & LoginData) => {
+    setErrors({})
+    if (setStatus) setStatus(null)
+    if (setLoading) setLoading(true)
     try {
       await loginMutation.mutateAsync(data)
-    } catch (error) {
-      if (typeof error === 'object' && error !== null) {
-        data.setErrors(error as Record<string, string[]>)
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setErrors(err.response.data.errors)
+      } else {
+        throw err
       }
+    } finally {
+      if (setLoading) setLoading(false)
     }
   }
 
-  const forgotPassword = async (data: { email: string } & ErrorHandler) => {
+  const forgotPassword = async ({
+    setErrors,
+    setStatus,
+    setLoading,
+    email,
+  }: ErrorHandler & { email: string }) => {
+    setErrors({})
+    if (setStatus) setStatus(null)
+    if (setLoading) setLoading(true)
     try {
-      await forgotPasswordMutation.mutateAsync(data)
-    } catch (error) {
-      // Error handling done in mutation
+      const response = await forgotPasswordMutation.mutateAsync({ email })
+      if (setStatus) setStatus(response.data.status)
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setErrors(err.response.data.errors)
+      } else {
+        throw err
+      }
+    } finally {
+      if (setLoading) setLoading(false)
     }
   }
 
-  const resetPassword = async (data: ResetPasswordData & ErrorHandler) => {
+  const resetPassword = async ({
+    setErrors,
+    setStatus,
+    setLoading,
+    ...data
+  }: ErrorHandler & ResetPasswordData) => {
+    setErrors({})
+    if (setStatus) setStatus(null)
+    if (setLoading) setLoading(true)
     try {
       await resetPasswordMutation.mutateAsync(data)
-    } catch (error) {
-      // Error handling done in mutation
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setErrors(err.response.data.errors)
+      } else {
+        throw err
+      }
+    } finally {
+      if (setLoading) setLoading(false)
     }
   }
 
   const resendEmailVerification = async ({
+    setErrors,
     setStatus,
-  }: {
-    setStatus: (status: string) => void
-  }) => {
-    await resendEmailVerificationMutation.mutateAsync({ setStatus })
+    setLoading,
+  }: ErrorHandler & ResetPasswordData) => {
+    setErrors({})
+    if (setStatus) setStatus(null)
+    if (setLoading) setLoading(true)
+    try {
+      const response = await resendEmailVerificationMutation.mutateAsync()
+      if (setStatus) setStatus(response.data.status)
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setErrors(err.response.data.errors)
+      } else {
+        throw err
+      }
+    } finally {
+      if (setLoading) setLoading(false)
+    }
   }
 
   const logout = async () => {
-    await logoutMutation.mutateAsync()
+    try {
+      await logoutMutation.mutateAsync()
+    } catch (err) {
+      throw err
+    }
   }
+
+  // Handle middleware logic for redirects based on authentication state.
+  useEffect(() => {
+    if (middleware === 'guest' && redirectIfAuthenticated && user) {
+      router.push({
+        pathname: redirectIfAuthenticated as any,
+      })
+    }
+    // if (middleware === 'auth' && user && !user.email_verified_at) {
+    //   router.push('/verify-email')
+    // }
+    // if (pathname === '/verify-email' && user?.email_verified_at) {
+    //   router.push(redirectIfAuthenticated)
+    // }
+    if (middleware === 'auth' && userError) {
+      logout()
+    }
+  }, [user, userError])
 
   return {
     user,
-    isLoading: isLoadingUser,
     register,
     login,
     forgotPassword,
     resetPassword,
     resendEmailVerification,
     logout,
-    refetchUser,
   }
 }

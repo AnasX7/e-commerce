@@ -1,11 +1,32 @@
-import React from 'react'
+import { useState } from 'react'
 import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/hooks/useAuth'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
 const RegisterScreen = () => {
   const router = useRouter()
+
+  const { register } = useAuth({
+    middleware: 'guest',
+    redirectIfAuthenticated: '/(tabs)/home',
+  })
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState([])
+
+  // const submitForm = () => {
+
+  //   register({
+  //     name,
+  //     email,
+  //     password,
+  //     setErrors,
+  //   })
+  // }
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
