@@ -6,40 +6,40 @@ import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Type definitions for authentication data
-interface User {
+type User = {
   id: number
   name: string
   email: string
-  email_verified_at: string | null
+  // email_verified_at: string | null
   [key: string]: any
 }
 
-interface AuthState {
+type AuthState = {
   user: User | null
   token: string | null
 }
 
-interface RegisterData {
+type RegisterData = {
   name: string
   email: string
   password: string
   password_confirmation: string
 }
 
-interface LoginData {
+type LoginData = {
   email: string
   password: string
   remember?: boolean
 }
 
-interface ResetPasswordData {
+type ResetPasswordData = {
   token: string
   email: string
   password: string
   password_confirmation: string
 }
 
-interface ErrorHandler {
+type ErrorHandler = {
   setErrors: (errors: Record<string, string[]>) => void
   setStatus?: (status: string | null) => void
 }
