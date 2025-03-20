@@ -35,7 +35,8 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/app-splash-icon.png",
-          "resizeMode": "cover",
+          "imageWidth": 200,
+          "resizeMode": "native",
           "backgroundColor": "#4e148c",
           "enableFullScreenImage_legacy": true
         }

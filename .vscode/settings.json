@@ -1,3 +1,4 @@
 {
-  "RadonIDE.panelLocation": "tab"
+  "RadonIDE.panelLocation": "tab",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

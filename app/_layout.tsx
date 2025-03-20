@@ -1,6 +1,7 @@
 import 'global.css'
 import { I18nManager, Platform } from 'react-native'
-import { SplashScreen, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
@@ -15,6 +16,11 @@ const queryClient = new QueryClient()
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+})
 
 export default function RootLayout() {
   const shouldBeRTL = true
@@ -50,14 +56,14 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
         {/* <KeyboardProvider> */}
-          <StatusBar style='dark' />
-          <Stack>
-            <Stack.Screen name='index' options={{ headerShown: false }} />
-            <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='search' />
-            <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
-          </Stack>
+        <StatusBar style='dark' />
+        <Stack>
+          <Stack.Screen name='index' options={{ headerShown: false }} />
+          <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+          <Stack.Screen name='search' />
+          <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
+        </Stack>
         {/* </KeyboardProvider> */}
       </GestureHandlerRootView>
     </QueryClientProvider>
