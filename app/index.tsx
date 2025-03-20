@@ -33,15 +33,19 @@ const WelcomeScreen = () => {
   }
 
   useEffect(() => {
+    const clearAllStorage = async () => {
+      await AsyncStorage.clear()
+    }
     setMounted(true)
+    clearAllStorage()
   }, [])
 
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome')
-      // if (hasSeenWelcome) {
-      //   router.replace('/(tabs)/home')
-      // }
+      if (hasSeenWelcome) {
+        router.replace('/(tabs)/home')
+      }
       setLoading(false)
     }
 
@@ -109,9 +113,9 @@ const WelcomeScreen = () => {
 
             <TouchableOpacity
               onPress={handleContinue}
-              className='w-full bg-primary py-4 rounded-xl shadow-sm active:bg-secondary'
+              className='w-full bg-primary py-3 rounded-xl shadow-sm active:bg-secondary'
               activeOpacity={0.8}>
-              <Text className='text-white font-notoKufiArabic-semiBold leading-relaxed text-center text-lg'>
+              <Text className='text-white font-notoKufiArabic-semiBold  text-center'>
                 ابدء الآن
               </Text>
             </TouchableOpacity>

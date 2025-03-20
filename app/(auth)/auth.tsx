@@ -58,9 +58,9 @@ const AuthScreen = () => {
             className='mb-4'>
             <TouchableOpacity
               onPress={handleLogin}
-              className='w-full bg-primary py-4 rounded-xl shadow-sm active:bg-secondary'
+              className='w-full bg-primary py-3 rounded-xl shadow-sm active:bg-secondary'
               activeOpacity={0.8}>
-              <Text className='text-white font-notoKufiArabic-semiBold leading-relaxed text-center text-lg'>
+              <Text className='text-white font-notoKufiArabic-semiBold text-center'>
                 تسجيل الدخول
               </Text>
             </TouchableOpacity>
@@ -72,9 +72,9 @@ const AuthScreen = () => {
             className='mb-6'>
             <TouchableOpacity
               onPress={handleRegister}
-              className='w-full bg-white py-4 rounded-xl border border-gray-300 active:bg-gray-100'
+              className='w-full bg-white py-3 rounded-xl border border-gray-300 active:bg-gray-100'
               activeOpacity={0.8}>
-              <Text className='text-gray-800 font-notoKufiArabic-semiBold leading-relaxed text-center text-lg'>
+              <Text className='text-gray-800 font-notoKufiArabic-semiBold text-center '>
                 إنشاء حساب
               </Text>
             </TouchableOpacity>
@@ -86,9 +86,9 @@ const AuthScreen = () => {
             className='items-center'>
             <TouchableOpacity
               onPress={handleSkip}
-              className='px-4 py-2'
+              className='px-4 py-1'
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Text className='text-gray-500 font-notoKufiArabic text-base'>
+              <Text className='text-gray-500 font-notoKufiArabic'>
                 ربما في وقت لاحق
               </Text>
             </TouchableOpacity>

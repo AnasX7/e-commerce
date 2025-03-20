@@ -45,7 +45,7 @@ axios.interceptors.response.use(
     return response
   },
   async (error) => {
-    console.error('API Error:', {
+    console.log('API Error:', {
       message: error.message,
       code: error.code,
       config: {

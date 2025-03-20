@@ -14,9 +14,9 @@ const OnboardingLayout = () => {
             backgroundColor: 'white',
           },
         }}>
-          <Stack.Screen name='login' options={{ presentation:'modal', headerShown: Platform.OS === 'ios' && true }} />
-          <Stack.Screen name='register' options={{ presentation:'modal', headerShown: Platform.OS === 'ios' && true}} />
-        </Stack>
+        <Stack.Screen name='login' options={{ presentation: 'modal' }} />
+        <Stack.Screen name='register' options={{ presentation: 'modal' }} />
+      </Stack>
     </>
   )
 }

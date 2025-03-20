@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { axios, isAxiosError } from '@/lib/axios'
 import { useEffect } from 'react'
-import { useRouter } from 'expo-router'
+import { Href, useRouter } from 'expo-router'
 import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -9,7 +9,6 @@ type RegisterData = {
   name: string
   email: string
   password: string
-  password_confirmation: string
 }
 
 type LoginData = {
@@ -21,7 +20,6 @@ type ResetPasswordData = {
   token: string
   email: string
   password: string
-  password_confirmation: string
 }
 
 type ErrorHandler = {
@@ -32,7 +30,7 @@ type ErrorHandler = {
 
 type useAuthProps = {
   middleware?: 'auth' | 'guest'
-  redirectIfAuthenticated?: string
+  redirectIfAuthenticated?: Href
 }
 
 export const useAuth = ({
@@ -42,17 +40,10 @@ export const useAuth = ({
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  // Store token in AsyncStorage
   const storeToken = async (token: string) => {
     await AsyncStorage.setItem('auth_token', token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
   }
-
-  // Remove token from AsyncStorage
-  // const removeToken = async () => {
-  //   await AsyncStorage.removeItem('auth_token')
-  //   delete axios.defaults.headers.common['Authorization']
-  // }
 
   // Load token from AsyncStorage on startup
   useEffect(() => {
@@ -67,130 +58,87 @@ export const useAuth = ({
     loadToken()
   }, [])
 
-  // CSRF protection
-  // const csrf = async () => {
-  //   await axios.get('/sanctum/csrf-cookie')
-  // }
-
   // Query to fetch the authenticated user.
-  const { data: user, error: userError } = useQuery({
+  const {
+    data: user,
+    error: userError,
+    refetch,
+  } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        const response = await axios.get('/user')
+        const response = await axios.get('/api/user')
         return response.data
       } catch (err) {
-        // if (err.response?.status === 409) {
-        //   router.push('/verify-email')
-        //   return null
-        // }
-        throw err
+        if (isAxiosError(err) && err.response?.status !== 409) throw err
+
+        // router.push('/(auth)/verify-email')
       }
     },
     retry: false,
-    enabled: middleware === 'auth', // Only fetch if auth middleware is specified
+    enabled: middleware === 'auth', // Only fetch in component mounts if auth middleware is specified
   })
 
-  // Register mutation
-  const registerMutation = useMutation({
-    mutationFn: async (data: RegisterData) => {
-      // await csrf();
-      return axios.post('/register', data)
-    },
-    onSuccess: async (response) => {
-      if (response.data.token) {
-        await storeToken(response.data.token)
-      }
-      queryClient.invalidateQueries({ queryKey: ['user'] })
-    },
-  })
-
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: async (data: LoginData) => {
-      console.log('Login request data:', data)
-      // await csrf();
-      return axios.post('/login', data)
-    },
-    onSuccess: async (response) => {
-      console.log('Login success response:', response.data)
-      if (response.data.token) {
-        await storeToken(response.data.token)
-      }
-      queryClient.invalidateQueries({ queryKey: ['user'] })
-    },
-    onError: (error: any) => {
-      console.warn('Login error:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      })
-    },
-  })
-
-  const forgotPasswordMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
-      // await csrf();
-      return axios.post('/forgot-password', { email })
-    },
-  })
-
-  // Reset password mutation
-  const resetPasswordMutation = useMutation({
-    mutationFn: async ({ token, ...data }: ResetPasswordData) => {
-      // await csrf()
-      return axios.post('/reset-password', { token, ...data })
-    },
-
-    onSuccess: (response) => {
-      router.push({
-        pathname: '/(auth)/login',
-        params: { reset: btoa(response.data.status) },
-      })
-    },
-  })
-
-  // Resend email verification mutation
-  const resendEmailVerificationMutation = useMutation({
-    mutationFn: async () => axios.post('/email/verification-notification'),
-  })
-
-  // Logout mutation
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      if (!userError) {
-        await axios.post('/logout')
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] })
-      queryClient.clear()
-
-      if (Platform.OS === 'web') {
-        router.push('/(auth)/login')
-      } else {
-        router.replace('/(auth)/login')
-      }
-    },
-  })
+  // CSRF protection
+  const csrf = async () => {
+    await axios.get('/sanctum/csrf-cookie')
+  }
 
   const register = async ({
     setErrors,
-    setStatus,
     setLoading,
-    ...data
+    ...props
   }: ErrorHandler & RegisterData) => {
-    setErrors({})
-    if (setStatus) setStatus(null)
     if (setLoading) setLoading(true)
+    await csrf()
+
+    setErrors({})
 
     try {
-      await registerMutation.mutateAsync(data)
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 422) {
-        setErrors(err.response.data.errors)
+      const response = await axios.post('/api/register', props)
+
+      console.log('Register success response:', response.data)
+
+      if (response.data.token) {
+        await storeToken(response.data.token)
+      }
+      refetch()
+    } catch (err: any) {
+      if (err.response) {
+        // Handle validation errors (422)
+        if (err.response.status === 422) {
+          setErrors(err.response.data.errors || {})
+        }
+        // Handle duplicate email errors (409)
+        else if (err.response.status === 409) {
+          setErrors({
+            email:
+              err.response.data.message || 'البريد الإلكتروني موجود بالفعل',
+          })
+        }
+        // Handle other client errors (400-499)
+        else if (err.response.status >= 400 && err.response.status < 500) {
+          setErrors({
+            name: err.response.data.message || 'فشل تسجيل الدخول',
+            email: err.response.data.message || 'فشل تسجيل الدخول',
+            password: err.response.data.message || 'فشل تسجيل الدخول',
+          })
+        }
+        // Handle server errors (500+)
+        else {
+          setErrors({
+            name: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+            email: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+            password: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+          })
+        }
       } else {
-        throw err
+        // Handle network errors
+        setErrors({
+          name: 'خطأ في الشبكة. يُرجى التحقق من اتصالك.',
+          email: 'خطأ في الشبكة. يُرجى التحقق من اتصالك.',
+          password: 'خطأ في الشبكة. يُرجى التحقق من اتصالك.',
+        })
       }
     } finally {
       if (setLoading) setLoading(false)
@@ -199,20 +147,43 @@ export const useAuth = ({
 
   const login = async ({
     setErrors,
-    setStatus,
     setLoading,
-    ...data
+    ...props
   }: ErrorHandler & LoginData) => {
-    setErrors({})
-    if (setStatus) setStatus(null)
     if (setLoading) setLoading(true)
+    await csrf()
+
+    setErrors({})
+
     try {
-      await loginMutation.mutateAsync(data)
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 422) {
-        setErrors(err.response.data.errors)
-      } else {
-        throw err
+      const response = await axios.post('/api/login', props)
+
+      console.log('Login success response:', response.data)
+
+      if (response.data.token) {
+        await storeToken(response.data.token)
+      }
+      refetch()
+    } catch (err: any) {
+      if (err.response) {
+        // Handle 401 Unauthorized errors
+        if (err.response.status === 401) {
+          setErrors({
+            email: err.response.data.message || 'بيانات اعتماد غير صالحة',
+            password: err.response.data.message || 'بيانات اعتماد غير صالحة',
+          })
+        }
+        // Handle 422 Validation errors
+        else if (err.response.status === 422) {
+          setErrors(err.response.data.errors || {})
+        }
+        // Handle other errors
+        else {
+          setErrors({
+            email: 'حدث خطأ أثناء تسجيل الدخول',
+            password: 'حدث خطأ أثناء تسجيل الدخول',
+          })
+        }
       }
     } finally {
       if (setLoading) setLoading(false)
@@ -221,43 +192,91 @@ export const useAuth = ({
 
   const forgotPassword = async ({
     setErrors,
-    setStatus,
-    setLoading,
     email,
   }: ErrorHandler & { email: string }) => {
+    await csrf()
+
     setErrors({})
-    if (setStatus) setStatus(null)
-    if (setLoading) setLoading(true)
+
     try {
-      const response = await forgotPasswordMutation.mutateAsync({ email })
-      if (setStatus) setStatus(response.data.status)
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 422) {
-        setErrors(err.response.data.errors)
+      const response = await axios.post('/api/forgot-password', { email })
+      console.log('forgotPassword success response:', response.data)
+    } catch (err: any) {
+      if (err.response) {
+        // Handle validation errors (422)
+        if (err.response.status === 422) {
+          setErrors(err.response.data.errors || {})
+        }
+        // Handle not found email (404)
+        else if (err.response.status === 404) {
+          setErrors({
+            email: err.response.data.message || 'البريد الإلكتروني غير مسجل',
+          })
+        }
+        // Handle other client errors (400-499)
+        else if (err.response.status >= 400 && err.response.status < 500) {
+          setErrors({
+            email:
+              err.response.data.message ||
+              'فشل إرسال رابط إعادة تعيين كلمة المرور',
+          })
+        }
+        // Handle server errors (500+)
+        else {
+          setErrors({
+            email: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+          })
+        }
       } else {
-        throw err
+        // Handle network errors
+        setErrors({
+          email: 'خطأ في الشبكة. يُرجى التحقق من اتصالك.',
+        })
       }
-    } finally {
-      if (setLoading) setLoading(false)
     }
   }
 
   const resetPassword = async ({
     setErrors,
-    setStatus,
     setLoading,
-    ...data
+    ...props
   }: ErrorHandler & ResetPasswordData) => {
-    setErrors({})
-    if (setStatus) setStatus(null)
     if (setLoading) setLoading(true)
+    await csrf()
+
+    setErrors({})
+
     try {
-      await resetPasswordMutation.mutateAsync(data)
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 422) {
-        setErrors(err.response.data.errors)
-      } else {
-        throw err
+      const response = await axios.post('/api/reset-password', props)
+      console.log('ResetPassword success response:', response.data)
+      router.push('/login')
+    } catch (err: any) {
+      // Handle validation errors (422)
+      if (err.response.status === 422) {
+        setErrors(err.response.data.errors || {})
+      }
+      // Handle invalid/expired token (400)
+      else if (err.response.status === 400) {
+        setErrors({
+          token:
+            err.response.data.message ||
+            'رمز إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية',
+          password: 'يرجى طلب رابط إعادة تعيين جديد',
+        })
+      }
+      // Handle other client errors (401-499)
+      else if (err.response.status >= 401 && err.response.status < 500) {
+        setErrors({
+          email: err.response.data.message || 'فشل إعادة تعيين كلمة المرور',
+          password: err.response.data.message || 'فشل إعادة تعيين كلمة المرور',
+        })
+      }
+      // Handle server errors (500+)
+      else {
+        setErrors({
+          email: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+          password: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+        })
       }
     } finally {
       if (setLoading) setLoading(false)
@@ -267,46 +286,78 @@ export const useAuth = ({
   const resendEmailVerification = async ({
     setErrors,
     setStatus,
-    setLoading,
-  }: ErrorHandler & ResetPasswordData) => {
-    setErrors({})
-    if (setStatus) setStatus(null)
-    if (setLoading) setLoading(true)
+  }: ErrorHandler) => {
     try {
-      const response = await resendEmailVerificationMutation.mutateAsync()
-      if (setStatus) setStatus(response.data.status)
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 422) {
-        setErrors(err.response.data.errors)
+      await axios.post('/api/email/verification-notification')
+      setStatus?.('تم إرسال رابط التحقق. يرجى التحقق من بريدك الإلكتروني.')
+    } catch (err: any) {
+      if (err.response) {
+        // Handle rate limiting (429)
+        if (err.response.status === 429) {
+          setErrors({
+            email:
+              'تم إرسال العديد من الطلبات. يرجى الانتظار قبل المحاولة مرة أخرى.',
+          })
+        }
+        // Handle other client errors
+        else if (err.response.status >= 400 && err.response.status < 500) {
+          setErrors({
+            email: err.response.data.message || 'فشل إرسال رابط التحقق',
+          })
+        }
+        // Handle server errors
+        else {
+          setErrors({
+            email: 'حدث خطأ في الخادم. يُرجى المحاولة لاحقًا.',
+          })
+        }
       } else {
-        throw err
+        // Handle network errors
+        setErrors({
+          email: 'خطأ في الشبكة. يُرجى التحقق من اتصالك.',
+        })
       }
-    } finally {
-      if (setLoading) setLoading(false)
     }
   }
 
   const logout = async () => {
     try {
-      await logoutMutation.mutateAsync()
+      if (!userError) {
+        await axios.post('/api/logout')
+      }
+      // Clear stored token
+      await AsyncStorage.removeItem('auth_token')
+      delete axios.defaults.headers.common['Authorization']
+
+      if (Platform.OS === 'web') {
+        router.push('/login')
+      } else {
+        router.replace('/login')
+      }
     } catch (err) {
-      throw err
+      console.error('Logout error:', err)
+      // Still clear local auth state and redirect even if server logout fails
+      await AsyncStorage.removeItem('auth_token')
+      delete axios.defaults.headers.common['Authorization']
+      router.replace('/login')
     }
   }
 
-  // Handle middleware logic for redirects based on authentication state.
   useEffect(() => {
     if (middleware === 'guest' && redirectIfAuthenticated && user) {
-      router.push({
-        pathname: redirectIfAuthenticated as any,
-      })
+      console.log('Redirecting to:', redirectIfAuthenticated)
+      router.dismissAll()
+      router.push(redirectIfAuthenticated)
     }
+
     // if (middleware === 'auth' && user && !user.email_verified_at) {
     //   router.push('/verify-email')
     // }
+
     // if (pathname === '/verify-email' && user?.email_verified_at) {
     //   router.push(redirectIfAuthenticated)
     // }
+
     if (middleware === 'auth' && userError) {
       logout()
     }

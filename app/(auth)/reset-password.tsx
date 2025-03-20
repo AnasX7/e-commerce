@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const PasswordReset = () => {
+const ResetPassword = () => {
   return (
     <View>
-      <Text>PasswordReset</Text>
+      <Text>ResetPassword</Text>
     </View>
   )
 }
 
-export default PasswordReset
+export default ResetPassword

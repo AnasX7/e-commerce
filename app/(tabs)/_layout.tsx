@@ -31,20 +31,6 @@ const Tabslayout = () => {
         }}
       />
 
-      {/* <Tabs.Screen
-        name='search'
-        options={{
-          title: 'البحث',
-          headerShown: true,
-          tabBarIcon: ({ focused, color }) =>
-            focused ? (
-              <Ionicons name='search' size={24} color={color} />
-            ) : (
-              <Ionicons name='search-outline' size={24} color={color} />
-            ),
-        }}
-      /> */}
-
       <Tabs.Screen
         name='favorites'
         options={{
