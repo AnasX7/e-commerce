@@ -12,7 +12,16 @@ import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
 import { useAppState } from '@/hooks/useAppState'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 1000 * 60 * 2,    // 2 minutes
+      gcTime: 1000 * 60 * 10,   // 10 minutes
+      refetchOnReconnect: true
+    },
+  },
+})
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -61,7 +70,13 @@ export default function RootLayout() {
           <Stack.Screen name='index' options={{ headerShown: false }} />
           <Stack.Screen name='(auth)' options={{ headerShown: false }} />
           <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-          <Stack.Screen name='search' />
+          <Stack.Screen
+            name='(search)'
+            // options={{
+            //   header: () => null,
+            // }}
+          />
+          <Stack.Screen name='store' options={{ headerShown: false }} />
           <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
         </Stack>
         {/* </KeyboardProvider> */}

@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const ResetPasswordScreen = () => {
+const StoresScreen = () => {
   return (
     <View>
-      <Text>ResetPassword</Text>
+      <Text>StoresScreen</Text>
     </View>
   )
 }
 
-export default ResetPasswordScreen
+export default StoresScreen

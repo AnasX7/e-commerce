@@ -7,7 +7,7 @@ interface CarouselItemProps {
 
 const CarouselItem = ({ imageUrl }: CarouselItemProps) => {
   return (
-    <View className='w-full h-full overflow-hidden rounded-2xl shadow-md'>
+    <View className='w-full h-full overflow-hidden rounded-xl shadow-md'>
       <Image
         source={{ uri: imageUrl }}
         style={{ width: '100%', height: '100%' }}

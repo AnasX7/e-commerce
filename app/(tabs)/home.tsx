@@ -1,23 +1,79 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Pressable,
-} from 'react-native'
-import { useState, useEffect } from 'react'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { View, Text, ScrollView, RefreshControl, StatusBar } from 'react-native'
+import { useState, useEffect, useCallback } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
-import { useRouter } from 'expo-router'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import Stores from '@/components/home/Stores'
-import Prouducts from '@/components/home/Prouducts'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useQuery } from '@tanstack/react-query'
+import { useFocusEffect } from 'expo-router'
+import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
+import { fetchCarouselAds } from '@/services/carouselAds'
+import { fetchStores } from '@/services/store'
+import { fetchProducts } from '@/services/product'
+
+import HomeScreenSkeleton from '@/components/skeletons/HomeScreenSkeleton'
+import LocationPicker from '@/components/home/LocationPicker'
+import SearchBar from '@/components/home/SearchBar'
+import StoresSlider from '@/components/home/StoresSlider'
+import ProuductsSlider from '@/components/home/ProuductsSlider'
 import AdsCarousel from '@/components/home/AdsCarousel'
+import ErrorMessage from '@/components/ErrorMessage'
+import NotFound from '@/components/home/NotFound'
 import { Images } from '@/constants/images'
 import { Colors } from '@/constants/colors'
 
-const Home = () => {
-  const router = useRouter()
+const HomeScreen = () => {
+  useFocusEffect(
+    useCallback(() => {
+      StatusBar.setBarStyle('light-content')
+    }, [])
+  )
+
+  const insets = useSafeAreaInsets()
+
+  const [refreshing, setRefreshing] = useState(false)
+
+  // const {
+  //   data: carouselAdsData,
+  //   refetch: refetchCarouselAds,
+  //   isLoading: isLoadingAds,
+  //   error: carouselError,
+  // } = useQuery({
+  //   queryKey: ['carouselAds'],
+  //   queryFn: () => fetchCarouselAds(),
+  // })
+
+  // const {
+  //   data: storesData,
+  //   refetch: refetchStores,
+  //   isLoading: isLoadingStores,
+  //   error: storesError,
+  // } = useQuery({
+  //   queryKey: ['stores'],
+  //   queryFn: () => fetchStores(),
+  // })
+
+  // const {
+  //   data: productsData,
+  //   refetch: refetchProducts,
+  //   isLoading: isLoadingProducts,
+  //   error: productsError,
+  // } = useQuery({
+  //   queryKey: ['products'],
+  //   queryFn: () => fetchProducts(8),
+  // })
+
+  // const onRefresh = useCallback(async () => {
+  //   setRefreshing(true)
+  //   await Promise.all([
+  //     refetchCarouselAds(),
+  //     refetchStores(),
+  //     refetchProducts(),
+  //   ])
+  //   setRefreshing(false)
+  // }, [refetchCarouselAds, refetchStores, refetchProducts])
+
+  // Refresh on screen focus
+  // useRefreshOnFocus(onRefresh)
 
   const words = ['متاجر', 'منتاجات']
   const [word, setWord] = useState(words[0])
@@ -31,94 +87,97 @@ const Home = () => {
   }, [word, words])
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView className='flex-1 bg-white'>
-        {/* Header */}
-        <View className='mx-4 mt-4 mb-3 gap-2'>
+    <View className='flex-1'>
+      {/* Header */}
+      <LinearGradient
+        colors={[Colors.primary, Colors.secondary]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ paddingTop: insets.top }}>
+        <View className='mx-4 pb-6 gap-4'>
           <View className='flex-row-reverse justify-between items-center'>
             <View className='flex-row-reverse items-center gap-3'>
               {/* App logo */}
-              <View className='w-14 h-14 border border-gray-200 rounded-2xl overflow-hidden'>
+              <View className='w-14 h-14 justify-center items-center'>
                 <Image
                   source={Images.appIcon}
                   style={{ width: '100%', height: '100%' }}
+                  contentFit='contain'
                 />
               </View>
-              <Text className='font-notoKufiArabic-bold text-[30px] text-primary'>
-                سلة
+              <Text className='font-notoKufiArabic-bold text-[30px] text-white'>
+                سلّتي
               </Text>
             </View>
-            {/* Location picker */}
-            <TouchableOpacity
-              onPress={() => {
-                alert('TODO: implement location picker screen')
-              }}>
-              <View className='justify-center items-start'>
-                <View className='flex-row items-center gap-1'>
-                  <Ionicons
-                    name='location-sharp'
-                    size={18}
-                    color={Colors.text.primary}
-                  />
-                  <Text className='text-sm text-gray-800 font-notoKufiArabic-semiBold leading-relaxed'>
-                    الموقع الحالي
-                  </Text>
-                  <Ionicons
-                    name='chevron-down'
-                    size={14}
-                    color={Colors.text.primary}
-                  />
-                </View>
-                <Text className='text-sm pl-4 text-gray-800 font-notoKufiArabic leading-relaxed'>
-                  {/* TODO: fetch User location  */}
-                  ابوظبي، بني ياس
-                </Text>
-              </View>
-            </TouchableOpacity>
+
+            {/* Location picker with light theme */}
+            <LocationPicker
+              onPress={() => alert('TODO: implement location picker screen')}
+              theme='light'
+            />
           </View>
-          {/* Search bar */}
-          <View className='flex-row-reverse gap-4'>
-            <Pressable
-              onPress={() => alert('TODO: implement filter Model')}
-              className='p-3 justify-center items-center rounded-xl border border-gray-300'>
-              <Ionicons name='filter-outline' size={20} color={Colors.text.quaternary} />
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                router.push('/search')
-                alert('TODO: implement search screen')
-              }}
-              className='flex-row-reverse flex-1 px-3 justify-end items-center gap-3 rounded-xl border border-gray-300'>
-              <View className='flex-row'>
-                <Text className='font-notoKufiArabic text-gray-400'>
-                  ابحث عن
-                </Text>
-                <Text className='font-notoKufiArabic text-gray-400'>
-                  {' '}
-                  {word}
-                </Text>
-              </View>
-              <Ionicons name='search-outline' size={22} color={Colors.text.quaternary} />
-            </Pressable>
-          </View>
+
+          {/* Search bar with transparent theme */}
+          <SearchBar
+            onFilterPress={() => alert('TODO: implement filter Model')}
+            theme='transparent'
+          />
         </View>
+      </LinearGradient>
 
-        <ScrollView className='flex-1'>
-          {/* Slider */}
-          <AdsCarousel />
+      <ScrollView
+        className='flex-1 pt-2'
+        showsVerticalScrollIndicator={false}
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={refreshing}
+        //     onRefresh={onRefresh}
+        //     tintColor={Colors.primary}
+        //   />
+        // }
+      >
+        {/* {isLoadingAds || isLoadingStores || isLoadingProducts ? (
+          <HomeScreenSkeleton />
+        ) : (
+          : carouselError || storesError || productsError ? (
+            <ErrorMessage message='حدث خطأ في الاتصال' onRetry={onRefresh} />
+          )
+          <>
+            {carouselAdsData?.length > 0 ? (
+              <AdsCarousel data={carouselAdsData} />
+            ) : (
+              <NotFound message='لا توجد إعلانات متاحة' />
+            )}
 
-          {/* Stores */}
-          <Stores />
+            {storesData?.length > 0 ? (
+              <StoresSlider title='المتاجر' data={storesData} />
+            ) : (
+              <NotFound message='لا توجد متاجر متاحة' />
+            )}
 
-          {/* Popular products */}
-          <Prouducts title='المنتجات الشائعة' />
+            {productsData?.popular?.length > 0 ? (
+              <ProuductsSlider
+                title='المنتجات الشائعة'
+                data={productsData.popular}
+              />
+            ) : (
+              <NotFound message='لا توجد منتجات شائعة متاحة' />
+            )}
 
-          {/* New arrival products */}
-          <Prouducts title='المنتجات حديثة الوصول' />
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+            {productsData?.new?.length > 0 ? (
+              <ProuductsSlider title='وصل حديثاً' data={productsData.new} />
+            ) : (
+              <NotFound message='لا توجد منتجات حديثةالوصول متاحة' />
+            )}
+          </>
+        )} */}
+        <AdsCarousel />
+        <StoresSlider title='المتاجر' />
+        <ProuductsSlider title='المنتجات الشائعة' />
+        <ProuductsSlider title='وصل حديثاً' />
+      </ScrollView>
+    </View>
   )
 }
 
-export default Home
+export default HomeScreen

@@ -1,8 +1,7 @@
-import { Platform } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { Stack } from 'expo-router'
 
-const OnboardingLayout = () => {
+const AuthLayout = () => {
   return (
     <>
       <StatusBar style='dark' />
@@ -21,4 +20,4 @@ const OnboardingLayout = () => {
   )
 }
 
-export default OnboardingLayout
+export default AuthLayout

@@ -33,11 +33,11 @@ const WelcomeScreen = () => {
   }
 
   useEffect(() => {
-    const clearAllStorage = async () => {
-      await AsyncStorage.clear()
-    }
+    // const clearAllStorage = async () => {
+    //   await AsyncStorage.clear()
+    // }
     setMounted(true)
-    clearAllStorage()
+    // clearAllStorage()
   }, [])
 
   useEffect(() => {
@@ -90,7 +90,6 @@ const WelcomeScreen = () => {
             className='flex-1 items-center justify-center pt-10'>
             <Image
               source={require('@/assets/images/welcome-illustration.png')}
-              placeholder='L184i9kCbkj00aRa_NSj00ay_NMy'
               contentFit='contain'
               style={{ width: '100%', height: 288 }}
             />
@@ -100,8 +99,8 @@ const WelcomeScreen = () => {
           <Animated.View style={animatedStyle} className='px-6 pb-12 pt-6'>
             <Animated.Text
               entering={FadeInDown.delay(500).duration(800)}
-              className='text-3xl font-notoKufiArabic-semiBold leading-normal text-gray-800 text-center mb-4'>
-              مرحبًا بك في سلة
+              className='text-3xl font-notoKufiArabic-semiBold leading-relaxed text-gray-800 text-center mb-4'>
+              مرحبًا بك في سلّتي
             </Animated.Text>
 
             <Animated.Text

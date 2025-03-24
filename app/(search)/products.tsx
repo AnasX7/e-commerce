@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams } from 'expo-router'
 
-const search = () => {
+const searchScreen = () => {
   const params = useLocalSearchParams()
 
   return (
@@ -14,4 +14,4 @@ const search = () => {
   )
 }
 
-export default search
+export default searchScreen

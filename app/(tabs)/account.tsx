@@ -1,7 +1,15 @@
-import { View, Text } from 'react-native'
+import { View, Text, StatusBar } from 'react-native'
+import { useCallback } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
-const account = () => {
+const AccountScreen = () => {
+  useFocusEffect(
+      useCallback(() => {
+        StatusBar.setBarStyle('dark-content')
+      }, [])
+    )
+    
   return (
     <SafeAreaProvider>
       <SafeAreaView>
@@ -11,4 +19,4 @@ const account = () => {
   )
 }
 
-export default account
+export default AccountScreen

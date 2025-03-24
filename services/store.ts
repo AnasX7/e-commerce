@@ -1,8 +1,9 @@
 import { axios } from '@/lib/axios'
 
-export const getAllStores = async () => {
+export const fetchStores = async () => {
   try {
-    const response = await axios.get('/stores')
+    const response = await axios.get('/api/stores')
+    console.log('response:', response)
     return response.data
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error)

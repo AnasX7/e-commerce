@@ -15,8 +15,10 @@ const Tabslayout = () => {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontFamily: 'NotoKufiArabic-Bold',
+          fontFamily: 'NotoKufiArabic-SemiBold',
+          lineHeight: 18,
         },
+        sceneStyle: { backgroundColor: 'white' },
       }}>
       <Tabs.Screen
         name='home'
@@ -24,9 +26,9 @@ const Tabslayout = () => {
           title: 'الرئيسية',
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name='home' size={24} color={color} />
+              <Ionicons name='home' size={22} color={color} />
             ) : (
-              <Ionicons name='home-outline' size={24} color={color} />
+              <Ionicons name='home-outline' size={22} color={color} />
             ),
         }}
       />
@@ -37,9 +39,9 @@ const Tabslayout = () => {
           title: 'المفضلة',
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name='heart' size={24} color={color} />
+              <Ionicons name='heart' size={22} color={color} />
             ) : (
-              <Ionicons name='heart-outline' size={24} color={color} />
+              <Ionicons name='heart-outline' size={22} color={color} />
             ),
         }}
       />
@@ -50,9 +52,9 @@ const Tabslayout = () => {
           title: 'الحساب',
           tabBarIcon: ({ focused, color }) =>
             focused ? (
-              <Ionicons name='person' size={24} color={color} />
+              <Ionicons name='person' size={22} color={color} />
             ) : (
-              <Ionicons name='person-outline' size={24} color={color} />
+              <Ionicons name='person-outline' size={22} color={color} />
             ),
         }}
       />

@@ -6,5 +6,6 @@ export const Colors = {
     secondary: '#374151',
     tertiary: '#6b7280',
     quaternary: '#9ca3af',
-  }
+  },
+  error: '#dc2626',
 }

@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 
-const Store = () => {
+const CartScreen = () => {
   const { id } = useLocalSearchParams()
 
   return (
@@ -11,4 +11,4 @@ const Store = () => {
   )
 }
 
-export default Store
+export default CartScreen
