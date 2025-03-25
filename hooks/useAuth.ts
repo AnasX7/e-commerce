@@ -18,9 +18,8 @@ type LoginData = {
 }
 
 type ResetPasswordData = {
-  token: string
-  email: string
-  password: string
+  currentPassword: string
+  newPassword: string
 }
 
 type ErrorHandler = {
@@ -114,16 +113,15 @@ export const useAuth = ({
         // Handle duplicate email errors (409)
         else if (err.response.status === 409) {
           setErrors({
-            email:
-              err.response.data.message || 'البريد الإلكتروني موجود بالفعل',
+            email: 'البريد الإلكتروني موجود بالفعل',
           })
         }
         // Handle other client errors (400-499)
         else if (err.response.status >= 400 && err.response.status < 500) {
           setErrors({
-            name: err.response.data.message || 'فشل تسجيل الدخول',
-            email: err.response.data.message || 'فشل تسجيل الدخول',
-            password: err.response.data.message || 'فشل تسجيل الدخول',
+            name: 'فشل تسجيل الدخول',
+            email: 'فشل تسجيل الدخول',
+            password: 'فشل تسجيل الدخول',
           })
         }
         // Handle server errors (500+)
@@ -171,8 +169,8 @@ export const useAuth = ({
         // Handle 401 Unauthorized errors
         if (err.response.status === 401) {
           setErrors({
-            email: err.response.data.message || 'بيانات اعتماد غير صالحة',
-            password: err.response.data.message || 'بيانات اعتماد غير صالحة',
+            email: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+            password: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
           })
         }
         // Handle 422 Validation errors
@@ -249,9 +247,9 @@ export const useAuth = ({
     setErrors({})
 
     try {
-      const response = await axios.post('/api/reset-password', props)
+      const response = await axios.put('/api/reset-password', props)
       console.log('ResetPassword success response:', response.data)
-      router.push('/login')
+      logout()
     } catch (err: any) {
       // Handle validation errors (422)
       if (err.response.status === 422) {
@@ -407,6 +405,6 @@ export const useAuth = ({
     resetPassword,
     resendEmailVerification,
     logout,
-    deleteAccount, // Add this
+    deleteAccount,
   }
 }
