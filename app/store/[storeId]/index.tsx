@@ -4,16 +4,14 @@ import { FlashList } from '@shopify/flash-list'
 import { ProductItem } from '@/types/product'
 import ListHeader from '@/components/store/ListHeader'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
-import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+
 import { mockProducts } from '@/mocks/products'
 import HorizontalProductCard from '@/components/HorizontalProductCard'
-import StoreHeader from '@/components/store/StoreHeader'
 import { useStoreDetails } from '@/stores/useStoreDetails'
 
 const StoreScreen = () => {
   const { storeId } = useLocalSearchParams()
   const router = useRouter()
-  const insets = useSafeAreaInsets()
   const setStoreName = useStoreDetails((state) => state.setStoreName)
 
   useFocusEffect(

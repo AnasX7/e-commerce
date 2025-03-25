@@ -15,4 +15,3 @@ export const useRefreshOnFocus = <T>(refetch: () => Promise<T>) => {
     }, [refetch])
   )
 }
-

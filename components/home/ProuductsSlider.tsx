@@ -1,6 +1,5 @@
 import { View, Text, FlatList } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 
 import { ProductItem } from '@/types/product'
@@ -9,13 +8,10 @@ import { mockProducts } from '@/mocks/products'
 
 type ProductsSliderProps = {
   title: string
-  data?: ProductItem[]
+  data: ProductItem[]
 }
 
-const ProuductsSlider = ({
-  title,
-  data = mockProducts,
-}: ProductsSliderProps) => {
+const ProuductsSlider = ({ title, data }: ProductsSliderProps) => {
   const router = useRouter()
 
   const renderItem = ({ item }: { item: ProductItem }) => (

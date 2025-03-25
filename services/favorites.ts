@@ -1,12 +1,21 @@
 import { axios } from '@/lib/axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const getAllFavorites = async () => {
+  const token = await AsyncStorage.getItem('auth_token')
+  if (!token) {
+    return [] // Return empty array if no token exists
+  }
+
   try {
     const response = await axios.get('/api/favorites')
     return response.data
-  } catch (error) {
-    console.error('There has been a problem with your fetch operation:', error)
-    throw new Error('Failed to fetch favorites')
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      return [] // Return empty array on unauthorized
+    }
+    console.error('Error fetching favorites:', error)
+    throw error
   }
 }
 

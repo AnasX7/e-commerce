@@ -2,27 +2,30 @@ import { Dimensions, View } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
 import Carousel from 'react-native-reanimated-carousel'
 import CarouselItem from '@/components/home/CarouselItem'
+import { useFullPath } from '@/hooks/useFullPath'
 
 const { width } = Dimensions.get('window')
 
-const SAMPLE_ITEMS: string[] = [
-  'https://picsum.photos/200/300',
-  'https://picsum.photos/200/301',
-  'https://picsum.photos/200/302',
-]
+// const SAMPLE_ITEMS: string[] = [
+//   'https://picsum.photos/200/300',
+//   'https://picsum.photos/200/301',
+//   'https://picsum.photos/200/302',
+// ]
 
 type AdsCarouselProps = {
-  data?: string[]
+  data: string[]
 }
 
-const AdsCarousel = ({ data = SAMPLE_ITEMS }: AdsCarouselProps) => {
+const AdsCarousel = ({ data }: AdsCarouselProps) => {
   const progress = useSharedValue<number>(0)
+
+  const imagesfullPaths = data.map((item) => useFullPath(item))
 
   return (
     <View>
       <Carousel
         autoPlayInterval={2000}
-        data={SAMPLE_ITEMS}
+        data={imagesfullPaths}
         height={200}
         loop={true}
         pagingEnabled={true}

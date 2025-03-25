@@ -32,48 +32,48 @@ const HomeScreen = () => {
 
   const [refreshing, setRefreshing] = useState(false)
 
-  // const {
-  //   data: carouselAdsData,
-  //   refetch: refetchCarouselAds,
-  //   isLoading: isLoadingAds,
-  //   error: carouselError,
-  // } = useQuery({
-  //   queryKey: ['carouselAds'],
-  //   queryFn: () => fetchCarouselAds(),
-  // })
+  const {
+    data: carouselAdsData,
+    refetch: refetchCarouselAds,
+    isLoading: isLoadingAds,
+    error: carouselError,
+  } = useQuery({
+    queryKey: ['carouselAds'],
+    queryFn: () => fetchCarouselAds(),
+  })
 
-  // const {
-  //   data: storesData,
-  //   refetch: refetchStores,
-  //   isLoading: isLoadingStores,
-  //   error: storesError,
-  // } = useQuery({
-  //   queryKey: ['stores'],
-  //   queryFn: () => fetchStores(),
-  // })
+  const {
+    data: storesData,
+    refetch: refetchStores,
+    isLoading: isLoadingStores,
+    error: storesError,
+  } = useQuery({
+    queryKey: ['stores'],
+    queryFn: () => fetchStores(),
+  })
 
-  // const {
-  //   data: productsData,
-  //   refetch: refetchProducts,
-  //   isLoading: isLoadingProducts,
-  //   error: productsError,
-  // } = useQuery({
-  //   queryKey: ['products'],
-  //   queryFn: () => fetchProducts(8),
-  // })
+  const {
+    data: productsData,
+    refetch: refetchProducts,
+    isLoading: isLoadingProducts,
+    error: productsError,
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => fetchProducts(8),
+  })
 
-  // const onRefresh = useCallback(async () => {
-  //   setRefreshing(true)
-  //   await Promise.all([
-  //     refetchCarouselAds(),
-  //     refetchStores(),
-  //     refetchProducts(),
-  //   ])
-  //   setRefreshing(false)
-  // }, [refetchCarouselAds, refetchStores, refetchProducts])
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await Promise.all([
+      refetchCarouselAds(),
+      refetchStores(),
+      refetchProducts(),
+    ])
+    setRefreshing(false)
+  }, [refetchCarouselAds, refetchStores, refetchProducts])
 
   // Refresh on screen focus
-  // useRefreshOnFocus(onRefresh)
+  useRefreshOnFocus(onRefresh)
 
   const words = ['متاجر', 'منتاجات']
   const [word, setWord] = useState(words[0])
@@ -128,20 +128,18 @@ const HomeScreen = () => {
       <ScrollView
         className='flex-1 pt-2'
         showsVerticalScrollIndicator={false}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={refreshing}
-        //     onRefresh={onRefresh}
-        //     tintColor={Colors.primary}
-        //   />
-        // }
-      >
-        {/* {isLoadingAds || isLoadingStores || isLoadingProducts ? (
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.primary}
+          />
+        }>
+        {isLoadingAds || isLoadingStores || isLoadingProducts ? (
           <HomeScreenSkeleton />
+        ) : carouselError || storesError || productsError ? (
+          <ErrorMessage message='حدث خطأ في الاتصال' onRetry={onRefresh} />
         ) : (
-          : carouselError || storesError || productsError ? (
-            <ErrorMessage message='حدث خطأ في الاتصال' onRetry={onRefresh} />
-          )
           <>
             {carouselAdsData?.length > 0 ? (
               <AdsCarousel data={carouselAdsData} />
@@ -170,11 +168,11 @@ const HomeScreen = () => {
               <NotFound message='لا توجد منتجات حديثةالوصول متاحة' />
             )}
           </>
-        )} */}
-        <AdsCarousel />
+        )}
+        {/* <AdsCarousel />
         <StoresSlider title='المتاجر' />
         <ProuductsSlider title='المنتجات الشائعة' />
-        <ProuductsSlider title='وصل حديثاً' />
+        <ProuductsSlider title='وصل حديثاً' /> */}
       </ScrollView>
     </View>
   )

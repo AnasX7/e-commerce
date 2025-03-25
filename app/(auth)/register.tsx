@@ -45,7 +45,7 @@ const RegisterScreen = () => {
 
   const { register } = useAuth({
     middleware: 'guest',
-    redirectIfAuthenticated: '/login',
+    redirectIfAuthenticated: '/home',
   })
 
   const { formData, errors, setErrors, updateField, validateForm } =

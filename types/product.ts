@@ -31,5 +31,5 @@ export type ProductItem = Pick<
   | 'averageRating'
   | 'isLiked'
 > & {
-  image: string
+  image: Product['images'][0]
 }

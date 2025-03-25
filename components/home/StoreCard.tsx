@@ -24,7 +24,7 @@ const StoreCard = ({ item, onPress }: StoresProps) => {
         activeOpacity={0.8}>
         <View className='w-24 h-24 rounded-l-lg overflow-hidden shadow-sm border-r border-r-gray-200'>
           <Image
-            source={{ uri: item.image }}
+            source={{ uri: imageURL }}
             contentFit='cover'
             style={{ width: '100%', height: '100%' }}
             transition={300}
@@ -37,11 +37,10 @@ const StoreCard = ({ item, onPress }: StoresProps) => {
             ellipsizeMode='tail'>
             {item.name}
           </Text>
-          {item.productsCount && (
-            <Text className='text-xs text-left font-notoKufiArabic leading-relaxed text-gray-500'>
-              {item.productsCount} منتج
-            </Text>
-          )}
+
+          <Text className='text-xs text-left font-notoKufiArabic leading-relaxed text-gray-500'>
+            {item.productsCount} منتج
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
