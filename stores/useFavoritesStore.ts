@@ -5,6 +5,7 @@ interface FavoritesStore {
   likedProducts: Record<string, boolean>
   setLiked: (productId: string, isLiked: boolean) => void
   isLiked: (productId: string) => boolean
+  reset: () => void // Add this
 }
 
 export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
@@ -17,4 +18,5 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
       },
     })),
   isLiked: (productId) => get().likedProducts[productId] || false,
+  reset: () => set({ likedProducts: {} }), // Add this
 }))

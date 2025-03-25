@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Href, useRouter } from 'expo-router'
 import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFavoritesStore } from '@/stores/useFavoritesStore'
 
 type RegisterData = {
   name: string
@@ -62,6 +63,7 @@ export const useAuth = ({
   const {
     data: user,
     error: userError,
+    isLoading,
     refetch,
   } = useQuery({
     queryKey: ['user'],
@@ -325,21 +327,30 @@ export const useAuth = ({
       if (!userError) {
         await axios.post('/api/logout')
       }
-      // Clear stored token
+
+      // Clear the auth token
       await AsyncStorage.removeItem('auth_token')
+
+      // Remove Authorization header
       delete axios.defaults.headers.common['Authorization']
 
-      if (Platform.OS === 'web') {
-        router.push('/login')
-      } else {
-        router.replace('/login')
-      }
+      // Clear favorites store
+      useFavoritesStore.getState().reset()
+
+      // Clear all query cache
+      queryClient.clear()
+
+      router.replace('/(auth)/auth')
     } catch (err) {
       console.error('Logout error:', err)
-      // Still clear local auth state and redirect even if server logout fails
+
+      // Still clear everything even if API call fails
       await AsyncStorage.removeItem('auth_token')
       delete axios.defaults.headers.common['Authorization']
-      router.replace('/login')
+      useFavoritesStore.getState().reset()
+      queryClient.clear()
+
+      router.replace('/(auth)/auth')
     }
   }
 
@@ -365,6 +376,8 @@ export const useAuth = ({
 
   return {
     user,
+    isLoading,
+    refetch,
     register,
     login,
     forgotPassword,

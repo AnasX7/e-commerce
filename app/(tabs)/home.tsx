@@ -20,6 +20,7 @@ import ErrorMessage from '@/components/ErrorMessage'
 import NotFound from '@/components/home/NotFound'
 import { Images } from '@/constants/images'
 import { Colors } from '@/constants/colors'
+import { useAuth } from '@/hooks/useAuth'
 
 const HomeScreen = () => {
   useFocusEffect(

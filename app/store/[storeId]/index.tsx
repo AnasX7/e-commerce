@@ -37,7 +37,6 @@ const StoreScreen = () => {
   )
 
   return (
-    // <SafeAreaProvider>
     <>
       <FlashList
         data={mockProducts}
@@ -77,7 +76,6 @@ const StoreScreen = () => {
         </View>
       )}
     </>
-    // </SafeAreaProvider>
   )
 }
 
