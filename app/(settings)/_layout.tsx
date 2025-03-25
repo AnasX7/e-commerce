@@ -1,7 +1,14 @@
 import { Stack } from 'expo-router'
 
 const Settingslayout = () => {
-  return <Stack></Stack>
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: 'white' },
+      }}
+    />
+  )
 }
 
 export default Settingslayout

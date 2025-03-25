@@ -354,6 +354,29 @@ export const useAuth = ({
     }
   }
 
+  const deleteAccount = async () => {
+    try {
+      await axios.delete('/api/user')
+
+      // Clear the auth token
+      await AsyncStorage.removeItem('auth_token')
+
+      // Remove Authorization header
+      delete axios.defaults.headers.common['Authorization']
+
+      // Clear favorites store
+      useFavoritesStore.getState().reset()
+
+      // Clear all query cache
+      queryClient.clear()
+
+      router.replace('/(auth)/auth')
+    } catch (error) {
+      console.error('Delete account error:', error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     if (middleware === 'guest' && redirectIfAuthenticated && user) {
       console.log('Redirecting to:', redirectIfAuthenticated)
@@ -384,5 +407,6 @@ export const useAuth = ({
     resetPassword,
     resendEmailVerification,
     logout,
+    deleteAccount, // Add this
   }
 }

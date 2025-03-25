@@ -18,10 +18,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const FavoritesScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
+  const insets = useSafeAreaInsets()
 
   const { user } = useAuth({
     middleware: 'guest',
@@ -59,8 +61,10 @@ const FavoritesScreen = () => {
   return (
     <>
       {/* Header */}
-      <View className='px-4 pb-3 pt-[env(safe-area-inset-top)] bg-white border-b border-gray-200'>
-        <Text className='text-xl text-center font-notoKufiArabic-bold leading-loose text-gray-800'>
+      <View
+        style={{ paddingTop: insets.top + 8 }}
+        className='px-4 pb-3 bg-white border-b border-gray-200'>
+        <Text className='text-lg text-center font-notoKufiArabic-semiBold leading-loose text-gray-800'>
           المفضلة
         </Text>
       </View>
