@@ -6,14 +6,9 @@ import {
   TouchableOpacity,
   StatusBar,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native'
-import {
-  FontAwesome5,
-  Ionicons,
-  MaterialCommunityIcons,
-} from '@expo/vector-icons'
-import { useFocusEffect } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { Href, useFocusEffect, useRouter } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { FlashList } from '@shopify/flash-list'
 import ListHeader from '@/components/settings/ListHeader'
@@ -21,53 +16,98 @@ import ListFooter from '@/components/settings/ListFooter'
 import { useAuth } from '@/hooks/useAuth'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import { Colors } from '@/constants/colors'
+import AuthModal from '@/components/AuthModal'
+import AccountScreenSkeleton from '@/components/skeletons/AccountScreenSkeleton'
 
-const menuItems = [
+type MenuItems = {
+  id: number
+  route: Href
+  title: string
+  icon: JSX.Element
+  auth?: boolean
+}
+
+const menuItems: MenuItems[] = [
   {
-    id: 'orders',
-    title: 'طلباتي السابقة',
+    id: 1,
+    route: '/account-info',
+    title: 'معلومات الحساب',
+    icon: <Ionicons name='person-outline' size={22} color={Colors.primary} />,
+    auth: true,
+  },
+  {
+    id: 2,
+    route: '/new-orders',
+    title: 'طلباتي',
     icon: (
-      <MaterialCommunityIcons
-        name='clipboard-text-outline'
-        size={20}
-        color='#000'
-      />
+      <Ionicons name='bag-check-outline' size={22} color={Colors.primary} />
+    ),
+    auth: true,
+  },
+  {
+    id: 3,
+    route: '/returns',
+    title: 'المرتجعات',
+    icon: (
+      <Ionicons name='arrow-undo-outline' size={22} color={Colors.primary} />
+    ),
+    auth: true,
+  },
+  {
+    id: 4,
+    route: '/locations',
+    title: 'عناوين التوصيل',
+    icon: <Ionicons name='location-outline' size={22} color={Colors.primary} />,
+    auth: true,
+  },
+  {
+    id: 5,
+    route: '/pro',
+    title: 'اشتراك pro',
+    icon: <Ionicons name='flame-outline' size={22} color={Colors.primary} />,
+    auth: true,
+  },
+  {
+    id: 6,
+    route: '/help',
+    title: 'احصل على المساعدة',
+    icon: (
+      <Ionicons name='help-circle-outline' size={22} color={Colors.primary} />
     ),
   },
   {
-    id: 'payments',
-    title: 'الدفع',
-    icon: <FontAwesome5 name='money-check' size={18} color='#000' />,
-  },
-  {
-    id: 'pro',
-    title: 'اشتراك pro',
-    icon: <Ionicons name='flame' size={22} color='#000' />,
-  },
-  {
-    id: 'help',
-    title: 'احصل على المساعدة',
-    icon: <Ionicons name='help-circle-outline' size={22} color='#000' />,
-  },
-  {
-    id: 'about',
+    id: 7,
+    route: '/about',
     title: 'حول التطبيق',
-    icon: <Ionicons name='information-circle-outline' size={22} color='#000' />,
+    icon: (
+      <Ionicons
+        name='information-circle-outline'
+        size={22}
+        color={Colors.primary}
+      />
+    ),
   },
 ]
 
 const AccountScreen = () => {
+  // Move all hooks to the top
   const [refreshing, setRefreshing] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<
+    (typeof menuItems)[0] | null
+  >(null)
+
+  const router = useRouter()
+
+  const { user, logout, isLoading, refetch } = useAuth({
+    middleware: 'guest',
+  })
 
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
     }, [])
   )
-
-  const { user, logout, isLoading, refetch } = useAuth({
-    middleware: 'guest',
-  })
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
@@ -78,55 +118,85 @@ const AccountScreen = () => {
   // Refresh on screen focus
   useRefreshOnFocus(onRefresh)
 
-  const ListHeaderComponent = () => <ListHeader user={user} />
+  const ListHeaderComponent = useCallback(
+    () => <ListHeader user={user} />,
+    [user]
+  )
 
-  const ListFooterComponent = () => <ListFooter user={user} logout={logout} />
+  const ListFooterComponent = useCallback(
+    () => <ListFooter user={user} logout={logout} />,
+    [user, logout]
+  )
 
-  if (isLoading) {
-    return (
-      <View className='flex-1 justify-center items-center'>
-        <ActivityIndicator size='large' color={Colors.primary} />
-      </View>
-    )
-  }
-  const renderItem = ({ item }: any) => (
-    <TouchableOpacity
-      key={item.id}
-      className='flex-row justify-between items-center px-6 py-5 border-b border-gray-100'>
-      <View className='flex-1 flex-row items-center'>
-        <View className='flex-row items-center gap-4'>
-          <View className='w-6 items-center'>{item.icon}</View>
+  const handelPress = useCallback(
+    (item: MenuItems) => {
+      if (!user && item.auth) {
+        setSelectedItem(item)
+        setShowAuthModal(true)
+        return
+      }
+      router.push(item.route)
+    },
+    [user, router]
+  )
 
-          <Text className='text-base text-right '>{item.title}</Text>
+  const renderItem = useCallback(
+    ({ item }: { item: MenuItems }) => (
+      <TouchableOpacity
+        key={item.id}
+        onPress={() => handelPress(item)}
+        className='flex-row justify-between items-center px-6 py-4 border-b border-gray-100'>
+        <View className='flex-1 flex-row items-center'>
+          <View className='flex-row items-center gap-4'>
+            <View className='w-6 items-center'>{item.icon}</View>
+            <Text className='text-base text-right font-notoKufiArabic leading-loose'>
+              {item.title}
+            </Text>
+          </View>
         </View>
-
-        {item.subtitle && (
-          <Text className='text-gray-500 text-sm'>{item.subtitle}</Text>
-        )}
-      </View>
-      <Ionicons name='chevron-back' size={18} />
-    </TouchableOpacity>
+        <Ionicons name='chevron-back' size={18} />
+      </TouchableOpacity>
+    ),
+    [handelPress]
   )
 
   return (
     <SafeAreaProvider>
       <SafeAreaView className='flex-1'>
-        <FlashList
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={Colors.primary}
-            />
-          }
-          data={menuItems}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={ListHeaderComponent}
-          ListFooterComponent={ListFooterComponent}
-          estimatedItemSize={50}
-          contentContainerClassName='pb-4'
-          showsVerticalScrollIndicator={false}
+        {isLoading ? (
+          <AccountScreenSkeleton />
+        ) : (
+          <FlashList
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={Colors.primary}
+              />
+            }
+            data={menuItems}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            ListHeaderComponent={ListHeaderComponent}
+            ListFooterComponent={ListFooterComponent}
+            estimatedItemSize={50}
+            contentContainerClassName='pb-4'
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+        <AuthModal
+          visible={showAuthModal}
+          onClose={() => {
+            setShowAuthModal(false)
+            setSelectedItem(null)
+          }}
+          icon={{
+            name: 'lock-closed-outline',
+            size: 40,
+            color: '#3B82F6',
+          }}
+          title='تسجيل الدخول مطلوب'
+          message={`يجب تسجيل الدخول للوصول إلى ${selectedItem?.title || ''}`}
         />
       </SafeAreaView>
     </SafeAreaProvider>

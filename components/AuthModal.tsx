@@ -5,9 +5,26 @@ import { Ionicons } from '@expo/vector-icons'
 type AuthModalProps = {
   visible: boolean
   onClose: () => void
+  icon?: {
+    name: keyof typeof Ionicons.glyphMap
+    size?: number
+    color?: string
+  }
+  title?: string
+  message?: string
 }
 
-const AuthModal = ({ visible, onClose }: AuthModalProps) => {
+const AuthModal = ({
+  visible,
+  onClose,
+  icon = {
+    name: 'heart-outline',
+    size: 40,
+    color: '#EF4444',
+  },
+  title = 'تسجيل الدخول مطلوب',
+  message = 'يجب تسجيل الدخول لإضافة المنتج إلى المفضلة',
+}: AuthModalProps) => {
   const router = useRouter()
 
   return (
@@ -25,12 +42,12 @@ const AuthModal = ({ visible, onClose }: AuthModalProps) => {
 
           {/* Content */}
           <View className='items-center mb-6'>
-            <Ionicons name='heart-outline' size={40} color='#EF4444' />
+            <Ionicons name={icon.name} size={icon.size} color={icon.color} />
             <Text className='text-xl font-notoKufiArabic-bold text-gray-800 mt-4 mb-2'>
-              تسجيل الدخول مطلوب
+              {title}
             </Text>
             <Text className='text-gray-600 font-notoKufiArabic text-center'>
-              يجب تسجيل الدخول لإضافة المنتج إلى المفضلة
+              {message}
             </Text>
           </View>
 

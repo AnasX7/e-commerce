@@ -138,6 +138,13 @@ const ProductCard = ({ item }: ProductProps) => {
       <AuthModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
+        icon={{
+          name: 'heart-outline',
+          size: 40,
+          color: '#EF4444',
+        }}
+        title='تسجيل الدخول مطلوب'
+        message='يجب تسجيل الدخول لإضافة المنتج إلى المفضلة'
       />
     </>
   )

@@ -16,9 +16,9 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 1000 * 60 * 2,    // 2 minutes
-      gcTime: 1000 * 60 * 10,   // 10 minutes
-      refetchOnReconnect: true
+      staleTime: 1000 * 60 * 2, // 2 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
+      refetchOnReconnect: true,
     },
   },
 })
@@ -70,9 +70,11 @@ export default function RootLayout() {
           <Stack.Screen name='index' options={{ headerShown: false }} />
           <Stack.Screen name='(auth)' options={{ headerShown: false }} />
           <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+          <Stack.Screen name='(orders)' options={{ headerShown: true }} />
           <Stack.Screen name='(settings)' options={{ headerShown: false }} />
           <Stack.Screen
             name='(search)'
+            options={{ headerShown: true }}
             // options={{
             //   header: () => null,
             // }}

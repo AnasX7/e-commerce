@@ -33,6 +33,7 @@
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
     "expo-image": "~2.0.6",
+    "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.5",
     "expo-localization": "~16.0.1",
     "expo-network": "~7.0.5",
@@ -44,6 +45,7 @@
     "expo-updates": "~0.27.4",
     "expo-web-browser": "~14.0.2",
     "lucide-react": "^0.479.0",
+    "moti": "^0.30.0",
     "nativewind": "^4.1.23",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -60,8 +62,7 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2",
-    "zustand": "^5.0.3",
-    "expo-linear-gradient": "~14.0.2"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

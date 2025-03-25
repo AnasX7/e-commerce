@@ -33,11 +33,11 @@ const WelcomeScreen = () => {
   }
 
   useEffect(() => {
-    // const clearAllStorage = async () => {
-    //   await AsyncStorage.clear()
-    // }
+    const clearAllStorage = async () => {
+      await AsyncStorage.clear()
+    }
     setMounted(true)
-    // clearAllStorage()
+    clearAllStorage()
   }, [])
 
   useEffect(() => {

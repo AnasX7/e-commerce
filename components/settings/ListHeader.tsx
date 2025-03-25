@@ -31,7 +31,7 @@ const ListHeader = ({ user }: { user: User | null }) => {
       )}
 
       {/* Pro Banner */}
-      <View className='mx-4 mt-6'>
+      <View className='mx-4 mt-6 mb-3'>
         <TouchableOpacity
           onPress={handelBannerPress}
           className='bg-secondary rounded-xl p-4 flex-row justify-between items-center'>
