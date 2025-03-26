@@ -14,7 +14,7 @@ const ListHeader = () => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('favorites')
 
-  const renderTab = ({ item: tab }) => (
+  const renderTab = ({ item: tab }: any) => (
     <TouchableOpacity
       key={tab.id}
       className={`mr-6 pb-2 ${
@@ -75,7 +75,9 @@ const ListHeader = () => {
 
         {/* Pro Banner */}
         {true && (
-          <TouchableOpacity className='bg-secondary rounded-lg mt-4 p-3 flex-row justify-between items-center'>
+          <TouchableOpacity
+            onPress={() => router.push('/(settings)/pro')}
+            className='bg-secondary rounded-lg mt-4 px-3 py-2.5 flex-row justify-between items-center'>
             <View className='flex-row items-center'>
               <Text className='text-white font-notoKufiArabic ml-2'>
                 احصل على توصيل مجاني مع

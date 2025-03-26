@@ -41,7 +41,7 @@ const ListHeader = ({ user }: { user: User | null }) => {
                 توصيل مجاني غير محدود
               </Text>
               <Text className='text-white text-sm text-left font-notoKufiArabic leading-loose'>
-                بدءاً من 29 د.ا شهرياً
+                قادم قريباً..
               </Text>
             </View>
             <View className='bg-primary flex-row justify-center items-center rounded px-2 py-1 mx-2'>
