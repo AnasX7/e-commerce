@@ -30,7 +30,6 @@ const StoreScreen = () => {
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
-      return () => {}
     }, [])
   )
 

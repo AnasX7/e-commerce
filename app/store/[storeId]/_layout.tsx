@@ -8,8 +8,12 @@ const Storelayout = () => {
         headerShown: true,
         contentStyle: { backgroundColor: 'white' },
         header: () => <StoreHeader />,
-      }}
-    />
+      }}>
+      <Stack.Screen
+        name='product/[productId]'
+        options={{ headerShown: false }}
+      />
+    </Stack>
   )
 }
 

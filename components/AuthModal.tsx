@@ -65,7 +65,7 @@ const AuthModal = ({
       hideModalContentWhileAnimating={true}
       deviceWidth={deviceWidth}
       deviceHeight={deviceHeight}>
-      <View className='bg-white w-full rounded-t-3xl px-6 pb-28 pt-6'>
+      <View className='bg-white w-full rounded-t-3xl px-6 pb-24 pt-6'>
         {/* Close Button */}
         <TouchableOpacity
           onPress={onClose}

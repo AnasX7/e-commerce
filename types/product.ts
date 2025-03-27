@@ -10,12 +10,10 @@ export type Product = {
   averageRating: number
   color: string
   sizes: string[]
-  reviews: Review[]
-  spescifications: string[]
+  description: string
+  spescifications: string
   storeID: number
   storeName: string
-  brandID: number
-  brandName: string
   category: string
   isLiked: boolean
 }

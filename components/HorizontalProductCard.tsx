@@ -1,12 +1,10 @@
-import { View, Text } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { Image } from 'expo-image'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { ProductItem } from '@/types/product'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { useProduct } from '@/hooks/useProduct'
 import AuthModal from '@/components/AuthModal'
-import { useFullPath } from '@/hooks/useFullPath'
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons)
 
@@ -22,10 +20,11 @@ const HorizontalProductCard = ({ item }: ProductProps) => {
     calculateDiscountedPrice,
     showAuthModal,
     setShowAuthModal,
+    getImageUrl,
     isLiked,
-  } = useProduct(item)
+  } = useProduct({ item: item })
 
-  const imageURL = useFullPath(item.image)
+  const imageURL = getImageUrl()
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

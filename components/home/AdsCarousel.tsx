@@ -6,42 +6,33 @@ import { useFullPath } from '@/hooks/useFullPath'
 
 const { width } = Dimensions.get('window')
 
-// const SAMPLE_ITEMS: string[] = [
-//   'https://picsum.photos/200/300',
-//   'https://picsum.photos/200/301',
-//   'https://picsum.photos/200/302',
-// ]
-
 type AdsCarouselProps = {
   data: string[]
 }
 
 const AdsCarousel = ({ data }: AdsCarouselProps) => {
   const progress = useSharedValue<number>(0)
-
   const imagesfullPaths = data.map((item) => useFullPath(item))
 
   return (
-    <View>
+    <View className='aspect-video'>
       <Carousel
-        autoPlayInterval={2000}
+        autoPlayInterval={3000}
         data={imagesfullPaths}
-        height={200}
         loop={true}
         pagingEnabled={true}
         autoPlay={true}
-        autoPlayReverse={true}
         snapEnabled={true}
         width={width}
-        style={{
-          width: width,
-        }}
+        height={width * 0.5625} // 16:9 aspect ratio
+        defaultIndex={0}
         mode='parallax'
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
-        onProgressChange={progress}
+        scrollAnimationDuration={1000}
+        enabled={true}
         renderItem={({ item }) => <CarouselItem imageUrl={item} />}
       />
     </View>

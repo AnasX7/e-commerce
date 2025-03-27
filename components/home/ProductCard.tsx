@@ -6,7 +6,6 @@ import { ProductItem } from '@/types/product'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { useProduct } from '@/hooks/useProduct'
 import AuthModal from '@/components/AuthModal'
-import { useFullPath } from '@/hooks/useFullPath'
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons)
 
@@ -22,10 +21,11 @@ const ProductCard = ({ item }: ProductProps) => {
     calculateDiscountedPrice,
     showAuthModal,
     setShowAuthModal,
+    getImageUrl,
     isLiked, // Use this instead of item.isLiked
-  } = useProduct(item)
+  } = useProduct({ item: item })
 
-  const imageURL = useFullPath(item.image)
+  const imageURL = getImageUrl()
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

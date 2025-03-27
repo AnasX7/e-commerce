@@ -14,7 +14,6 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
@@ -92,8 +91,8 @@ const FavoritesScreen = () => {
         <FlashList
           data={data}
           renderItem={renderItem}
-          estimatedItemSize={200}
-          contentContainerStyle={{ paddingVertical: 16 }}
+          estimatedItemSize={192}
+          contentContainerClassName='flex-1 pb-4 py-4'
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.productID}
           refreshControl={
