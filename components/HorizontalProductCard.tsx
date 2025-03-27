@@ -34,7 +34,7 @@ const HorizontalProductCard = ({ item }: ProductProps) => {
   return (
     <>
       <TouchableOpacity
-        onPress={() => handleCardPress}
+        onPress={handleCardPress}
         activeOpacity={0.9}
         style={{ marginHorizontal: 8, marginBottom: 8 }}>
         <View className='flex-row-reverse bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200'>
@@ -135,6 +135,13 @@ const HorizontalProductCard = ({ item }: ProductProps) => {
       <AuthModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
+        icon={{
+          name: 'heart-outline',
+          size: 40,
+          color: '#EF4444',
+        }}
+        title='تسجيل الدخول مطلوب'
+        message='يجب تسجيل الدخول لإضافة المنتج إلى المفضلة'
       />
     </>
   )
