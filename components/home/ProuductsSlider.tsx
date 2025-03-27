@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router'
 
 import { ProductItem } from '@/types/product'
 import ProductCard from '@/components/home/ProductCard'
-import { mockProducts } from '@/mocks/products'
 
 type ProductsSliderProps = {
   title: string
@@ -44,7 +43,7 @@ const ProuductsSlider = ({ title, data }: ProductsSliderProps) => {
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName='py-2 px-2 gap-3'
+        contentContainerClassName='w-full py-2 px-2 gap-3'
       />
     </View>
   )

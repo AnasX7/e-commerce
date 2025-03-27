@@ -17,10 +17,11 @@ import StoresSlider from '@/components/home/StoresSlider'
 import ProuductsSlider from '@/components/home/ProuductsSlider'
 import AdsCarousel from '@/components/home/AdsCarousel'
 import ErrorMessage from '@/components/ErrorMessage'
+import ProBanner from '@/components/ProBanner'
 import NotFound from '@/components/home/NotFound'
+import NoProductsMessage from '@/components/NoProductsMassage'
 import { Images } from '@/constants/images'
 import { Colors } from '@/constants/colors'
-import { useAuth } from '@/hooks/useAuth'
 
 const HomeScreen = () => {
   useFocusEffect(
@@ -160,20 +161,23 @@ const HomeScreen = () => {
                 data={productsData.popular}
               />
             ) : (
-              <NotFound message='لا توجد منتجات شائعة متاحة' />
+              <NoProductsMessage />
+            )}
+
+            {/* Pro Banner */}
+            {true && (
+              <View className='px-4 pb-3 my-3'>
+                <ProBanner />
+              </View>
             )}
 
             {productsData?.new?.length > 0 ? (
               <ProuductsSlider title='وصل حديثاً' data={productsData.new} />
             ) : (
-              <NotFound message='لا توجد منتجات حديثةالوصول متاحة' />
+              <NoProductsMessage />
             )}
           </>
         )}
-        {/* <AdsCarousel />
-        <StoresSlider title='المتاجر' />
-        <ProuductsSlider title='المنتجات الشائعة' />
-        <ProuductsSlider title='وصل حديثاً' /> */}
       </ScrollView>
     </View>
   )

@@ -16,8 +16,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 1000 * 60 * 2, // 2 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
+      // staleTime: 1000 * 60 * 2, // 2 minutes
+      // gcTime: 1000 * 60 * 10, // 10 minutes
       refetchOnReconnect: true,
     },
   },
@@ -66,21 +66,15 @@ export default function RootLayout() {
       <GestureHandlerRootView>
         {/* <KeyboardProvider> */}
         <StatusBar style='dark' />
-        <Stack>
-          <Stack.Screen name='index' options={{ headerShown: false }} />
-          <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name='index' />
+          <Stack.Screen name='(auth)' />
+          <Stack.Screen name='(tabs)' />
           <Stack.Screen name='(orders)' options={{ headerShown: true }} />
-          <Stack.Screen name='(settings)' options={{ headerShown: false }} />
-          <Stack.Screen
-            name='(search)'
-            options={{ headerShown: true }}
-            // options={{
-            //   header: () => null,
-            // }}
-          />
-          <Stack.Screen name='store' options={{ headerShown: false }} />
-          <Stack.Screen name='+not-found' options={{ title: 'Oops!' }} />
+          <Stack.Screen name='(settings)' />
+          <Stack.Screen name='(search)' options={{ headerShown: true }} />
+          <Stack.Screen name='store/[storeId]' />
+          <Stack.Screen name='+not-found' />
         </Stack>
         {/* </KeyboardProvider> */}
       </GestureHandlerRootView>

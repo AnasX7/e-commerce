@@ -24,6 +24,7 @@ export type ProductItem = Pick<
   Product,
   | 'productID'
   | 'name'
+  | 'storeID'
   | 'storeName'
   | 'price'
   | 'currency'

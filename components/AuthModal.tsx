@@ -1,6 +1,11 @@
-import { View, Text, Modal, TouchableOpacity } from 'react-native'
+import { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
+import Modal from 'react-native-modal'
+
+const deviceWidth = Dimensions.get('window').width
+const deviceHeight = Dimensions.get('window').height
 
 type AuthModalProps = {
   visible: boolean
@@ -26,55 +31,82 @@ const AuthModal = ({
   message = 'يجب تسجيل الدخول لإضافة المنتج إلى المفضلة',
 }: AuthModalProps) => {
   const router = useRouter()
+  const [isModalVisible, setModalVisible] = useState(visible)
+
+  useEffect(() => {
+    if (visible) {
+      setModalVisible(true)
+    } else {
+      const timer = setTimeout(() => {
+        setModalVisible(false)
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [visible])
 
   return (
     <Modal
-      visible={visible}
-      transparent
-      animationType='fade'
-      onRequestClose={onClose}>
-      <View className='flex-1 bg-black/50 justify-center items-center p-4'>
-        <View className='bg-white w-full max-w-sm rounded-2xl p-6'>
-          {/* Close Button */}
-          <TouchableOpacity onPress={onClose} className='absolute left-4 top-4'>
-            <Ionicons name='close' size={24} color='#6B7280' />
+      isVisible={isModalVisible}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
+      style={{
+        justifyContent: 'flex-end',
+        margin: 0,
+      }}
+      animationIn='slideInUp'
+      animationOut='slideOutDown'
+      backdropOpacity={0.05}
+      animationInTiming={500}
+      animationOutTiming={500}
+      backdropTransitionInTiming={300}
+      backdropTransitionOutTiming={300}
+      useNativeDriver={true}
+      useNativeDriverForBackdrop={true}
+      hideModalContentWhileAnimating={true}
+      deviceWidth={deviceWidth}
+      deviceHeight={deviceHeight}>
+      <View className='bg-white w-full rounded-t-3xl px-6 pb-28 pt-6'>
+        {/* Close Button */}
+        <TouchableOpacity
+          onPress={onClose}
+          className='absolute left-4 top-4 z-10'>
+          <Ionicons name='close' size={24} color='#6B7280' />
+        </TouchableOpacity>
+
+        {/* Content */}
+        <View className='items-center mb-4'>
+          <Ionicons name={icon.name} size={icon.size} color={icon.color} />
+          <Text className='text-xl font-notoKufiArabic-bold text-gray-800 mt-4 mb-3'>
+            {title}
+          </Text>
+          <Text className='text-gray-600 font-notoKufiArabic text-center mb-6'>
+            {message}
+          </Text>
+        </View>
+
+        {/* Buttons */}
+        <View className='gap-4'>
+          <TouchableOpacity
+            onPress={() => {
+              onClose()
+              router.push('/login')
+            }}
+            className='bg-primary py-4 rounded-xl'>
+            <Text className='text-white font-notoKufiArabic-semiBold text-center text-base'>
+              تسجيل الدخول
+            </Text>
           </TouchableOpacity>
 
-          {/* Content */}
-          <View className='items-center mb-6'>
-            <Ionicons name={icon.name} size={icon.size} color={icon.color} />
-            <Text className='text-xl font-notoKufiArabic-bold text-gray-800 mt-4 mb-2'>
-              {title}
+          <TouchableOpacity
+            onPress={() => {
+              onClose()
+              router.push('/register')
+            }}
+            className='bg-white py-4 rounded-xl border border-gray-300'>
+            <Text className='text-gray-800 font-notoKufiArabic-semiBold text-center text-base'>
+              إنشاء حساب
             </Text>
-            <Text className='text-gray-600 font-notoKufiArabic text-center'>
-              {message}
-            </Text>
-          </View>
-
-          {/* Buttons */}
-          <View className='gap-3'>
-            <TouchableOpacity
-              onPress={() => {
-                onClose()
-                router.push('/login')
-              }}
-              className='bg-primary py-3 rounded-xl'>
-              <Text className='text-white font-notoKufiArabic-semiBold text-center'>
-                تسجيل الدخول
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                onClose()
-                router.push('/register')
-              }}
-              className='bg-white py-3 rounded-xl border border-gray-300'>
-              <Text className='text-gray-800 font-notoKufiArabic-semiBold text-center'>
-                إنشاء حساب
-              </Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

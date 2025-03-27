@@ -65,7 +65,6 @@ const menuItems: MenuItems[] = [
     route: '/pro',
     title: 'اشتراك pro',
     icon: <Ionicons name='flame-outline' size={22} color={Colors.primary} />,
-    auth: true,
   },
   {
     id: 6,
@@ -90,7 +89,6 @@ const menuItems: MenuItems[] = [
 ]
 
 const AccountScreen = () => {
-  // Move all hooks to the top
   const [refreshing, setRefreshing] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState<

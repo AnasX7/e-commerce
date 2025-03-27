@@ -1,41 +1,11 @@
-import { View } from 'react-native'
+import { Platform, View } from 'react-native'
 import { MotiView } from 'moti'
-
-const SkeletonLoader = ({
-  width,
-  height,
-  radius,
-}: {
-  width: number | `${number}%`
-  height: number
-  radius: number
-}) => {
-  return (
-    <MotiView
-      from={{
-        opacity: 0.5,
-      }}
-      animate={{
-        opacity: 1,
-      }}
-      transition={{
-        type: 'timing',
-        duration: 2000,
-        loop: true,
-      }}
-      style={{
-        width,
-        height,
-        borderRadius: radius,
-        backgroundColor: '#E5E7EB',
-      }}
-    />
-  )
-}
+import SkeletonLoader from '@/components/Skeleton'
 
 const AccountScreenSkeleton = () => {
   return (
-    <View className='flex-1 bg-white'>
+    <View
+      className={`flex-1 bg-white ${Platform.OS === 'ios' ? '' : 'pt-safe'}`}>
       {/* Header Skeleton */}
       <View className='px-4 pt-2'>
         <View className='flex-row items-center gap-3'>

@@ -1,40 +1,13 @@
 import { View } from 'react-native'
 import { MotiView } from 'moti'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-const SkeletonLoader = ({
-  width,
-  height,
-  radius,
-}: {
-  width: number | `${number}%`
-  height: number
-  radius: number
-}) => {
-  return (
-    <MotiView
-      from={{ opacity: 0.5 }}
-      animate={{ opacity: 1 }}
-      transition={{
-        type: 'timing',
-        duration: 2000,
-        loop: true,
-      }}
-      style={{
-        width,
-        height,
-        borderRadius: radius,
-        backgroundColor: '#E5E7EB',
-      }}
-    />
-  )
-}
+import SkeletonLoader from '@/components/Skeleton'
 
 const AccountInfoSkeleton = () => {
   const insets = useSafeAreaInsets()
 
   return (
-    <View className='flex-1 bg-white'>
+    <View className='flex-1 pt-safe bg-white'>
       {/* Header Skeleton */}
       <View
         style={{ paddingTop: insets.top + 8 }}
@@ -61,8 +34,8 @@ const AccountInfoSkeleton = () => {
 
       {/* Account Management Section Skeleton */}
       <View className='p-4 gap-3'>
-        <SkeletonLoader width="100%" height={50} radius={12} />
-        <SkeletonLoader width="100%" height={50} radius={12} />
+        <SkeletonLoader width='100%' height={50} radius={12} />
+        <SkeletonLoader width='100%' height={50} radius={12} />
       </View>
     </View>
   )

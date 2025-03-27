@@ -11,20 +11,17 @@ export const fetchProducts = async (take: number) => {
   }
 }
 
-export const fetchProduct = async (id: string) => {
+export const fetchStoreProductsByCategory = async (
+  storeId: number,
+  categoryId: number
+) => {
   try {
-    const response = await axios.get(`/product/${id}`)
+    const response = await axios.get(
+      `/api/store/${storeId}/category/${categoryId}/products`
+    )
     return response.data
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error)
-  }
-}
-
-export const fetchStoreProducts = async (storeId: string) => {
-  try {
-    const response = await axios.get(`/store/${storeId}/products`)
-    return response.data
-  } catch (error) {
-    console.error('There has been a problem with your fetch operation:', error)
+    throw new Error('Failed to fetch products')
   }
 }

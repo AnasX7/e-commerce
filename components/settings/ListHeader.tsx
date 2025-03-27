@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import React, { useCallback } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -12,7 +12,7 @@ const ListHeader = ({ user }: { user: User | null }) => {
   }, [router])
 
   return (
-    <>
+    <View className={`${Platform.OS === 'ios' ? '' : 'pt-safe'}`}>
       {user && (
         <View className='px-4 pt-2 flex-row justify-between items-center'>
           {/* Profile Info */}
@@ -51,7 +51,7 @@ const ListHeader = ({ user }: { user: User | null }) => {
           </View>
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   )
 }
 

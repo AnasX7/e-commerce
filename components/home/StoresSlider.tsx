@@ -4,14 +4,13 @@ import { useRouter } from 'expo-router'
 import StoreCard from '@/components/home/StoreCard'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { StoreCardType } from '@/types/store'
-import { mockStores } from '@/mocks/stores'
 
 type StoresProps = {
   title: string
-  data?: StoreCardType[]
+  data: StoreCardType[]
 }
 
-const StoresSlider = ({ title, data = mockStores }: StoresProps) => {
+const StoresSlider = ({ title, data }: StoresProps) => {
   const router = useRouter()
 
   const handleStorePress = useCallback(
@@ -51,11 +50,11 @@ const StoresSlider = ({ title, data = mockStores }: StoresProps) => {
       </View>
       <FlatList
         data={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id?.toString() ?? `store-${Math.random()}`}
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName='py-2 px-2 gap-3'
+        contentContainerClassName='w-full py-2 px-2 gap-3'
       />
     </View>
   )

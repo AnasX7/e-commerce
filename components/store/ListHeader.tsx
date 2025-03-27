@@ -1,107 +1,107 @@
 import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { useCallback } from 'react'
 import { Image } from 'expo-image'
-import { useRouter } from 'expo-router'
-import { useCallback, useState } from 'react'
-import { Ionicons } from '@expo/vector-icons'
+import { useFullPath } from '@/hooks/useFullPath'
+import { category, Store } from '@/types/store'
+import ProBanner from '@/components/ProBanner'
 
-const tabs = [
-  { id: 'less30', label: 'أقل من 30' },
-  { id: 'offers', label: 'العروض' },
-  { id: 'favorites', label: 'اختيارات على ذوقك', icon: 'heart' },
-]
+type ListHeaderProps = {
+  data: Store
+  activeTab: number
+  setActiveTab: (id: number) => void
+}
 
-const ListHeader = () => {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState('favorites')
+const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
+  const bannerImageURL = useFullPath(data.banner)
+  const storeImageURL = useFullPath(data.image)
 
-  const renderTab = ({ item: tab }: any) => (
-    <TouchableOpacity
-      key={tab.id}
-      className={`mr-6 pb-2 ${
-        activeTab === tab.id ? 'border-b-2 border-black' : ''
-      }`}
-      onPress={() => setActiveTab(tab.id)}>
-      <View className='flex-row items-center'>
+  const renderTab = useCallback(
+    ({ item: tab }: { item: category }) => (
+      <TouchableOpacity
+        key={tab.id}
+        className={`pb-2 ${
+          activeTab === tab.id ? 'border-b-2 border-black' : ''
+        }`}
+        onPress={() => setActiveTab(tab.id)}>
         <Text
-          className={`text-base ${
-            activeTab === tab.id ? 'font-bold' : 'text-gray-500'
+          className={`text-base font-notoKufiArabic ${
+            activeTab === tab.id
+              ? 'font-notoKufiArabic-bold text-primary'
+              : 'text-gray-500'
           }`}>
-          {tab.label}
+          {tab.category}
         </Text>
-        {tab.icon && activeTab === tab.id && (
-          <Ionicons
-            name={tab.icon as any}
-            size={16}
-            color='#F97316'
-            className='ml-1'
-          />
-        )}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    ),
+    [activeTab, setActiveTab]
   )
 
   return (
     <View className='mb-6'>
       {/* Header Cover Image */}
-      <View className={`relative h-52`}>
+      <View className='relative h-52'>
         <Image
-          source={{
-            uri: 'https://picsum.photos/200/300',
-          }}
+          source={{ uri: bannerImageURL }}
           style={{ width: '100%', height: '100%' }}
           contentFit='cover'
+          transition={1000}
         />
       </View>
 
       {/* Store Info Card */}
-      <View className='bg-white rounded-t-3xl -mt-4 pt-4 px-4'>
-        <View className='flex-row-reverse justify-between items-center gap-2'>
-          <View className='flex-1'>
-            <Text className='text-xl text-left font-notoKufiArabic-bold leading-loose'>
-              متجر ابل
-            </Text>
-            <Text className='text-gray-500 text-left font-notoKufiArabic-light leading-relaxed'>
-              انغمس في الغمر: استمتع بكل شيء بوضوح ممتاز، مع شاشة فل اتش دي بلس
-            </Text>
-          </View>
-          <View className='w-20 h-20 rounded-lg overflow-hidden'>
+      <View className='bg-white rounded-t-3xl -mt-4 pt-2 px-4 '>
+        <View className='flex-row justify-between items-center gap-2'>
+          {/* Store Image */}
+          <View className='w-24 h-24 rounded-xl overflow-hidden shadow-sm'>
             <Image
-              source={{ uri: 'https://picsum.photos/200/300' }}
+              source={{ uri: storeImageURL }}
               style={{ width: '100%', height: '100%' }}
               contentFit='cover'
+              transition={500}
             />
           </View>
-        </View>
 
-        {/* Pro Banner */}
-        {true && (
-          <TouchableOpacity
-            onPress={() => router.push('/(settings)/pro')}
-            className='bg-secondary rounded-lg mt-4 px-3 py-2.5 flex-row justify-between items-center'>
-            <View className='flex-row items-center'>
-              <Text className='text-white font-notoKufiArabic ml-2'>
-                احصل على توصيل مجاني مع
+          {/* Store Details */}
+          <View className='flex-1'>
+            {/* Store Name */}
+            <View className='flex-row items-center justify-between mb-1'>
+              <Text className='text-2xl text-left font-notoKufiArabic-bold leading-loose text-gray-800'>
+                {data.name}
               </Text>
-              <View className='bg-primary flex-row rounded px-2 py-1 mx-2'>
-                <Text className='text-white font-bold'>pro</Text>
-                <Ionicons name='flame' size={16} color='#fff' />
+              <View className='bg-gray-100 px-2 py-1 rounded-md'>
+                <Text className='text-xs text-gray-600 font-notoKufiArabic-light leading-loose'>
+                  {data.productsCount} منتج
+                </Text>
               </View>
             </View>
-            <Text className='text-white font-notoKufiArabic'>انضم</Text>
-          </TouchableOpacity>
-        )}
+
+            {/* Location */}
+            <Text className='text-sm text-left text-gray-500 font-notoKufiArabic-light mb-2'>
+              {data.country}
+            </Text>
+
+            {/* Description */}
+            <Text
+              className='text-gray-600 text-left font-notoKufiArabic-light text-sm'
+              numberOfLines={2}
+              ellipsizeMode='tail'>
+              {data.description}
+            </Text>
+          </View>
+        </View>
+        {true && <ProBanner />}
       </View>
+
       {/* Category Tabs */}
       <View className='mt-6 px-4'>
-        <View className='flex-row justify-between'>
-          <FlatList
-            data={tabs}
-            renderItem={renderTab}
-            keyExtractor={(item) => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+        <FlatList
+          data={data.categories}
+          renderItem={renderTab}
+          keyExtractor={(item) => item.id.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName='w-full gap-4'
+        />
       </View>
     </View>
   )

@@ -1,14 +1,17 @@
-import { Brand } from '@/types/brand'
-
 export type Store = {
-  id: string
+  id: number
   name: string
   image: string
   banner: string
   description: string
-  brands: Brand[]
+  categories: category[]
   country: string
   productsCount: number
+}
+
+export type category = {
+  id: number
+  category: string
 }
 
 export type StoreCardType = Pick<

@@ -24,7 +24,7 @@ const HomeScreenSkeleton = () => {
   }))
 
   return (
-    <View className='flex-1 px-4 gap-6'>
+    <View className='flex-1 pt-2 px-4 gap-6'>
       {/* Carousel Skeleton */}
       <View className='h-[200px] rounded-xl overflow-hidden bg-gray-200'>
         <Animated.View style={animatedStyle}>

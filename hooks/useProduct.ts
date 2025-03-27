@@ -122,7 +122,7 @@ export const useProduct = (item: ProductItem) => {
   const handleCardPress = useCallback(() => {
     router.push({
       pathname: '/store/[storeId]/product/[productId]',
-      params: { storeId: item.storeName, productId: item.productID },
+      params: { storeId: item.storeID, productId: item.productID },
     })
   }, [router, item])
 

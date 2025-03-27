@@ -80,7 +80,6 @@ const FavoritesScreen = () => {
             <Text className='text-white font-notoKufiArabic-semiBold'>
               تسجيل الدخول
             </Text>
-            <Ionicons name='enter-outline' size={24} color='white' />
           </TouchableOpacity>
         </View>
       ) : data?.length === 0 ? (
