@@ -4,16 +4,16 @@ import { User } from '@/types/user'
 import { useRouter } from 'expo-router'
 
 type ListFooterProps = {
-  user: User | null // Add null type
+  isAuthenticated: boolean
   logout: () => void
 }
 
-const ListFooter = ({ user, logout }: ListFooterProps) => {
+const ListFooter = ({ isAuthenticated, logout }: ListFooterProps) => {
   const router = useRouter()
 
   return (
     <View className='p-4 mt-5'>
-      {user ? ( // Changed from !!user to user
+      {isAuthenticated ? (
         <TouchableOpacity
           onPress={logout}
           className='bg-white py-3 rounded-xl border border-gray-300'>

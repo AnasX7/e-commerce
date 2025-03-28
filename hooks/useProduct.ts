@@ -23,7 +23,7 @@ export const useProduct = ({ item }: UseProductProps) => {
   const router = useRouter()
   const queryClient = useQueryClient()
   const scale = useSharedValue(1)
-  const { user } = useAuth({ middleware: 'guest' })
+  const { isAuthenticated } = useAuth({ middleware: 'guest' })
   const [showAuthModal, setShowAuthModal] = useState(false)
   const { setLiked, isLiked } = useFavoritesStore()
 
@@ -48,35 +48,10 @@ export const useProduct = ({ item }: UseProductProps) => {
     (newIsLikedState: boolean) => {
       if (!item?.productID) return
 
-      // Update products in home screen
-      queryClient.setQueryData(['products'], (old: any) => {
-        if (!old) return old
-        return {
-          popular: old.popular?.map((p: ProductItem) =>
-            p.productID === item.productID
-              ? { ...p, isLiked: newIsLikedState }
-              : p
-          ),
-          new: old.new?.map((p: ProductItem) =>
-            p.productID === item.productID
-              ? { ...p, isLiked: newIsLikedState }
-              : p
-          ),
-        }
-      })
-
-      // Update product details if available
-      queryClient.setQueryData(
-        ['product', item.productID],
-        (old: Product | undefined) => {
-          if (!old) return old
-          return { ...old, isLiked: newIsLikedState }
-        }
-      )
-
-      // Update favorites list
+      // Update favorites first
       queryClient.setQueryData(['favorites'], (old: ProductItem[] = []) => {
         if (newIsLikedState) {
+          if (!item) return old
           const favoriteItem: ProductItem = {
             productID: item.productID,
             name: item.name,
@@ -94,6 +69,24 @@ export const useProduct = ({ item }: UseProductProps) => {
             : [...old, favoriteItem]
         } else {
           return old.filter((p) => p.productID !== item.productID)
+        }
+      })
+
+      // Update other queries
+      queryClient.setQueriesData({ queryKey: ['products'] }, (old: any) => {
+        if (!old) return old
+        return {
+          ...old,
+          popular: old.popular?.map((p: ProductItem) =>
+            p.productID === item.productID
+              ? { ...p, isLiked: newIsLikedState }
+              : p
+          ),
+          new: old.new?.map((p: ProductItem) =>
+            p.productID === item.productID
+              ? { ...p, isLiked: newIsLikedState }
+              : p
+          ),
         }
       })
 
@@ -174,7 +167,7 @@ export const useProduct = ({ item }: UseProductProps) => {
   const handleLikePress = useCallback(() => {
     if (!item?.productID) return
 
-    if (!user) {
+    if (!isAuthenticated) {
       setShowAuthModal(true)
       return
     }
@@ -190,7 +183,7 @@ export const useProduct = ({ item }: UseProductProps) => {
       removeFromFavorites()
     }
   }, [
-    user,
+    isAuthenticated,
     item?.productID,
     scale,
     isLiked,

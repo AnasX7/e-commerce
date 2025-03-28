@@ -1,12 +1,12 @@
 import { axios } from '@/lib/axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SecureStore from 'expo-secure-store'
 
 export const getAllFavorites = async () => {
-  const token = await AsyncStorage.getItem('auth_token')
+  const token = await SecureStore.getItemAsync('auth_token')
   if (!token) {
     return [] // Return empty array if no token exists
   }
-
+  
   try {
     const response = await axios.get('/api/favorites')
     return response.data

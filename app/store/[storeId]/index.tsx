@@ -123,7 +123,7 @@ const StoreScreen = () => {
           from={{ translateY: 100, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'timing', duration: 300 }}
-          className='h-24 px-4 mb-[env(safe-area-inset-bottom)] justify-center items-center border-t border-t-gray-200'>
+          className='h-24 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
           <TouchableOpacity
             onPress={handleCartPress}
             className='w-full px-3 py-3 bg-secondary flex-row justify-between items-center rounded-full'>

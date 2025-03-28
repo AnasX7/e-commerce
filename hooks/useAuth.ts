@@ -3,8 +3,9 @@ import { axios, isAxiosError } from '@/lib/axios'
 import { useEffect } from 'react'
 import { Href, useRouter } from 'expo-router'
 import { Platform } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFavoritesStore } from '@/stores/useFavoritesStore'
+import * as SecureStore from 'expo-secure-store'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 type RegisterData = {
   name: string
@@ -39,26 +40,14 @@ export const useAuth = ({
 }: useAuthProps) => {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const { setToken, token, isInitialized } = useAuthStore()
 
-  const storeToken = async (token: string) => {
-    await AsyncStorage.setItem('auth_token', token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  }
-
-  // Load token from AsyncStorage on startup
+  // Initialize auth state on mount
   useEffect(() => {
-    const loadToken = async () => {
-      const token = await AsyncStorage.getItem('auth_token')
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        queryClient.invalidateQueries({ queryKey: ['user'] })
-      }
-    }
-
-    loadToken()
+    useAuthStore.getState().initialize()
   }, [])
 
-  // Query to fetch the authenticated user.
+  // Query to fetch the authenticated user with optimizations
   const {
     data: user,
     error: userError,
@@ -72,13 +61,17 @@ export const useAuth = ({
         return response.data
       } catch (err) {
         if (isAxiosError(err) && err.response?.status !== 409) throw err
-
-        // router.push('/(auth)/verify-email')
       }
     },
     retry: false,
-    enabled: middleware === 'auth', // Only fetch in component mounts if auth middleware is specified
+    enabled: middleware === 'auth' && isInitialized,
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
   })
+
+  const storeToken = async (token: string) => {
+    await setToken(token)
+  }
 
   // CSRF protection
   const csrf = async () => {
@@ -320,34 +313,23 @@ export const useAuth = ({
     }
   }
 
+  // Modified logout function
   const logout = async () => {
     try {
       if (!userError) {
         await axios.post('/api/logout')
       }
 
-      // Clear the auth token
-      await AsyncStorage.removeItem('auth_token')
-
-      // Remove Authorization header
-      delete axios.defaults.headers.common['Authorization']
-
-      // Clear favorites store
+      await setToken(null)
       useFavoritesStore.getState().reset()
-
-      // Clear all query cache
       queryClient.clear()
-
       router.replace('/(auth)/auth')
     } catch (err) {
       console.error('Logout error:', err)
-
-      // Still clear everything even if API call fails
-      await AsyncStorage.removeItem('auth_token')
-      delete axios.defaults.headers.common['Authorization']
+      // Ensure cleanup even if API call fails
+      await setToken(null)
       useFavoritesStore.getState().reset()
       queryClient.clear()
-
       router.replace('/(auth)/auth')
     }
   }
@@ -356,11 +338,8 @@ export const useAuth = ({
     try {
       await axios.delete('/api/user')
 
-      // Clear the auth token
-      await AsyncStorage.removeItem('auth_token')
-
-      // Remove Authorization header
-      delete axios.defaults.headers.common['Authorization']
+      // Clear the auth token using SecureStore and AuthStore
+      await setToken(null)
 
       // Clear favorites store
       useFavoritesStore.getState().reset()
@@ -368,36 +347,64 @@ export const useAuth = ({
       // Clear all query cache
       queryClient.clear()
 
+      // Navigate to auth screen
       router.replace('/(auth)/auth')
     } catch (error) {
       console.error('Delete account error:', error)
-      throw error
+
+      // Ensure cleanup even if API call fails
+      await setToken(null)
+      useFavoritesStore.getState().reset()
+      queryClient.clear()
+      router.replace('/(auth)/auth')
     }
   }
 
+  // Authentication state effect
   useEffect(() => {
-    if (middleware === 'guest' && redirectIfAuthenticated && user) {
-      console.log('Redirecting to:', redirectIfAuthenticated)
-      router.dismissAll()
-      router.push(redirectIfAuthenticated)
-    }
+    if (!isInitialized) return
 
-    // if (middleware === 'auth' && user && !user.email_verified_at) {
-    //   router.push('/verify-email')
-    // }
-
-    // if (pathname === '/verify-email' && user?.email_verified_at) {
+    // if (middleware === 'guest' && redirectIfAuthenticated && user) {
+    //   console.log('Redirecting to:', redirectIfAuthenticated)
+    //   router.dismissAll()
     //   router.push(redirectIfAuthenticated)
     // }
+
+    // Quick check using token first
+    if (middleware === 'guest' && redirectIfAuthenticated && !!token) {
+      console.log('(token) Redirecting to:', redirectIfAuthenticated)
+      router.dismissAll()
+      router.push(redirectIfAuthenticated)
+      return
+    }
+
+    // Secondary verification with user data
+    if (user) {
+      // Token was valid and we have user data
+      if (middleware === 'guest' && redirectIfAuthenticated) {
+        console.log('(user) Redirecting to:', redirectIfAuthenticated)
+        router.dismissAll()
+        router.push(redirectIfAuthenticated)
+      }
+    }
 
     if (middleware === 'auth' && userError) {
       logout()
     }
-  }, [user, userError])
+  }, [user, userError, isInitialized])
+
+  // Add debug logs
+  useEffect(() => {
+    console.log('Auth State:', {
+      token: !!token,
+      isInitialized,
+    })
+  }, [token, isInitialized])
 
   return {
     user,
-    isLoading,
+    isLoading: !isInitialized || isLoading,
+    isAuthenticated: !!token,
     refetch,
     register,
     login,

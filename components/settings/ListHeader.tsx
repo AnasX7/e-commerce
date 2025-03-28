@@ -1,10 +1,16 @@
 import { View, Text, TouchableOpacity, Platform } from 'react-native'
-import React, { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { User } from '@/types/user'
+import { useAuth } from '@/hooks/useAuth'
 
-const ListHeader = ({ user }: { user: User | null }) => {
+type ListHeaderProps = {
+  user: User
+  isAuthenticated: boolean
+}
+
+const ListHeader = ({ user, isAuthenticated }: ListHeaderProps) => {
   const router = useRouter()
 
   const handelBannerPress = useCallback(() => {
@@ -13,18 +19,18 @@ const ListHeader = ({ user }: { user: User | null }) => {
 
   return (
     <View className={`${Platform.OS === 'ios' ? '' : 'pt-safe'}`}>
-      {user && (
+      {isAuthenticated && (
         <View className='px-4 pt-2 flex-row justify-between items-center'>
           {/* Profile Info */}
           <View className='flex-row gap-2 items-center'>
             <View className='w-10 h-10 rounded-full bg-orange-100 items-center justify-center'>
               <Text className='text-orange-800 font-bold text-lg'>
-                {user.name[0]}
+                {user?.name[0]}
               </Text>
             </View>
 
             <Text className='text-lg font-notoKufiArabic-semiBold leading-loose text-right'>
-              {user.name}
+              {user?.name}
             </Text>
           </View>
         </View>

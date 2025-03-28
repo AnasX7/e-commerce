@@ -97,7 +97,7 @@ const AccountScreen = () => {
 
   const router = useRouter()
 
-  const { user, logout, isLoading, refetch } = useAuth({
+  const { user, isAuthenticated, isLoading, refetch, logout } = useAuth({
     middleware: 'guest',
   })
 
@@ -117,25 +117,25 @@ const AccountScreen = () => {
   useRefreshOnFocus(onRefresh)
 
   const ListHeaderComponent = useCallback(
-    () => <ListHeader user={user} />,
-    [user]
+    () => <ListHeader user={user} isAuthenticated={isAuthenticated} />,
+    [isAuthenticated]
   )
 
   const ListFooterComponent = useCallback(
-    () => <ListFooter user={user} logout={logout} />,
-    [user, logout]
+    () => <ListFooter isAuthenticated={isAuthenticated} logout={logout} />,
+    [isAuthenticated, logout]
   )
 
   const handelPress = useCallback(
     (item: MenuItems) => {
-      if (!user && item.auth) {
+      if (!isAuthenticated && item.auth) {
         setSelectedItem(item)
         setShowAuthModal(true)
         return
       }
       router.push(item.route)
     },
-    [user, router]
+    [isAuthenticated, router]
   )
 
   const renderItem = useCallback(
@@ -170,6 +170,7 @@ const AccountScreen = () => {
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 tintColor={Colors.primary}
+                enabled={isAuthenticated}
               />
             }
             data={menuItems}

@@ -1,23 +1,22 @@
 import Axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SecureStore from 'expo-secure-store'
 
 export const axios = Axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-  }
+  },
 })
 
-// Request interceptor - add auth token if available
+// Request interceptor
 axios.interceptors.request.use(
   async (config) => {
     try {
-      const token = await AsyncStorage.getItem('auth_token')
+      const token = await SecureStore.getItemAsync('auth_token')
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
-      // Enhanced request logging
       console.log('Request Details:', {
         method: config.method?.toUpperCase(),
         url: `${config.baseURL || ''}${config.url || ''}`,
@@ -29,12 +28,10 @@ axios.interceptors.request.use(
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
-// Enhanced error handling in response interceptor
+// Response interceptor with enhanced error handling
 axios.interceptors.response.use(
   (response) => {
     console.log('Response received:', {
@@ -58,21 +55,14 @@ axios.interceptors.response.use(
 
     const originalRequest = error.config
 
-    // Handle 401 Unauthorized errors (token expired)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
-
-      // For now, clear the token on 401 errors
-      try {
-        await AsyncStorage.removeItem('auth_token')
-      } catch (e) {
-        console.error('Error removing auth token:', e)
-      }
+      await SecureStore.deleteItemAsync('auth_token')
+      delete axios.defaults.headers.common['Authorization']
     }
 
     return Promise.reject(error)
   }
 )
 
-// Helper functions
 export const isAxiosError = Axios.isAxiosError

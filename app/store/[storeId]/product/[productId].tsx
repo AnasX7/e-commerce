@@ -22,6 +22,7 @@ import { useProduct } from '@/hooks/useProduct'
 import AuthModal from '@/components/AuthModal'
 import { MotiView } from 'moti'
 import { Easing } from 'react-native-reanimated'
+import { useAuth } from '@/hooks/useAuth'
 
 const { width } = Dimensions.get('window')
 
@@ -31,6 +32,7 @@ const ProductDetailScreen = () => {
   const { storeId, productId } = useLocalSearchParams()
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
+  const [showCartAuthModal, setShowCartAuthModal] = useState(false)
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: ['product', productId],
@@ -45,6 +47,10 @@ const ProductDetailScreen = () => {
     scale,
     calculateDiscountedPrice,
   } = useProduct({ item: product })
+
+  const { isAuthenticated } = useAuth({
+    middleware: 'guest',
+  })
 
   useFocusEffect(
     useCallback(() => {
@@ -63,6 +69,15 @@ const ProductDetailScreen = () => {
   const handleDecrement = () => {
     setQuantity((prev) => Math.max(prev - 1, 1))
   }
+
+  const handleAddToCart = useCallback(() => {
+    if (!isAuthenticated) {
+      setShowCartAuthModal(true)
+      return
+    }
+
+    alert(`تم اضافة المنتج الى السلة ${quantity} مرات`)
+  }, [isAuthenticated, quantity])
 
   if (isLoading || !product) {
     return <ProductDetailsSkeleton />
@@ -108,26 +123,6 @@ const ProductDetailScreen = () => {
         className='flex-1'
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Product Info */}
-        <View className='px-4 pt-1 pb-4'>
-          <TouchableOpacity
-            onPress={() => router.push(`/store/${storeId}`)}
-            className='flex-row items-center gap-x-1'>
-            <Text className='text-base font-notoKufiArabic-semiBold leading-loose text-primary'>
-              {product.storeName}
-            </Text>
-          </TouchableOpacity>
-          <Text className='text-2xl text-left font-notoKufiArabic-bold text-gray-900 mt-1'>
-            {product.name}
-          </Text>
-          <Text
-            className='text-sm text-left font-notoKufiArabic leading-loose text-gray-600'
-            ellipsizeMode='tail'
-            numberOfLines={2}>
-            {product.description}
-          </Text>
-        </View>
-
         {/* Image Carousel */}
         <View className='relative aspect-square overflow-hidden'>
           <Carousel
@@ -159,6 +154,26 @@ const ProductDetailScreen = () => {
           </View>
 
           <View className='absolute bottom-0 left-0 right-0 h-[18px] bg-white w-full shadow-lg rounded-t-full' />
+        </View>
+
+        {/* Product Info */}
+        <View className='px-4 pb-4'>
+          <TouchableOpacity
+            onPress={() => router.push(`/store/${storeId}`)}
+            className='flex-row items-center gap-x-1'>
+            <Text className='text-base font-notoKufiArabic-semiBold leading-loose text-primary'>
+              {product.storeName}
+            </Text>
+          </TouchableOpacity>
+          <Text className='text-2xl text-left font-notoKufiArabic-bold text-gray-900 mt-1'>
+            {product.name}
+          </Text>
+          <Text
+            className='text-sm text-left font-notoKufiArabic leading-loose text-gray-600'
+            ellipsizeMode='tail'
+            numberOfLines={2}>
+            {product.description}
+          </Text>
         </View>
 
         {/* Product Price */}
@@ -247,7 +262,11 @@ const ProductDetailScreen = () => {
       </ScrollView>
 
       {/* Fixed Add to Cart Button */}
-      <View className='pb-safe px-4 py-4 bg-white border-t border-gray-200'>
+      <MotiView
+        from={{ translateY: 100, opacity: 0 }}
+        animate={{ translateY: 0, opacity: 1 }}
+        transition={{ type: 'timing', duration: 300 }}
+        className='h-24 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
         <View className='flex-row items-center gap-x-4'>
           {/* Quantity Controls */}
           <View className='flex-row items-center bg-gray-100 rounded-xl overflow-hidden'>
@@ -279,16 +298,25 @@ const ProductDetailScreen = () => {
           {/* Add to Cart Button */}
           <TouchableOpacity
             className='flex-1 flex-row items-center justify-center gap-x-2 bg-secondary py-4 rounded-xl active:opacity-90'
-            onPress={() => {
-              /* Add to cart logic */
-            }}>
+            onPress={handleAddToCart}>
             <Text className='text-center text-white font-notoKufiArabic-bold'>
               إضافة إلى السلة
             </Text>
             <Ionicons name='cart-outline' size={24} color='white' />
           </TouchableOpacity>
         </View>
-      </View>
+      </MotiView>
+      <AuthModal
+        visible={showCartAuthModal}
+        onClose={() => setShowCartAuthModal(false)}
+        icon={{
+          name: 'cart-outline',
+          size: 44,
+          color: Colors.primary,
+        }}
+        title='تسجيل الدخول مطلوب'
+        message='يجب تسجيل الدخول لإضافة المنتج إلى السلة'
+      />
     </>
   )
 }

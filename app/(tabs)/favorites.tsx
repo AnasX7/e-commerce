@@ -6,25 +6,30 @@ import {
   RefreshControl,
 } from 'react-native'
 import { getAllFavorites } from '@/services/favorites'
-import { useQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { FlashList } from '@shopify/flash-list'
 import { ProductItem } from '@/types/product'
 import HorizontalProductCard from '@/components/HorizontalProductCard'
-import { useFocusEffect } from '@react-navigation/native'
+import { useEffect } from 'react'
 import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { Colors } from '@/constants/colors'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useFavoritesStore } from '@/stores/useFavoritesStore'
 
 const FavoritesScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
-  const { user } = useAuth({
+  const { isAuthenticated } = useAuth({
     middleware: 'guest',
   })
 
@@ -34,17 +39,35 @@ const FavoritesScreen = () => {
     }, [])
   )
 
-  const { data, isLoading, refetch } = useQuery({
+  const { setFavorites } = useFavoritesStore()
+  const queryClient = useQueryClient()
+
+  const { data, isLoading, refetch } = useQuery<ProductItem[]>({
     queryKey: ['favorites'],
-    queryFn: () => getAllFavorites(),
-    enabled: !!user,
+    queryFn: getAllFavorites,
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   })
 
+  // Sync with favorites store - with type safety
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      setFavorites(data)
+    }
+  }, [data, setFavorites])
+
   const onRefresh = useCallback(async () => {
+    if (!isAuthenticated) return
+
     setRefreshing(true)
-    await refetch()
-    setRefreshing(false)
-  }, [refetch])
+    try {
+      await queryClient.invalidateQueries({ queryKey: ['favorites'] })
+      await refetch()
+    } finally {
+      setRefreshing(false)
+    }
+  }, [refetch, isAuthenticated, queryClient])
 
   // Refresh on screen focus
   useRefreshOnFocus(onRefresh)
@@ -68,7 +91,7 @@ const FavoritesScreen = () => {
         </Text>
       </View>
 
-      {!user ? (
+      {!isAuthenticated ? (
         <View className='flex-1 items-center justify-center p-4 space-y-4'>
           <Text className='text-gray-500 font-notoKufiArabic text-center mb-4'>
             يجب تسجيل الدخول للوصول للمفضلة
@@ -100,6 +123,7 @@ const FavoritesScreen = () => {
               refreshing={refreshing}
               onRefresh={onRefresh}
               tintColor={Colors.primary}
+              enabled={isAuthenticated}
             />
           }
         />
