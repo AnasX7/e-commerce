@@ -73,10 +73,12 @@ export default function SearchBar({
         />
       </Pressable>
       <Pressable
-        onPress={() => router.push('/(search)/products')}
+        onPress={() => router.push('/search')}
         className={`flex-row-reverse flex-1 px-3 justify-end items-center gap-3 rounded-xl border ${containerClass}`}>
         <View className='flex-row items-center justify-end h-12'>
-          <Text className={`font-notoKufiArabic text-gray-400 ${textColor}`}>ابحث عن</Text>
+          <Text className={`font-notoKufiArabic text-gray-400 ${textColor}`}>
+            ابحث عن
+          </Text>
           <Text className={`font-notoKufiArabic text-gray-400 ${textColor}`}>
             {' '}
             {displayText}

@@ -35,12 +35,12 @@ const WelcomeScreen = () => {
   }
 
   useEffect(() => {
-    const clearAllStorage = async () => {
-      await AsyncStorage.clear()
-      await SecureStore.deleteItemAsync('auth_token')
-    }
+    // const clearAllStorage = async () => {
+    //   await AsyncStorage.clear()
+    //   await SecureStore.deleteItemAsync('auth_token')
+    // }
     setMounted(true)
-    clearAllStorage()
+    // clearAllStorage()
   }, [])
 
   useEffect(() => {

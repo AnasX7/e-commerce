@@ -113,6 +113,7 @@ const StoreScreen = () => {
           }
           estimatedItemSize={192}
           ListEmptyComponent={<NoProductsMessage />}
+          className='flex-1'
           contentContainerClassName='pb-4'
           showsVerticalScrollIndicator={false}
         />

@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useQuery } from '@tanstack/react-query'
-import { useFocusEffect } from 'expo-router'
+import { useRouter, useFocusEffect } from 'expo-router'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import { fetchCarouselAds } from '@/services/carouselAds'
 import { fetchStores } from '@/services/store'
@@ -30,6 +30,7 @@ const HomeScreen = () => {
     }, [])
   )
 
+  const router = useRouter()
   const insets = useSafeAreaInsets()
 
   const [refreshing, setRefreshing] = useState(false)
@@ -121,7 +122,7 @@ const HomeScreen = () => {
 
           {/* Search bar with transparent theme */}
           <SearchBar
-            onFilterPress={() => alert('TODO: implement filter Model')}
+            onFilterPress={() => router.push('/search')}
             theme='transparent'
           />
         </View>
