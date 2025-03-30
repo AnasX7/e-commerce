@@ -232,7 +232,7 @@ const ProductDetailScreen = () => {
 
           {product.sizes.length > 0 && (
             <View className='mt-6'>
-              <Text className='text-base font-notoKufiArabic-semiBold leading-loose text-gray-800 mb-2'>
+              <Text className='text-base text-left font-notoKufiArabic-semiBold leading-loose text-gray-800 mb-2'>
                 المقاسات
               </Text>
               <View className='flex-row flex-wrap gap-2'>

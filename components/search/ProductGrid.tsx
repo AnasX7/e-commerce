@@ -4,7 +4,7 @@ import HorizontalProductCard from '@/components/HorizontalProductCard'
 import SearchForProductMessage from '@/components/search/SearchForProductMessage'
 import { View } from 'moti'
 
-interface ProductGridProps {
+type ProductGridProps = {
   products: SearchProduct[]
 }
 

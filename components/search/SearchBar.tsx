@@ -1,17 +1,11 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StatusBar,
-} from 'react-native'
+import { View, TextInput, TouchableOpacity, StatusBar } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearch } from '@/hooks/useSearch'
 import { Colors } from '@/constants/colors'
 import { useFocusEffect } from 'expo-router'
 
-interface SearchBarProps {
+type SearchBarProps = {
   initialValue?: string
   theme?: 'default' | 'transparent'
   autoFocus?: boolean

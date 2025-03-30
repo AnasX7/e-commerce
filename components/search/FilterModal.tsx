@@ -17,7 +17,7 @@ const deviceHeight = Dimensions.get('window').height
 const colors = ['red', 'blue', 'green', 'black', 'white']
 const sizes = ['S', 'M', 'L', 'XL', 'XXL']
 
-interface FilterModalProps {
+type FilterModalProps = {
   theme?: 'default' | 'transparent'
 }
 

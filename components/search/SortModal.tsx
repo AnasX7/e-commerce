@@ -23,7 +23,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'views', label: 'الأكثر مشاهدة' },
 ]
 
-interface SortModalProps {
+type SortModalProps = {
   theme?: 'default' | 'transparent'
 }
 
