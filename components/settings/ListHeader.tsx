@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { User } from '@/types/user'
-import { useAuth } from '@/hooks/useAuth'
 
 type ListHeaderProps = {
   user: User
@@ -19,7 +18,7 @@ const ListHeader = ({ user, isAuthenticated }: ListHeaderProps) => {
 
   return (
     <View className={`${Platform.OS === 'ios' ? '' : 'pt-safe'}`}>
-      {isAuthenticated && (
+      {isAuthenticated && user && (
         <View className='px-4 pt-2 flex-row justify-between items-center'>
           {/* Profile Info */}
           <View className='flex-row gap-2 items-center'>

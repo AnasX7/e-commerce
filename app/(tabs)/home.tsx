@@ -114,10 +114,7 @@ const HomeScreen = () => {
             </View>
 
             {/* Location picker with light theme */}
-            <LocationPicker
-              onPress={() => alert('TODO: implement location picker screen')}
-              theme='light'
-            />
+            <LocationPicker theme='light' />
           </View>
 
           {/* Search bar with transparent theme */}

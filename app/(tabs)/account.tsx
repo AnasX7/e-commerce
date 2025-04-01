@@ -92,15 +92,15 @@ const AccountScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState<
-    (typeof menuItems)[0] | null
+  (typeof menuItems)[0] | null
   >(null)
-
+  
   const router = useRouter()
-
+  
   const { user, isAuthenticated, isLoading, refetch, logout } = useAuth({
     middleware: 'guest',
   })
-
+  
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
@@ -118,7 +118,7 @@ const AccountScreen = () => {
 
   const ListHeaderComponent = useCallback(
     () => <ListHeader user={user} isAuthenticated={isAuthenticated} />,
-    [isAuthenticated]
+    [user, isAuthenticated, onRefresh]
   )
 
   const ListFooterComponent = useCallback(

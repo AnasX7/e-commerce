@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useSearchStore } from '@/stores/useSearchStore'
+import { useSearchStore } from '@/stores/SearchStore'
 import { searchProducts } from '@/services/search'
 import { SearchFilters } from '@/types/search'
 

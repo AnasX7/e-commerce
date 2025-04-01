@@ -1,19 +1,21 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
+import { useLocationStore } from '@/stores/LocationStore'
+import { useRouter } from 'expo-router'
+import { useCallback } from 'react'
 
 type LocationPickerProps = {
-  currentLocation?: string
-  onPress?: () => void
   theme?: 'light' | 'dark'
 }
-
-export default function LocationPicker({
-  currentLocation = 'ابوظبي، بني ياس',
-  onPress,
-  theme = 'dark',
-}: LocationPickerProps) {
+const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
+  const { mainLocation } = useLocationStore()
+  const router = useRouter()
   const textColor = theme === 'light' ? 'text-white' : 'text-gray-800'
+
+  const onPress = useCallback(() => {
+    router.push('/(settings)/locations')
+  }, [router])
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -26,7 +28,7 @@ export default function LocationPicker({
           />
           <Text
             className={`text-sm font-notoKufiArabic-semiBold leading-relaxed ${textColor}`}>
-            الموقع الحالي
+            {mainLocation ? 'موقع التوصيل' : 'اختر موقع التوصيل'}
           </Text>
           <Ionicons
             name='chevron-down'
@@ -34,11 +36,15 @@ export default function LocationPicker({
             color={theme === 'light' ? '#fff' : Colors.text.primary}
           />
         </View>
-        <Text
-          className={`text-sm pl-4 font-notoKufiArabic leading-relaxed ${textColor}`}>
-          {currentLocation}
-        </Text>
+        {mainLocation && (
+          <Text
+            className={`text-sm pl-4 font-notoKufiArabic leading-relaxed ${textColor}`}>
+            {mainLocation.country}, {mainLocation.location}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   )
 }
+
+export default LocationPicker

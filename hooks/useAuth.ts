@@ -3,9 +3,9 @@ import { axios, isAxiosError } from '@/lib/axios'
 import { useEffect } from 'react'
 import { Href, useRouter } from 'expo-router'
 import { Platform } from 'react-native'
-import { useFavoritesStore } from '@/stores/useFavoritesStore'
+import { useFavoritesStore } from '@/stores/FavoritesStore'
 import * as SecureStore from 'expo-secure-store'
-import { useAuthStore } from '@/stores/useAuthStore'
+import { useAuthStore } from '@/stores/AuthStore'
 
 type RegisterData = {
   name: string

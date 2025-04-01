@@ -6,23 +6,19 @@ import {
   RefreshControl,
 } from 'react-native'
 import { getAllFavorites } from '@/services/favorites'
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { FlashList } from '@shopify/flash-list'
 import { ProductItem } from '@/types/product'
-import HorizontalProductCard from '@/components/HorizontalProductCard'
 import { useEffect } from 'react'
 import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { Colors } from '@/constants/colors'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
-import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useFavoritesStore } from '@/stores/useFavoritesStore'
+import { useFavoritesStore } from '@/stores/FavoritesStore'
+import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
+import HorizontalProductCard from '@/components/HorizontalProductCard'
 
 const FavoritesScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
@@ -72,10 +68,6 @@ const FavoritesScreen = () => {
   // Refresh on screen focus
   useRefreshOnFocus(onRefresh)
 
-  const renderItem = ({ item }: { item: ProductItem }) => (
-    <HorizontalProductCard item={item} />
-  )
-
   if (isLoading) {
     return <FavoritesScreenSkeleton />
   }
@@ -113,11 +105,14 @@ const FavoritesScreen = () => {
       ) : (
         <FlashList
           data={data}
-          renderItem={renderItem}
+          keyExtractor={(item) => item.productID.toString()}
+          renderItem={({ item }: { item: ProductItem }) => (
+            <HorizontalProductCard item={item} />
+          )}
           estimatedItemSize={192}
-          contentContainerClassName='flex-1 pb-4 py-4'
+          className='flex-1'
+          contentContainerClassName='pb-4 py-4'
           showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.productID}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

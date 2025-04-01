@@ -1,4 +1,4 @@
-import { useCartStore } from '@/stores/useCartStore'
+import { useCartStore } from '@/stores/CartStore'
 import { ProductItem } from '@/types/product'
 
 export const useCart = (storeId: number) => {
