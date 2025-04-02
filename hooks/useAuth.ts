@@ -2,9 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { axios, isAxiosError } from '@/lib/axios'
 import { useEffect } from 'react'
 import { Href, useRouter } from 'expo-router'
-import { Platform } from 'react-native'
 import { useFavoritesStore } from '@/stores/FavoritesStore'
-import * as SecureStore from 'expo-secure-store'
 import { useAuthStore } from '@/stores/AuthStore'
 
 type RegisterData = {
@@ -40,7 +38,7 @@ export const useAuth = ({
 }: useAuthProps) => {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const { setToken, token, isInitialized } = useAuthStore()
+  const { setToken, token, isInitialized, user, setUser } = useAuthStore()
 
   // Initialize auth state on mount
   useEffect(() => {
@@ -49,7 +47,6 @@ export const useAuth = ({
 
   // Query to fetch the authenticated user with optimizations
   const {
-    data: user,
     error: userError,
     isLoading,
     refetch,
@@ -58,13 +55,14 @@ export const useAuth = ({
     queryFn: async () => {
       try {
         const response = await axios.get('/api/user')
+        setUser(response.data)
         return response.data
       } catch (err) {
         if (isAxiosError(err) && err.response?.status !== 409) throw err
       }
     },
     retry: false,
-    enabled: middleware === 'auth' && isInitialized,
+    enabled: middleware === 'auth' && isInitialized && !user,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
   })
@@ -321,6 +319,7 @@ export const useAuth = ({
       }
 
       await setToken(null)
+      setUser(null)
       useFavoritesStore.getState().reset()
       queryClient.clear()
       router.replace('/(auth)/auth')
@@ -328,6 +327,7 @@ export const useAuth = ({
       console.error('Logout error:', err)
       // Ensure cleanup even if API call fails
       await setToken(null)
+      setUser(null)
       useFavoritesStore.getState().reset()
       queryClient.clear()
       router.replace('/(auth)/auth')
@@ -338,22 +338,18 @@ export const useAuth = ({
     try {
       await axios.delete('/api/user')
 
-      // Clear the auth token using SecureStore and AuthStore
       await setToken(null)
-
-      // Clear favorites store
+      setUser(null)
       useFavoritesStore.getState().reset()
-
-      // Clear all query cache
       queryClient.clear()
 
-      // Navigate to auth screen
       router.replace('/(auth)/auth')
     } catch (error) {
       console.error('Delete account error:', error)
 
       // Ensure cleanup even if API call fails
       await setToken(null)
+      setUser(null)
       useFavoritesStore.getState().reset()
       queryClient.clear()
       router.replace('/(auth)/auth')
@@ -364,12 +360,6 @@ export const useAuth = ({
   useEffect(() => {
     if (!isInitialized) return
 
-    // if (middleware === 'guest' && redirectIfAuthenticated && user) {
-    //   console.log('Redirecting to:', redirectIfAuthenticated)
-    //   router.dismissAll()
-    //   router.push(redirectIfAuthenticated)
-    // }
-
     // Quick check using token first
     if (middleware === 'guest' && redirectIfAuthenticated && !!token) {
       console.log('(token) Redirecting to:', redirectIfAuthenticated)
@@ -379,13 +369,11 @@ export const useAuth = ({
     }
 
     // Secondary verification with user data
-    if (user) {
-      // Token was valid and we have user data
-      if (middleware === 'guest' && redirectIfAuthenticated) {
-        console.log('(user) Redirecting to:', redirectIfAuthenticated)
-        router.dismissAll()
-        router.push(redirectIfAuthenticated)
-      }
+    // Token was valid and we have user data
+    if (user && middleware === 'guest' && redirectIfAuthenticated) {
+      console.log('(user) Redirecting to:', redirectIfAuthenticated)
+      router.dismissAll()
+      router.push(redirectIfAuthenticated)
     }
 
     if (middleware === 'auth' && userError) {

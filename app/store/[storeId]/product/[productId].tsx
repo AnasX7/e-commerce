@@ -126,35 +126,37 @@ const ProductDetailScreen = () => {
                 style={animatedStyle}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push(`/store/${storeId}/cart`)}>
-              <MotiView
-                animate={{ scale: shouldAnimateCart ? [1, 1.2, 1] : 1 }}
-                transition={{
-                  type: 'timing',
-                  duration: 300,
-                  easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-                }}
-                key={`cart-${totalItems}`}>
-                <View className='flex-row items-center justify-end'>
-                  {totalItems > 0 && (
-                    <MotiView
-                      from={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring' }}>
-                      <Text className='text-gray-800 text-sm font-notoKufiArabic-bold leading-relaxed mr-1'>
-                        {totalItems}
-                      </Text>
-                    </MotiView>
-                  )}
-                  <Ionicons
-                    name='cart-outline'
-                    size={26}
-                    color={Colors.text.primary}
-                  />
-                </View>
-              </MotiView>
-            </TouchableOpacity>
+            {isAuthenticated && (
+              <TouchableOpacity
+                onPress={() => router.push(`/store/${storeId}/cart`)}>
+                <MotiView
+                  animate={{ scale: shouldAnimateCart ? [1, 1.2, 1] : 1 }}
+                  transition={{
+                    type: 'timing',
+                    duration: 300,
+                    easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+                  }}
+                  key={`cart-${totalItems}`}>
+                  <View className='flex-row items-center justify-end'>
+                    {totalItems > 0 && (
+                      <MotiView
+                        from={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring' }}>
+                        <Text className='text-gray-800 text-sm font-notoKufiArabic-bold leading-relaxed mr-1'>
+                          {totalItems}
+                        </Text>
+                      </MotiView>
+                    )}
+                    <Ionicons
+                      name='cart-outline'
+                      size={26}
+                      color={Colors.text.primary}
+                    />
+                  </View>
+                </MotiView>
+              </TouchableOpacity>
+            )}
           </View>
           <AuthModal
             visible={showAuthModal}

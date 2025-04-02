@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useAuth } from './useAuth'
+import { useCartStore } from '@/stores/CartStore'
 import {
   fetchCart,
   addToCart,
   updateCartItem,
   removeFromCart,
 } from '@/services/cart'
-import { useCartStore } from '@/stores/CartStore'
 
 type UseCartProps = {
   storeId: number
@@ -16,6 +17,8 @@ export const useCart = ({ storeId }: UseCartProps) => {
   const queryClient = useQueryClient()
   const { updateTotalItems } = useCartStore()
 
+  const { isAuthenticated } = useAuth({ middleware: 'guest' })
+
   // Fetch cart items
   const {
     data: cartItems,
@@ -24,6 +27,7 @@ export const useCart = ({ storeId }: UseCartProps) => {
   } = useQuery({
     queryKey: ['cart', storeId],
     queryFn: () => fetchCart(storeId),
+    enabled: isAuthenticated,
   })
 
   // Add to cart mutation
