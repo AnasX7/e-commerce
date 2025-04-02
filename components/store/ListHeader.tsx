@@ -65,7 +65,7 @@ const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
           <View className='flex-1'>
             {/* Store Name */}
             <View className='flex-row items-center justify-between mb-1'>
-              <Text className='text-2xl text-left font-notoKufiArabic-bold leading-loose text-gray-800'>
+              <Text className='text-xl text-left font-notoKufiArabic-bold leading-loose text-gray-800'>
                 {data.name}
               </Text>
               <View className='bg-gray-100 px-2 py-1 rounded-md'>

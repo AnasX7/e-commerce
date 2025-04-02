@@ -86,7 +86,7 @@ const LocationsScreen = () => {
         className='h-24 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
-          className='w-full py-4 bg-primary rounded-xl active:opacity-90'>
+          className='w-full py-4 bg-primary rounded-2xl'>
           <Text className='text-center text-white font-notoKufiArabic-bold'>
             إضافة عنوان جديد
           </Text>

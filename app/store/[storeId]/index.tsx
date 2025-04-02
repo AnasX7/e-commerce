@@ -11,6 +11,7 @@ import { FlashList } from '@shopify/flash-list'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
+import { useCart } from '@/hooks/useCart'
 import { fetchStoreProductsByCategory } from '@/services/product'
 import { fetchStore } from '@/services/store'
 import { Colors } from '@/constants/colors'
@@ -22,7 +23,7 @@ import NoProductsMessage from '@/components/NoProductsMassage'
 
 const StoreScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
-  const { storeId } = useLocalSearchParams()
+  const { storeId } = useLocalSearchParams<{ storeId: string }>()
   const router = useRouter()
 
   const [activeTab, setActiveTab] = useState(1)
@@ -32,6 +33,10 @@ const StoreScreen = () => {
       StatusBar.setBarStyle('dark-content')
     }, [])
   )
+
+  const { cartItems, totalItems, calculateTotal } = useCart({
+    storeId: +storeId,
+  })
 
   const {
     data: store,
@@ -74,6 +79,16 @@ const StoreScreen = () => {
     })
   }, [])
 
+  const listHeaderComponent = useCallback(() => {
+    return (
+      <ListHeader
+        data={store}
+        activeTab={activeTab}
+        setActiveTab={memoizedSetActiveTab}
+      />
+    )
+  }, [store, activeTab, memoizedSetActiveTab])
+
   if (storeError || productsError) {
     return (
       <View className='flex-1 justify-center items-center'>
@@ -104,13 +119,7 @@ const StoreScreen = () => {
             <HorizontalProductCard item={item} />
           )}
           keyExtractor={(item) => item.productID.toString()}
-          ListHeaderComponent={
-            <ListHeader
-              data={store}
-              activeTab={activeTab}
-              setActiveTab={memoizedSetActiveTab}
-            />
-          }
+          ListHeaderComponent={listHeaderComponent}
           estimatedItemSize={192}
           ListEmptyComponent={<NoProductsMessage />}
           className='flex-1'
@@ -119,7 +128,7 @@ const StoreScreen = () => {
         />
       )}
 
-      {true && (
+      {totalItems > 0 ? (
         <MotiView
           from={{ translateY: 100, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
@@ -127,11 +136,11 @@ const StoreScreen = () => {
           className='h-24 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
           <TouchableOpacity
             onPress={handleCartPress}
-            className='w-full px-3 py-3 bg-secondary flex-row justify-between items-center rounded-full'>
+            className='w-full px-3 py-3 bg-secondary flex-row justify-between items-center rounded-2xl'>
             <View className='flex-row gap-2 justify-center items-center'>
-              <View className='w-10 h-10 flex justify-center items-center bg-primary rounded-full'>
+              <View className='w-10 h-10 flex justify-center items-center bg-primary rounded-xl'>
                 <Text className='text-white text-xl font-notoKufiArabic-bold leading-loose'>
-                  4
+                  {totalItems > 99 ? '99+' : totalItems}
                 </Text>
               </View>
               <Text className='text-center text-lg text-white font-notoKufiArabic-bold leading-loose'>
@@ -139,9 +148,24 @@ const StoreScreen = () => {
               </Text>
             </View>
             <Text className='text-lg text-white font-notoKufiArabic-bold leading-loose'>
-              26 د.إ
+              {calculateTotal().toFixed(2)}{' '}
+              {cartItems?.[0]?.currency === 'AED'
+                ? 'د.إ'
+                : cartItems?.[0]?.currency === 'SAR'
+                ? 'ر.س'
+                : 'ر.ي'}
             </Text>
           </TouchableOpacity>
+        </MotiView>
+      ) : (
+        <MotiView
+          from={{ translateY: 100, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'timing', duration: 300 }}
+          className='h-14 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
+          <Text className='text-base text-gray-500 font-notoKufiArabic-light leading-loose'>
+            أضف منتجات للسلّة لتبدأ الطلب
+          </Text>
         </MotiView>
       )}
     </>

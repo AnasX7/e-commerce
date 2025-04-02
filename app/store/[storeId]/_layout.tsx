@@ -13,6 +13,10 @@ const Storelayout = () => {
         name='product/[productId]'
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name='cart'
+        options={{ headerShown: false }}
+      />
     </Stack>
   )
 }

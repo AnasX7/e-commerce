@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import Carousel from 'react-native-reanimated-carousel'
 import { Image } from 'expo-image'
@@ -18,25 +19,30 @@ import { Colors } from '@/constants/colors'
 import { Product } from '@/types/product'
 import { useFullPath } from '@/hooks/useFullPath'
 import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton'
+import { useAuth } from '@/hooks/useAuth'
 import { useProduct } from '@/hooks/useProduct'
+import { useCart } from '@/hooks/useCart'
 import AuthModal from '@/components/AuthModal'
 import { MotiView } from 'moti'
 import { Easing } from 'react-native-reanimated'
-import { useAuth } from '@/hooks/useAuth'
 
 const { width } = Dimensions.get('window')
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons)
 
 const ProductDetailScreen = () => {
-  const { storeId, productId } = useLocalSearchParams()
+  const { storeId, productId } = useLocalSearchParams<{
+    storeId: string
+    productId: string
+  }>()
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
+  const [shouldAnimateCart, setShouldAnimateCart] = useState(false)
   const [showCartAuthModal, setShowCartAuthModal] = useState(false)
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: ['product', productId],
-    queryFn: () => fetchProductDetails(+storeId, productId as string),
+    queryFn: () => fetchProductDetails(+storeId, productId),
   })
 
   const {
@@ -52,11 +58,25 @@ const ProductDetailScreen = () => {
     middleware: 'guest',
   })
 
+  const { addToCart, isAddingToCart, totalItems } = useCart({
+    storeId: +storeId,
+  })
+
+  const prevTotalItems = useRef(totalItems)
+
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
     }, [])
   )
+
+  useEffect(() => {
+    if (totalItems > prevTotalItems.current) {
+      setShouldAnimateCart(true)
+      setTimeout(() => setShouldAnimateCart(false), 300)
+    }
+    prevTotalItems.current = totalItems
+  }, [totalItems])
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -76,8 +96,8 @@ const ProductDetailScreen = () => {
       return
     }
 
-    alert(`تم اضافة المنتج الى السلة ${quantity} مرات`)
-  }, [isAuthenticated, quantity])
+    addToCart({ productId, quantity })
+  }, [isAuthenticated, quantity, productId, addToCart])
 
   if (isLoading || !product) {
     return <ProductDetailsSkeleton />
@@ -95,16 +115,47 @@ const ProductDetailScreen = () => {
               color={Colors.text.primary}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleLikePress}
-            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-            <AnimatedIcon
-              name={isLiked ? 'heart' : 'heart-outline'}
-              size={24}
-              color={isLiked ? '#ef4444' : Colors.text.primary}
-              style={animatedStyle}
-            />
-          </TouchableOpacity>
+          <View className='flex-row-reverse items-center gap-4'>
+            <TouchableOpacity
+              onPress={handleLikePress}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+              <AnimatedIcon
+                name={isLiked ? 'heart' : 'heart-outline'}
+                size={24}
+                color={isLiked ? '#ef4444' : Colors.text.primary}
+                style={animatedStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push(`/store/${storeId}/cart`)}>
+              <MotiView
+                animate={{ scale: shouldAnimateCart ? [1, 1.2, 1] : 1 }}
+                transition={{
+                  type: 'timing',
+                  duration: 300,
+                  easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+                }}
+                key={`cart-${totalItems}`}>
+                <View className='flex-row items-center justify-end'>
+                  {totalItems > 0 && (
+                    <MotiView
+                      from={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring' }}>
+                      <Text className='text-gray-800 text-sm font-notoKufiArabic-bold leading-relaxed mr-1'>
+                        {totalItems}
+                      </Text>
+                    </MotiView>
+                  )}
+                  <Ionicons
+                    name='cart-outline'
+                    size={26}
+                    color={Colors.text.primary}
+                  />
+                </View>
+              </MotiView>
+            </TouchableOpacity>
+          </View>
           <AuthModal
             visible={showAuthModal}
             onClose={() => setShowAuthModal(false)}
@@ -145,19 +196,10 @@ const ProductDetailScreen = () => {
               />
             )}
           />
-          {/* Rating */}
-          <View className='absolute top-4 right-4 w-16 flex-row justify-center items-center gap-1 bg-white shadow py-1 rounded-full'>
-            <Text className='text-lg font-extrabold text-gray-600'>
-              {product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
-            </Text>
-            <Text className='text-amber-500 text-lg'>★</Text>
-          </View>
-
-          <View className='absolute bottom-0 left-0 right-0 h-[18px] bg-white w-full shadow-lg rounded-t-full' />
         </View>
 
         {/* Product Info */}
-        <View className='px-4 pb-4'>
+        <View className='relative px-4 py-4'>
           <TouchableOpacity
             onPress={() => router.push(`/store/${storeId}`)}
             className='flex-row items-center gap-x-1'>
@@ -174,6 +216,13 @@ const ProductDetailScreen = () => {
             numberOfLines={2}>
             {product.description}
           </Text>
+          {/* Rating */}
+          <View className='absolute top-4 right-4 w-16 flex-row justify-center items-center gap-1 bg-white py-1 rounded-full'>
+            <Text className='text-lg font-extrabold text-gray-600'>
+              {product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
+            </Text>
+            <Text className='text-amber-500 text-lg'>★</Text>
+          </View>
         </View>
 
         {/* Product Price */}
@@ -282,7 +331,8 @@ const ProductDetailScreen = () => {
                 type: 'timing',
                 duration: 300,
                 easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-              }}>
+              }}
+              key={`quantity-${quantity}`}>
               <Text className='w-12 text-center text-lg font-notoKufiArabic-bold'>
                 {quantity}
               </Text>
@@ -297,12 +347,18 @@ const ProductDetailScreen = () => {
 
           {/* Add to Cart Button */}
           <TouchableOpacity
-            className='flex-1 flex-row items-center justify-center gap-x-2 bg-secondary py-4 rounded-xl active:opacity-90'
+            className='flex-1 flex-row items-center justify-center gap-x-2 bg-secondary py-4 rounded-2xl active:opacity-90'
             onPress={handleAddToCart}>
-            <Text className='text-center text-white font-notoKufiArabic-bold'>
-              إضافة إلى السلة
-            </Text>
-            <Ionicons name='cart-outline' size={24} color='white' />
+            {isAddingToCart ? (
+              <ActivityIndicator size='small' color='white' />
+            ) : (
+              <>
+                <Text className='text-center text-white font-notoKufiArabic-bold'>
+                  إضافة إلى السلة
+                </Text>
+                <Ionicons name='cart-outline' size={24} color='white' />
+              </>
+            )}
           </TouchableOpacity>
         </View>
       </MotiView>

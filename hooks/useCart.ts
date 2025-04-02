@@ -1,19 +1,101 @@
+import { useCallback, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  fetchCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+} from '@/services/cart'
 import { useCartStore } from '@/stores/CartStore'
-import { ProductItem } from '@/types/product'
 
-export const useCart = (storeId: number) => {
-  const cartData = useCartStore(
-    (state) => state.carts[storeId] || { items: [], total: 0 }
-  )
-  const { addItem, removeItem, updateQuantity, clearCart } = useCartStore()
+type UseCartProps = {
+  storeId: number
+}
+
+export const useCart = ({ storeId }: UseCartProps) => {
+  const queryClient = useQueryClient()
+  const { updateTotalItems } = useCartStore()
+
+  // Fetch cart items
+  const {
+    data: cartItems,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['cart', storeId],
+    queryFn: () => fetchCart(storeId),
+  })
+
+  // Add to cart mutation
+  const addToCartMutation = useMutation({
+    mutationFn: ({
+      productId,
+      quantity,
+    }: {
+      productId: string
+      quantity: number
+    }) => addToCart(storeId, productId, { quantity }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', storeId] })
+    },
+  })
+
+  // Update cart item mutation
+  const updateCartMutation = useMutation({
+    mutationFn: ({
+      productId,
+      quantity,
+    }: {
+      productId: string
+      quantity: number
+    }) => updateCartItem(storeId, productId, { quantity }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', storeId] })
+    },
+  })
+
+  // Remove from cart mutation
+  const removeFromCartMutation = useMutation({
+    mutationFn: (productId: string) => removeFromCart(storeId, productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', storeId] })
+    },
+  })
+
+  // Calculate cart total
+  const calculateTotal = useCallback(() => {
+    return (
+      cartItems?.reduce((acc, item) => {
+        const price = item.price * (1 - item.discount / 100)
+        return acc + price * item.quantity
+      }, 0) || 0
+    )
+  }, [cartItems])
+
+  useEffect(() => {
+    if (cartItems) {
+      const count = cartItems.reduce((acc, item) => acc + item.quantity, 0)
+      updateTotalItems(count)
+    }
+  }, [cartItems, updateTotalItems])
+
+  const totalItems = useCartStore((state) => state.totalItems)
 
   return {
-    cart: cartData,
-    total: cartData.total,
-    addItem: (product: ProductItem) => addItem(storeId, product),
-    removeItem: (productId: number) => removeItem(storeId, productId),
-    updateQuantity: (productId: number, quantity: number) =>
-      updateQuantity(storeId, productId, quantity),
-    clearCart: () => clearCart(storeId),
+    cartItems,
+    isLoading,
+    refetch,
+    addToCart: addToCartMutation.mutate,
+    updateCartItem: updateCartMutation.mutate,
+    removeFromCart: removeFromCartMutation.mutate,
+    calculateTotal,
+    totalItems,
+    isAddingToCart: addToCartMutation.isPending,
+    isUpdatingCart: updateCartMutation.isPending,
+    isRemovingFromCart: removeFromCartMutation.isPending,
+    error:
+      addToCartMutation.error ||
+      updateCartMutation.error ||
+      removeFromCartMutation.error,
   }
 }

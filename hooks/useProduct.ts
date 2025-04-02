@@ -14,9 +14,10 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { useFavoritesStore } from '@/stores/FavoritesStore'
 import { useFullPath } from '@/hooks/useFullPath'
+import { CartItem } from '@/types/cart'
 
 type UseProductProps = {
-  item: ProductItem | Product | undefined
+  item: ProductItem | Product | CartItem | undefined
 }
 
 export const useProduct = ({ item }: UseProductProps) => {
