@@ -1,8 +1,7 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 import StoreCard from '@/components/home/StoreCard'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { StoreCardType } from '@/types/store'
 
 type StoresProps = {
@@ -36,17 +35,11 @@ const StoresSlider = ({ title, data }: StoresProps) => {
         <Text className='text-2xl font-notoKufiArabic-bold leading-loose text-gray-800'>
           {title}
         </Text>
-        <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: '/(search)/stores',
-              params: { title },
-            })
-          }>
+        {/* <TouchableOpacity onPress={}>
           <Text className='text-sm px-3 py-2 bg-primary font-notoKufiArabic-semiBold leading-relaxed text-white text-center rounded-md'>
             عرض الكل
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <FlatList
         data={data}

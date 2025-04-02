@@ -9,7 +9,7 @@ const Tabslayout = () => {
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
         headerShown: false,
-        tabBarPosition: Platform.OS === 'web' ? 'top' : 'bottom',
+        tabBarPosition: Platform.OS === 'web' ? 'bottom' : 'bottom',
         tabBarStyle: {
           height: Platform.OS === 'ios' ? 84 : 64,
         },

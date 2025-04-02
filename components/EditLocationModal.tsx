@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import Modal from 'react-native-modal'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { z } from 'zod'
 import { updateLocation } from '@/services/location'
 import { useForm } from '@/hooks/useForm'
-import { Colors } from '@/constants/colors'
 import FormInput from '@/components/FormInput'
 import { Location } from '@/types/location'
 
@@ -73,6 +73,10 @@ const EditLocationModal = ({
       hideModalContentWhileAnimating>
       <View className='bg-white rounded-t-3xl pb-safe'>
         <View className='p-6'>
+          {/* <KeyboardAwareScrollView
+        bottomOffset={88}
+        className='flex-1'
+        contentContainerClassName='flex-grow'> */}
           <View className='items-center mb-6'>
             <View className='w-16 h-1 bg-gray-300 rounded-full' />
           </View>
@@ -130,6 +134,7 @@ const EditLocationModal = ({
               </Text>
             </TouchableOpacity>
           </View>
+          {/* </KeyboardAwareScrollView> */}
         </View>
       </View>
     </Modal>

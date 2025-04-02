@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { useRouter } from 'expo-router'
 import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
@@ -63,7 +64,6 @@ const ResetPasswordScreen = () => {
   }
 
   return (
-    // <SafeAreaProvider>
     <>
       {/* Header */}
       <View
@@ -85,7 +85,10 @@ const ResetPasswordScreen = () => {
           </Text>
         </View>
       </View>
-
+      {/* <KeyboardAwareScrollView
+        bottomOffset={88}
+        className='flex-1'
+        contentContainerClassName='flex-grow'> */}
       <View className='justify-center items-center px-4 pb-6 pt-20'>
         <Text className='text-2xl font-notoKufiArabic-bold leading-relaxed text-gray-800 mb-2'>
           تغيير كلمة المرور
@@ -151,8 +154,8 @@ const ResetPasswordScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      {/* </KeyboardAwareScrollView> */}
     </>
-    // </SafeAreaProvider>
   )
 }
 

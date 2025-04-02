@@ -4,14 +4,25 @@ import { useRouter } from 'expo-router'
 
 import { ProductItem } from '@/types/product'
 import ProductCard from '@/components/home/ProductCard'
+import { useCallback } from 'react'
+import { useSearch } from '@/hooks/useSearch'
+import { SortOption } from '@/types/search'
 
 type ProductsSliderProps = {
   title: string
   data: ProductItem[]
+  sort: SortOption
 }
 
-const ProuductsSlider = ({ title, data }: ProductsSliderProps) => {
+const ProuductsSlider = ({ title, data, sort }: ProductsSliderProps) => {
   const router = useRouter()
+  const { setFilters, performSearch } = useSearch()
+
+  const handleViewAll = useCallback(() => {
+    router.push('/search')
+    setFilters({ sort })
+    performSearch()
+  }, [router, setFilters, performSearch])
 
   const renderItem = ({ item }: { item: ProductItem }) => (
     <ProductCard item={item} />
@@ -24,13 +35,7 @@ const ProuductsSlider = ({ title, data }: ProductsSliderProps) => {
         <Text className='text-2xl font-notoKufiArabic-bold leading-loose text-gray-800'>
           {title}
         </Text>
-        <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: '/(search)/products',
-              params: { title },
-            })
-          }>
+        <TouchableOpacity onPress={handleViewAll}>
           <Text className='text-sm px-3 py-2 rounded-md bg-primary font-notoKufiArabic-semiBold leading-relaxed text-white'>
             عرض الكل
           </Text>

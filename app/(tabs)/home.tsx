@@ -157,6 +157,7 @@ const HomeScreen = () => {
               <ProuductsSlider
                 title='المنتجات الشائعة'
                 data={productsData.popular}
+                sort='views'
               />
             ) : (
               <NoProductsMessage />
@@ -170,7 +171,11 @@ const HomeScreen = () => {
             )}
 
             {productsData?.new?.length > 0 ? (
-              <ProuductsSlider title='وصل حديثاً' data={productsData.new} />
+              <ProuductsSlider
+                title='وصل حديثاً'
+                data={productsData.new}
+                sort='latest'
+              />
             ) : (
               <NoProductsMessage />
             )}
