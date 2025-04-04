@@ -17,7 +17,7 @@ const ListFooter = ({ isAuthenticated, logout }: ListFooterProps) => {
         <TouchableOpacity
           onPress={logout}
           className='bg-white py-3 rounded-xl border border-gray-300'>
-          <Text className='text-gray-800 font-notoKufiArabic-semiBold text-center'>
+          <Text className='text-gray-600 font-notoKufiArabic-semiBold text-center'>
             تسجيل الخروج
           </Text>
         </TouchableOpacity>
@@ -37,7 +37,7 @@ const ListFooter = ({ isAuthenticated, logout }: ListFooterProps) => {
               router.push('/register')
             }}
             className='bg-white py-3 rounded-xl border border-gray-300'>
-            <Text className='text-gray-800 font-notoKufiArabic-semiBold text-center'>
+            <Text className='text-gray-600 font-notoKufiArabic-semiBold text-center'>
               إنشاء حساب
             </Text>
           </TouchableOpacity>

@@ -34,7 +34,7 @@ const StoreScreen = () => {
     }, [])
   )
 
-  const { cartItems, totalItems, calculateTotal } = useCart({
+  const { cartItems, count, total } = useCart({
     storeId: +storeId,
   })
 
@@ -128,7 +128,7 @@ const StoreScreen = () => {
         />
       )}
 
-      {totalItems > 0 ? (
+      {count > 0 ? (
         <MotiView
           from={{ translateY: 100, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
@@ -140,7 +140,7 @@ const StoreScreen = () => {
             <View className='flex-row gap-2 justify-center items-center'>
               <View className='w-10 h-10 flex justify-center items-center bg-primary rounded-xl'>
                 <Text className='text-white text-xl font-notoKufiArabic-bold leading-loose'>
-                  {totalItems > 99 ? '99+' : totalItems}
+                  {count > 99 ? '99+' : count}
                 </Text>
               </View>
               <Text className='text-center text-lg text-white font-notoKufiArabic-bold leading-loose'>
@@ -148,7 +148,7 @@ const StoreScreen = () => {
               </Text>
             </View>
             <Text className='text-lg text-white font-notoKufiArabic-bold leading-loose'>
-              {calculateTotal().toFixed(2)}{' '}
+              {total}{' '}
               {cartItems?.[0]?.currency === 'AED'
                 ? 'د.إ'
                 : cartItems?.[0]?.currency === 'SAR'

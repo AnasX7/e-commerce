@@ -1,7 +1,12 @@
 import { axios } from '@/lib/axios'
-import { CartItem, AddToCartPayload, UpdateCartPayload } from '@/types/cart'
+import {
+  Cart,
+  CartItem,
+  AddToCartPayload,
+  UpdateCartPayload,
+} from '@/types/cart'
 
-export const fetchCart = async (storeId: number): Promise<CartItem[]> => {
+export const fetchCart = async (storeId: number): Promise<Cart> => {
   try {
     const { data } = await axios.get(`/api/store/${storeId}/cart`)
     return data
@@ -54,5 +59,19 @@ export const removeFromCart = async (
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error)
     throw new Error('Failed to remove from cart')
+  }
+}
+
+export const applyCoupon = async (
+  storeId: number,
+  couponCode: string
+): Promise<void> => {
+  try {
+    await axios.post(`/api/store/${storeId}/cart/apply-coupon`, {
+      code: couponCode,
+    })
+  } catch (error) {
+    console.error('There has been a problem with your fetch operation:', error)
+    throw new Error('Failed to apply coupon')
   }
 }

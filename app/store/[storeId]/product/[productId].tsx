@@ -58,11 +58,11 @@ const ProductDetailScreen = () => {
     middleware: 'guest',
   })
 
-  const { addToCart, isAddingToCart, totalItems } = useCart({
+  const { addToCart, isAddingToCart, count } = useCart({
     storeId: +storeId,
   })
 
-  const prevTotalItems = useRef(totalItems)
+  const prevTotalItems = useRef(count)
 
   useFocusEffect(
     useCallback(() => {
@@ -71,12 +71,12 @@ const ProductDetailScreen = () => {
   )
 
   useEffect(() => {
-    if (totalItems > prevTotalItems.current) {
+    if (count > prevTotalItems.current) {
       setShouldAnimateCart(true)
       setTimeout(() => setShouldAnimateCart(false), 300)
     }
-    prevTotalItems.current = totalItems
-  }, [totalItems])
+    prevTotalItems.current = count
+  }, [count])
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -136,15 +136,15 @@ const ProductDetailScreen = () => {
                     duration: 300,
                     easing: Easing.bezier(0.25, 0.1, 0.25, 1),
                   }}
-                  key={`cart-${totalItems}`}>
+                  key={`cart-${count}`}>
                   <View className='flex-row items-center justify-end'>
-                    {totalItems > 0 && (
+                    {count > 0 && (
                       <MotiView
                         from={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: 'spring' }}>
                         <Text className='text-gray-800 text-sm font-notoKufiArabic-bold leading-relaxed mr-1'>
-                          {totalItems}
+                          {count}
                         </Text>
                       </MotiView>
                     )}

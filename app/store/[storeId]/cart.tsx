@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react'
 import {
   View,
   Text,
@@ -7,6 +6,7 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native'
+import { useState, useCallback, useEffect } from 'react'
 import { FlashList } from '@shopify/flash-list'
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
@@ -15,26 +15,24 @@ import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 import { CartItem } from '@/types/cart'
 import CartItemCard from '@/components/CartItemCard'
+import ListFooter from '@/components/cart/ListFooter'
 
 const CartScreen = () => {
   const { storeId } = useLocalSearchParams()
   const router = useRouter()
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const {
-    cartItems,
-    isLoading,
-    refetch,
-    updateCartItem,
-    removeFromCart,
-    calculateTotal,
-  } = useCart({ storeId: +storeId })
 
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
     }, [])
   )
+
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const { cartItems, updateCartItem, removeFromCart, isLoading, refetch } =
+    useCart({ storeId: +storeId })
+
+  const currency = cartItems?.[0]?.currency
 
   // Handle refresh
   const onRefresh = useCallback(async () => {
@@ -48,7 +46,11 @@ const CartScreen = () => {
 
   useRefreshOnFocus(onRefresh)
 
-  // Render cart item
+  const listFooterComponent = useCallback(
+    () => <ListFooter storeId={+storeId} currency={currency} />,
+    [storeId, currency]
+  )
+
   const renderItem = useCallback(
     ({ item }: { item: CartItem }) => (
       <CartItemCard
@@ -95,6 +97,7 @@ const CartScreen = () => {
             contentContainerStyle={{ padding: 16 }}
             ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
             showsVerticalScrollIndicator={false}
+            ListFooterComponent={listFooterComponent}
             refreshControl={
               <RefreshControl
                 refreshing={isRefreshing}
@@ -104,25 +107,18 @@ const CartScreen = () => {
             }
           />
 
-          <View className='p-4 pb-safe-offset-4 border-t border-gray-200'>
-            <View className='flex-row justify-between items-center px-2 mb-4'>
-              <Text className='font-notoKufiArabic leading-relaxed text-gray-600'>
-                المجموع
+          <View className='flex-row justify-between gap-4 p-4 pb-safe-offset-4 border-t border-gray-200'>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className=' flex-1 py-4 border border-gray-300 rounded-2xl'>
+              <Text className='text-center text-gray-600 font-notoKufiArabic-semiBold'>
+                أضف المزيد
               </Text>
-              <Text className='font-notoKufiArabic-bold text-lg'>
-                {calculateTotal().toFixed(2)}{' '}
-                {cartItems?.[0]?.currency === 'AED'
-                  ? 'د.إ'
-                  : cartItems?.[0]?.currency === 'SAR'
-                  ? 'ر.س'
-                  : 'ر.ي'}
-              </Text>
-            </View>
-
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push(`/store/${storeId}/checkout`)}
-              className='bg-primary py-4 rounded-2xl'>
-              <Text className='text-center text-white font-notoKufiArabic-bold'>
+              className='flex-1 py-4 bg-primary rounded-2xl'>
+              <Text className='text-center text-white  font-notoKufiArabic-semiBold'>
                 إتمام الشراء
               </Text>
             </TouchableOpacity>

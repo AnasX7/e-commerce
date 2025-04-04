@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from './useAuth'
 import { useCartStore } from '@/stores/CartStore'
@@ -7,6 +7,7 @@ import {
   addToCart,
   updateCartItem,
   removeFromCart,
+  applyCoupon,
 } from '@/services/cart'
 
 type UseCartProps = {
@@ -15,13 +16,22 @@ type UseCartProps = {
 
 export const useCart = ({ storeId }: UseCartProps) => {
   const queryClient = useQueryClient()
-  const { updateTotalItems } = useCartStore()
+  const {
+    updateTotalItems,
+    updateSubtotal,
+    updateDiscount,
+    updateDelivery,
+    updateService,
+    updateTotal,
+    updateCouponCode,
+    updateCouponDiscount,
+  } = useCartStore()
 
   const { isAuthenticated } = useAuth({ middleware: 'guest' })
 
-  // Fetch cart items
+  // Fetch cart data
   const {
-    data: cartItems,
+    data: Cart,
     isLoading,
     refetch,
   } = useQuery({
@@ -66,37 +76,56 @@ export const useCart = ({ storeId }: UseCartProps) => {
     },
   })
 
-  // Calculate cart total
-  const calculateTotal = useCallback(() => {
-    return (
-      cartItems?.reduce((acc, item) => {
-        const price = item.price * (1 - item.discount / 100)
-        return acc + price * item.quantity
-      }, 0) || 0
-    )
-  }, [cartItems])
+  const applyCouponMutation = useMutation({
+    mutationFn: (couponCode: string) => applyCoupon(storeId, couponCode),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart', storeId] })
+    },
+  })
 
   useEffect(() => {
-    if (cartItems) {
-      const count = cartItems.reduce((acc, item) => acc + item.quantity, 0)
-      updateTotalItems(count)
+    if (Cart) {
+      updateTotalItems(Cart.count)
+      updateSubtotal(Cart.subtotal)
+      updateDiscount(Cart.discount)
+      updateDelivery(Cart.delivery)
+      updateService(Cart.service)
+      updateTotal(Cart.total)
+      updateCouponCode(Cart.couponCode || '')
+      updateCouponDiscount(Cart.couponDiscount)
     }
-  }, [cartItems, updateTotalItems])
+  }, [Cart])
 
-  const totalItems = useCartStore((state) => state.totalItems)
+  const count = useCartStore((state) => state.count)
+  const subtotal = useCartStore((state) => state.subtotal)
+  const discount = useCartStore((state) => state.discount)
+  const delivery = useCartStore((state) => state.delivery)
+  const service = useCartStore((state) => state.service)
+  const total = useCartStore((state) => state.total)
+  const couponCode = useCartStore((state) => state.couponCode)
+  const couponDiscount = useCartStore((state) => state.couponDiscount)
 
   return {
-    cartItems,
+    cartItems: Cart?.items || [],
+    count,
+    subtotal,
+    discount,
+    delivery,
+    service,
+    total,
+    couponCode,
+    couponDiscount,
     isLoading,
     refetch,
     addToCart: addToCartMutation.mutate,
     updateCartItem: updateCartMutation.mutate,
     removeFromCart: removeFromCartMutation.mutate,
-    calculateTotal,
-    totalItems,
+    applyCoupon: applyCouponMutation.mutate,
     isAddingToCart: addToCartMutation.isPending,
     isUpdatingCart: updateCartMutation.isPending,
     isRemovingFromCart: removeFromCartMutation.isPending,
+    isApplyingCoupon: applyCouponMutation.isPending,
+    couponError: applyCouponMutation.error,
     error:
       addToCartMutation.error ||
       updateCartMutation.error ||
