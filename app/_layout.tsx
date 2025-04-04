@@ -64,7 +64,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
-        {/* <KeyboardProvider> */}
+        <KeyboardProvider>
         <StatusBar style='dark' />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name='index' />
@@ -76,7 +76,7 @@ export default function RootLayout() {
           <Stack.Screen name='store/[storeId]' />
           <Stack.Screen name='+not-found' />
         </Stack>
-        {/* </KeyboardProvider> */}
+        </KeyboardProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   )

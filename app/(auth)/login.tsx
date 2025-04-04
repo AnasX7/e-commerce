@@ -73,86 +73,86 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-        {/* <KeyboardAwareScrollView
-        bottomOffset={88}
-        className='flex-1'
-        contentContainerClassName='flex-grow'> */}
-        <View className='flex-1 justify-center items-center px-4'>
-          <Text className='text-2xl font-notoKufiArabic-bold leading-relaxed text-gray-800 mb-2'>
-            مرحبًا بعودتك
-          </Text>
-          <Text className='text-center font-notoKufiArabic leading-relaxed text-gray-600 mb-6'>
-            قم بتسجيل الدخول إلى حسابك للمتابعة
-          </Text>
+        <KeyboardAwareScrollView
+          bottomOffset={88}
+          className='flex-1'
+          contentContainerClassName='flex-grow'>
+          <View className='flex-1 justify-center items-center px-4'>
+            <Text className='text-2xl font-notoKufiArabic-bold leading-relaxed text-gray-800 mb-2'>
+              مرحبًا بعودتك
+            </Text>
+            <Text className='text-center font-notoKufiArabic leading-relaxed text-gray-600 mb-6'>
+              قم بتسجيل الدخول إلى حسابك للمتابعة
+            </Text>
 
-          <View className='w-full max-w-sm'>
-            {/* Email Input */}
-            <FormInput
-              label='البريد إلكتروني'
-              placeholder='أدخل بريدك الإلكتروني'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.email}
-              onChangeText={(text) => updateField('email', text)}
-              error={errors.email}
-              keyboardType='email-address'
-              autoCapitalize='none'
-              textAlign='right'
-            />
+            <View className='w-full max-w-sm'>
+              {/* Email Input */}
+              <FormInput
+                label='البريد إلكتروني'
+                placeholder='أدخل بريدك الإلكتروني'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.email}
+                onChangeText={(text) => updateField('email', text)}
+                error={errors.email}
+                keyboardType='email-address'
+                autoCapitalize='none'
+                textAlign='right'
+              />
 
-            {/* Password Input */}
-            <FormInput
-              label='كلمة المرور'
-              placeholder='إنشاء كلمة مرور'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.password}
-              onChangeText={(text) => updateField('password', text)}
-              error={errors.password}
-              secureTextEntry
-              textAlign='right'
-            />
+              {/* Password Input */}
+              <FormInput
+                label='كلمة المرور'
+                placeholder='إنشاء كلمة مرور'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.password}
+                onChangeText={(text) => updateField('password', text)}
+                error={errors.password}
+                secureTextEntry
+                textAlign='right'
+              />
 
-            {/* Forgot Password */}
-            <TouchableOpacity className='mb-6'>
-              <Text className='text-secondary-foreground text-left font-notoKufiArabic-light leading-relaxed'>
-                هل نسيت كلمة السر؟
-              </Text>
-            </TouchableOpacity>
+              {/* Forgot Password */}
+              <TouchableOpacity className='mb-6'>
+                <Text className='text-secondary-foreground text-left font-notoKufiArabic-light leading-relaxed'>
+                  هل نسيت كلمة السر؟
+                </Text>
+              </TouchableOpacity>
 
-            {/* Login Button */}
-            <TouchableOpacity
-              onPress={submitForm}
-              disabled={loading}
-              className={`py-3 px-8 rounded-xl w-full ${
-                loading ? 'bg-secondary' : 'bg-primary'
-              }`}>
-              <Text className='text-white font-notoKufiArabic-semiBold text-center'>
-                {loading ? (
-                  <View className='w-full flex-row justify-center'>
-                    <ActivityIndicator size='small' color='#fff' />
-                  </View>
-                ) : (
-                  'تسجيل الدخول'
-                )}
-              </Text>
-            </TouchableOpacity>
+              {/* Login Button */}
+              <TouchableOpacity
+                onPress={submitForm}
+                disabled={loading}
+                className={`py-3 px-8 rounded-xl w-full ${
+                  loading ? 'bg-secondary' : 'bg-primary'
+                }`}>
+                <Text className='text-white font-notoKufiArabic-semiBold text-center'>
+                  {loading ? (
+                    <View className='w-full flex-row justify-center'>
+                      <ActivityIndicator size='small' color='#fff' />
+                    </View>
+                  ) : (
+                    'تسجيل الدخول'
+                  )}
+                </Text>
+              </TouchableOpacity>
 
-            {/* Register Link */}
-            <View className='flex-row justify-center mt-6'>
-              <Text className='text-gray-600 font-notoKufiArabic-light leading-relaxed'>
-                ليس لديك حساب؟
-              </Text>
-              <Link href='/register' asChild>
-                <TouchableOpacity>
-                  <Text className='text-secondary-foreground font-notoKufiArabic-light leading-relaxed'>
-                    {' '}
-                    إنشاء حساب
-                  </Text>
-                </TouchableOpacity>
-              </Link>
+              {/* Register Link */}
+              <View className='flex-row justify-center mt-6'>
+                <Text className='text-gray-600 font-notoKufiArabic-light leading-relaxed'>
+                  ليس لديك حساب؟
+                </Text>
+                <Link href='/register' asChild>
+                  <TouchableOpacity>
+                    <Text className='text-secondary-foreground font-notoKufiArabic-light leading-relaxed'>
+                      {' '}
+                      إنشاء حساب
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
             </View>
           </View>
-        </View>
-        {/* </KeyboardAwareScrollView> */}
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   )

@@ -85,104 +85,106 @@ const RegisterScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-        {/* <KeyboardAwareScrollView
-        bottomOffset={88}
-        className='flex-1'
-        contentContainerClassName='flex-grow'> */}
-        <View className='flex-1 justify-center items-center px-4 pb-6'>
-          <Text className='text-2xl font-notoKufiArabic-bold leading-relaxed text-gray-800 mb-2'>
-            إنشاء حساب
-          </Text>
-          <Text className='text-center font-notoKufiArabic leading-relaxed text-gray-600 mb-6'>
-            سجل الآن للبدء في استخدام تطبيقنا
-          </Text>
+        <KeyboardAwareScrollView
+          bottomOffset={88}
+          className='flex-1'
+          contentContainerClassName='flex-grow'>
+          <View className='flex-1 justify-center items-center px-4 pb-6'>
+            <Text className='text-2xl font-notoKufiArabic-bold leading-relaxed text-gray-800 mb-2'>
+              إنشاء حساب
+            </Text>
+            <Text className='text-center font-notoKufiArabic leading-relaxed text-gray-600 mb-6'>
+              سجل الآن للبدء في استخدام تطبيقنا
+            </Text>
 
-          <View className='w-full max-w-sm'>
-            {/* Name Input */}
-            <FormInput
-              label='الاسم الكامل'
-              placeholder='أدخل اسمك الكامل'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.name}
-              onChangeText={(text) => updateField('name', text)}
-              error={errors.name}
-              autoCapitalize='words'
-              textAlign='right'
-            />
+            <View className='w-full max-w-sm'>
+              {/* Name Input */}
+              <FormInput
+                label='الاسم الكامل'
+                placeholder='أدخل اسمك الكامل'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.name}
+                onChangeText={(text) => updateField('name', text)}
+                error={errors.name}
+                autoCapitalize='words'
+                textAlign='right'
+              />
 
-            {/* Email Input */}
-            <FormInput
-              label='البريد إلكتروني'
-              placeholder='أدخل بريدك الإلكتروني'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.email}
-              onChangeText={(text) => updateField('email', text)}
-              error={errors.email}
-              keyboardType='email-address'
-              autoCapitalize='none'
-              textAlign='right'
-            />
+              {/* Email Input */}
+              <FormInput
+                label='البريد إلكتروني'
+                placeholder='أدخل بريدك الإلكتروني'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.email}
+                onChangeText={(text) => updateField('email', text)}
+                error={errors.email}
+                keyboardType='email-address'
+                autoCapitalize='none'
+                textAlign='right'
+              />
 
-            {/* Password Input */}
-            <FormInput
-              label='كلمة المرور'
-              placeholder='إنشاء كلمة مرور'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.password}
-              onChangeText={(text) => updateField('password', text)}
-              error={errors.password}
-              secureTextEntry
-              textAlign='right'
-            />
+              {/* Password Input */}
+              <FormInput
+                label='كلمة المرور'
+                placeholder='إنشاء كلمة مرور'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.password}
+                onChangeText={(text) => updateField('password', text)}
+                error={errors.password}
+                secureTextEntry
+                textAlign='right'
+              />
 
-            {/* Confirm Password Input */}
-            <FormInput
-              label='تأكيد كلمة المرور'
-              placeholder='تأكيد كلمة المرور الخاصة بك'
-              placeholderTextColor={Colors.text.quaternary}
-              value={formData.passwordConfirmation}
-              onChangeText={(text) => updateField('passwordConfirmation', text)}
-              error={errors.passwordConfirmation}
-              secureTextEntry
-              containerClassName='mb-6'
-              textAlign='right'
-            />
+              {/* Confirm Password Input */}
+              <FormInput
+                label='تأكيد كلمة المرور'
+                placeholder='تأكيد كلمة المرور الخاصة بك'
+                placeholderTextColor={Colors.text.quaternary}
+                value={formData.passwordConfirmation}
+                onChangeText={(text) =>
+                  updateField('passwordConfirmation', text)
+                }
+                error={errors.passwordConfirmation}
+                secureTextEntry
+                containerClassName='mb-6'
+                textAlign='right'
+              />
 
-            {/* Register Button */}
-            <TouchableOpacity
-              onPress={submitForm}
-              disabled={loading}
-              className={`py-3 px-8 rounded-xl w-full ${
-                loading ? 'bg-secondary' : 'bg-primary'
-              }`}>
-              <Text className='text-white font-notoKufiArabic-semiBold text-center'>
-                {loading ? (
-                  <View className='w-full flex-row justify-center'>
-                    <ActivityIndicator size='small' color='#fff' />
-                  </View>
-                ) : (
-                  'إنشاء حساب'
-                )}
-              </Text>
-            </TouchableOpacity>
+              {/* Register Button */}
+              <TouchableOpacity
+                onPress={submitForm}
+                disabled={loading}
+                className={`py-3 px-8 rounded-xl w-full ${
+                  loading ? 'bg-secondary' : 'bg-primary'
+                }`}>
+                <Text className='text-white font-notoKufiArabic-semiBold text-center'>
+                  {loading ? (
+                    <View className='w-full flex-row justify-center'>
+                      <ActivityIndicator size='small' color='#fff' />
+                    </View>
+                  ) : (
+                    'إنشاء حساب'
+                  )}
+                </Text>
+              </TouchableOpacity>
 
-            {/* Login Link */}
-            <View className='flex-row justify-center mt-6'>
-              <Text className='text-gray-600 font-notoKufiArabic-light leading-relaxed'>
-                هل لديك حساب بالفعل؟
-              </Text>
-              <Link href='/login' asChild>
-                <TouchableOpacity>
-                  <Text className='text-secondary-foreground font-notoKufiArabic-light leading-relaxed'>
-                    {' '}
-                    تسجيل الدخول
-                  </Text>
-                </TouchableOpacity>
-              </Link>
+              {/* Login Link */}
+              <View className='flex-row justify-center mt-6'>
+                <Text className='text-gray-600 font-notoKufiArabic-light leading-relaxed'>
+                  هل لديك حساب بالفعل؟
+                </Text>
+                <Link href='/login' asChild>
+                  <TouchableOpacity>
+                    <Text className='text-secondary-foreground font-notoKufiArabic-light leading-relaxed'>
+                      {' '}
+                      تسجيل الدخول
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
             </View>
           </View>
-        </View>
-        {/* </KeyboardAwareScrollView> */}
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   )
