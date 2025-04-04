@@ -37,22 +37,22 @@ const menuItems: MenuItems[] = [
   },
   {
     id: 2,
-    route: '/new-orders',
+    route: '/orders',
     title: 'طلباتي',
     icon: (
       <Ionicons name='bag-check-outline' size={22} color={Colors.primary} />
     ),
     auth: true,
   },
-  {
-    id: 3,
-    route: '/returns',
-    title: 'المرتجعات',
-    icon: (
-      <Ionicons name='arrow-undo-outline' size={22} color={Colors.primary} />
-    ),
-    auth: true,
-  },
+  // {
+  //   id: 3,
+  //   route: '/returns',
+  //   title: 'المرتجعات',
+  //   icon: (
+  //     <Ionicons name='arrow-undo-outline' size={22} color={Colors.primary} />
+  //   ),
+  //   auth: true,
+  // },
   {
     id: 4,
     route: '/locations',

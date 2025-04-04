@@ -8,8 +8,8 @@ import {
 import { useForm } from '@/hooks/useForm'
 import { useCart } from '@/hooks/useCart'
 import { z } from 'zod'
-import PriceRow from '@/components/cart/PriceRow'
 import { Colors } from '@/constants/colors'
+import PriceBreakdown from '@/components/store/PriceBreakdown'
 
 type ListFooterProps = {
   storeId: number
@@ -85,42 +85,16 @@ const ListFooter = ({ storeId, currency }: ListFooterProps) => {
       </View>
 
       {/* Price Breakdown */}
-      <View className='gap-y-3'>
-        <Text className='font-notoKufiArabic-extraBold leading-loose text-gray-800 text-xl text-left'>
-          ملخّص الدفع
-        </Text>
-        <PriceRow
-          label='المجموع الفرعي'
-          value={subtotal}
-          symbol={currencySymbol}
-        />
-        <PriceRow
-          label='رسوم التوصيل'
-          value={delivery}
-          symbol={currencySymbol}
-        />
-        <PriceRow label='رسوم الخدمة' value={service} symbol={currencySymbol} />
-
-        {couponDiscount > 0 && (
-          <View className='flex-row justify-between items-center'>
-            <Text className='font-notoKufiArabic text-gray-600'>
-              خصم الكوبون ({couponCode} {couponDiscount}%)
-            </Text>
-            <Text className='font-notoKufiArabic-bold text-green-600'>
-              {discount} {currencySymbol}
-            </Text>
-          </View>
-        )}
-
-        <View className='border-t border-gray-200 pt-3 mt-2'>
-          <PriceRow
-            label='المبلغ الإجمالي'
-            value={total}
-            symbol={currencySymbol}
-            isTotal
-          />
-        </View>
-      </View>
+      <PriceBreakdown
+        subtotal={subtotal}
+        delivery={delivery}
+        service={service}
+        total={total}
+        currencySymbol={currencySymbol}
+        couponCode={couponCode}
+        couponDiscount={couponDiscount}
+        discount={discount}
+      />
     </View>
   )
 }

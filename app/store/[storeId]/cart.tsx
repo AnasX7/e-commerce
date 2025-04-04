@@ -6,7 +6,7 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { FlashList } from '@shopify/flash-list'
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'

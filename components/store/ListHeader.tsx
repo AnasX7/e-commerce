@@ -12,8 +12,8 @@ type ListHeaderProps = {
 }
 
 const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
-  const bannerImageURL = useFullPath(data.banner)
-  const storeImageURL = useFullPath(data.image)
+  const bannerImageURL = useFullPath(data?.banner)
+  const storeImageURL = useFullPath(data?.image)
 
   const renderTab = useCallback(
     ({ item: tab }: { item: category }) => (

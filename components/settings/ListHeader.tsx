@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router'
 import { User } from '@/types/user'
 
 type ListHeaderProps = {
-  user: User
+  user:  Record<string, any> | null
   isAuthenticated: boolean
 }
 
