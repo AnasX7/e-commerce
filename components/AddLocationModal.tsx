@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import Modal from 'react-native-modal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

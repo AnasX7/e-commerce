@@ -34,24 +34,24 @@ axios.interceptors.request.use(
 // Response interceptor with enhanced error handling
 axios.interceptors.response.use(
   (response) => {
-    console.log('Response received:', {
-      status: response.status,
-      data: response.data,
-      headers: response.headers,
-    })
+    // console.log('Response received:', {
+    //   status: response.status,
+    //   data: response.data,
+    //   headers: response.headers,
+    // })
     return response
   },
   async (error) => {
-    console.log('API Error:', {
-      message: error.message,
-      code: error.code,
-      config: {
-        url: error.config?.url,
-        method: error.config?.method,
-        baseURL: error.config?.baseURL,
-      },
-      response: error.response?.data,
-    })
+    // console.log('API Error:', {
+    //   message: error.message,
+    //   code: error.code,
+    //   config: {
+    //     url: error.config?.url,
+    //     method: error.config?.method,
+    //     baseURL: error.config?.baseURL,
+    //   },
+    //   response: error.response?.data,
+    // })
 
     const originalRequest = error.config
 

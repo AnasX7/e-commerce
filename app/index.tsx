@@ -21,7 +21,6 @@ import Animated, {
 } from 'react-native-reanimated'
 import * as SecureStore from 'expo-secure-store'
 
-
 const WelcomeScreen = () => {
   const router = useRouter()
   const opacity = useSharedValue(0)

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useLocationStore } from '@/stores/LocationStore'
 import { useAuth } from '@/hooks/useAuth'
@@ -11,8 +11,12 @@ type LocationPickerProps = {
   theme?: 'light' | 'dark'
 }
 const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
-  const { mainLocation } = useLocationStore()
+  const mainLocation = useLocationStore((state) => state.mainLocation)
   const router = useRouter()
+
+  useEffect(() => {
+    console.info('Main location updated:', mainLocation);
+  }, [mainLocation]);
 
   const { isAuthenticated } = useAuth({
     middleware: 'guest',
