@@ -11,7 +11,7 @@ export const searchProducts = async (
       if (value) queryParams.append(key, value)
     })
     const response = await axios.get(`/api/search?${queryParams.toString()}`)
-    console.log('response:', response)
+    // console.log('response:', response)
     return response.data
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error)

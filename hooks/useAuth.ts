@@ -89,7 +89,7 @@ export const useAuth = ({
     try {
       const response = await axios.post('/api/register', props)
 
-      console.log('Register success response:', response.data)
+      // console.log('Register success response:', response.data)
 
       if (response.data.token) {
         await storeToken(response.data.token)
@@ -149,7 +149,7 @@ export const useAuth = ({
     try {
       const response = await axios.post('/api/login', props)
 
-      console.log('Login success response:', response.data)
+      // console.log('Login success response:', response.data)
 
       if (response.data.token) {
         await storeToken(response.data.token)
@@ -191,7 +191,7 @@ export const useAuth = ({
 
     try {
       const response = await axios.post('/api/forgot-password', { email })
-      console.log('forgotPassword success response:', response.data)
+      // console.log('forgotPassword success response:', response.data)
     } catch (err: any) {
       if (err.response) {
         // Handle validation errors (422)
@@ -239,7 +239,7 @@ export const useAuth = ({
 
     try {
       const response = await axios.put('/api/reset-password', props)
-      console.log('ResetPassword success response:', response.data)
+      // console.log('ResetPassword success response:', response.data)
       logout()
     } catch (err: any) {
       // Handle validation errors (422)
@@ -382,12 +382,12 @@ export const useAuth = ({
   }, [user, userError, isInitialized])
 
   // Add debug logs
-  useEffect(() => {
-    console.log('Auth State:', {
-      token: !!token,
-      isInitialized,
-    })
-  }, [token, isInitialized])
+  // useEffect(() => {
+  //   console.log('Auth State:', {
+  //     token: !!token,
+  //     isInitialized,
+  //   })
+  // }, [token, isInitialized])
 
   return {
     user,

@@ -1,7 +1,7 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useRouter } from 'expo-router'
-
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { ProductItem } from '@/types/product'
 import ProductCard from '@/components/home/ProductCard'
 import { useCallback } from 'react'
@@ -24,7 +24,7 @@ const ProuductsSlider = ({ title, data, sort }: ProductsSliderProps) => {
     performSearch()
   }, [router, setFilters, performSearch])
 
-  const renderItem = ({ item }: { item: ProductItem }) => (
+  const renderItem = ({ item }: LegendListRenderItemProps<ProductItem>) => (
     <ProductCard item={item} />
   )
 
@@ -42,13 +42,20 @@ const ProuductsSlider = ({ title, data, sort }: ProductsSliderProps) => {
         </TouchableOpacity>
       </View>
       {/* Products list */}
-      <FlatList
+      <LegendList
         data={data}
-        keyExtractor={(item) => item.productID}
         renderItem={renderItem}
+        keyExtractor={(item) => item.productID}
+        recycleItems
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName='w-full py-2 px-2 gap-3'
+        style={{ height: 274 }}
+        contentContainerStyle={{
+          width: '100%',
+          paddingHorizontal: 8,
+          paddingVertical: 8,
+          gap: 8,
+        }}
       />
     </View>
   )

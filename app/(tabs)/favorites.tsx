@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { getAllFavorites } from '@/services/favorites'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { ProductItem } from '@/types/product'
 import { useEffect } from 'react'
 import { useCallback, useState } from 'react'
@@ -38,7 +38,7 @@ const FavoritesScreen = () => {
   const { setFavorites } = useFavoritesStore()
   const queryClient = useQueryClient()
 
-  const { data, isLoading, refetch } = useQuery<ProductItem[]>({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['favorites'],
     queryFn: getAllFavorites,
     enabled: isAuthenticated,
@@ -103,16 +103,19 @@ const FavoritesScreen = () => {
           </Text>
         </View>
       ) : (
-        <FlashList
+        <LegendList
           data={data}
-          keyExtractor={(item) => item.productID.toString()}
-          renderItem={({ item }: { item: ProductItem }) => (
+          renderItem={({ item }: LegendListRenderItemProps<ProductItem>) => (
             <HorizontalProductCard item={item} />
           )}
-          estimatedItemSize={192}
-          className='flex-1'
-          contentContainerClassName='pb-4 py-4'
+          keyExtractor={(item) => item.productID.toString()}
+          recycleItems
           showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingVertical: 16,
+          }}
+          maintainVisibleContentPosition
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

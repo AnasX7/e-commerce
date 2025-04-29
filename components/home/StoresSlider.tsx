@@ -1,6 +1,7 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import StoreCard from '@/components/home/StoreCard'
 import { StoreCardType } from '@/types/store'
 
@@ -23,7 +24,7 @@ const StoresSlider = ({ title, data }: StoresProps) => {
   )
 
   const renderItem = useCallback(
-    ({ item }: { item: StoreCardType }) => (
+    ({ item }: LegendListRenderItemProps<StoreCardType>) => (
       <StoreCard key={item.id} item={item} onPress={handleStorePress} />
     ),
     [handleStorePress]
@@ -41,13 +42,20 @@ const StoresSlider = ({ title, data }: StoresProps) => {
           </Text>
         </TouchableOpacity> */}
       </View>
-      <FlatList
+      <LegendList
         data={data}
-        keyExtractor={(item) => item.id?.toString() ?? `store-${Math.random()}`}
         renderItem={renderItem}
+        keyExtractor={(item) => item.id?.toString() ?? `store-${Math.random()}`}
+        recycleItems
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName='w-full py-2 px-2 gap-3'
+        style={{ height: 96 }}
+        contentContainerStyle={{
+          width: '100%',
+          paddingHorizontal: 8,
+          paddingVertical: 8,
+          gap: 8,
+        }}
       />
     </View>
   )

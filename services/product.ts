@@ -3,7 +3,7 @@ import { axios } from '@/lib/axios'
 export const fetchProducts = async (take: number) => {
   try {
     const response = await axios.get(`/api/products/${take}`)
-    console.log('response:', response)
+    // console.log('response:', response)
     return response.data
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error)

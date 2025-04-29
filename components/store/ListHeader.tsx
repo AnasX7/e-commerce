@@ -1,5 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { useCallback } from 'react'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { Image } from 'expo-image'
 import { useFullPath } from '@/hooks/useFullPath'
 import { category, Store } from '@/types/store'
@@ -16,7 +17,7 @@ const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
   const storeImageURL = useFullPath(data?.image)
 
   const renderTab = useCallback(
-    ({ item: tab }: { item: category }) => (
+    ({ item: tab }: LegendListRenderItemProps<category>) => (
       <TouchableOpacity
         key={tab.id}
         className={`pb-2 ${
@@ -94,13 +95,15 @@ const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
 
       {/* Category Tabs */}
       <View className='mt-6 px-4'>
-        <FlatList
+        <LegendList
           data={data.categories}
           renderItem={renderTab}
           keyExtractor={(item) => item.id.toString()}
+          recycleItems
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName='w-full gap-4'
+          style={{ height: 32 }}
+          contentContainerStyle={{ width: '100%', gap: '16' }}
         />
       </View>
     </View>

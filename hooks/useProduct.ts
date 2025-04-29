@@ -157,15 +157,13 @@ export const useProduct = ({ item }: UseProductProps) => {
   })
 
   const handleCardPress = useCallback(() => {
-    console.info('(press) handleCardPress')
     if (!item?.productID || !item?.storeID) return
-
+    
     router.push({
       pathname: '/store/[storeId]/product/[productId]',
       params: { storeId: item.storeID, productId: item.productID },
     })
 
-    console.info('(sucess) handleCardPress')
   }, [router, item])
 
   const handleLikePress = useCallback(() => {

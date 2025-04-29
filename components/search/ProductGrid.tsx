@@ -1,5 +1,6 @@
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { SearchProduct } from '@/types/search'
+import { ProductItem } from '@/types/product'
 import HorizontalProductCard from '@/components/HorizontalProductCard'
 import SearchForProductMessage from '@/components/search/SearchForProductMessage'
 import { View } from 'moti'
@@ -16,14 +17,16 @@ export const ProductGrid = ({ products }: ProductGridProps) => {
           <SearchForProductMessage />
         </View>
       ) : (
-        <FlashList
+        <LegendList
           data={products}
+          renderItem={({ item }: LegendListRenderItemProps<ProductItem>) => (
+            <HorizontalProductCard item={item} />
+          )}
           keyExtractor={(item) => item.productID}
-          estimatedItemSize={192}
-          className='flex-1'
-          contentContainerClassName='pt-2 pb-4'
+          recycleItems
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <HorizontalProductCard item={item} />}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
         />
       )}
     </>

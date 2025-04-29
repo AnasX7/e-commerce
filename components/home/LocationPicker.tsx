@@ -14,10 +14,6 @@ const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
   const mainLocation = useLocationStore((state) => state.mainLocation)
   const router = useRouter()
 
-  useEffect(() => {
-    console.info('Main location updated:', mainLocation);
-  }, [mainLocation]);
-
   const { isAuthenticated } = useAuth({
     middleware: 'guest',
   })

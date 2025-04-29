@@ -7,7 +7,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import { useCallback, useState } from 'react'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
@@ -106,7 +106,18 @@ const StoreScreen = () => {
           <ActivityIndicator size='large' color={Colors.primary} />
         </View>
       ) : (
-        <FlashList
+        <LegendList
+          data={products}
+          renderItem={({ item }: LegendListRenderItemProps<ProductItem>) => (
+            <HorizontalProductCard item={item} />
+          )}
+          keyExtractor={(item) => item.productID.toString()}
+          ListHeaderComponent={listHeaderComponent}
+          ListEmptyComponent={<NoProductsMessage />}
+          recycleItems
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 16 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -114,17 +125,6 @@ const StoreScreen = () => {
               tintColor={Colors.primary}
             />
           }
-          data={products}
-          renderItem={({ item }: { item: ProductItem }) => (
-            <HorizontalProductCard item={item} />
-          )}
-          keyExtractor={(item) => item.productID.toString()}
-          ListHeaderComponent={listHeaderComponent}
-          estimatedItemSize={192}
-          ListEmptyComponent={<NoProductsMessage />}
-          className='flex-1'
-          contentContainerClassName='pb-4'
-          showsVerticalScrollIndicator={false}
         />
       )}
 

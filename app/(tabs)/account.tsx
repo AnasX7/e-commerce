@@ -5,16 +5,14 @@ import {
   SafeAreaView,
   TouchableOpacity,
   StatusBar,
-  RefreshControl,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Href, useFocusEffect, useRouter } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import ListHeader from '@/components/settings/ListHeader'
 import ListFooter from '@/components/settings/ListFooter'
 import { useAuth } from '@/hooks/useAuth'
-import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import { Colors } from '@/constants/colors'
 import AuthModal from '@/components/AuthModal'
 import AccountScreenSkeleton from '@/components/skeletons/AccountScreenSkeleton'
@@ -89,36 +87,26 @@ const menuItems: MenuItems[] = [
 ]
 
 const AccountScreen = () => {
-  const [refreshing, setRefreshing] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState<
-  (typeof menuItems)[0] | null
+    (typeof menuItems)[0] | null
   >(null)
-  
+
   const router = useRouter()
-  
+
   const { user, isAuthenticated, isLoading, refetch, logout } = useAuth({
     middleware: 'guest',
   })
-  
+
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content')
     }, [])
   )
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    await refetch()
-    setRefreshing(false)
-  }, [refetch])
-
-  // Refresh on screen focus
-  useRefreshOnFocus(onRefresh)
-
   const ListHeaderComponent = useCallback(
     () => <ListHeader user={user} isAuthenticated={isAuthenticated} />,
-    [user, isAuthenticated, onRefresh]
+    [user, isAuthenticated]
   )
 
   const ListFooterComponent = useCallback(
@@ -139,7 +127,7 @@ const AccountScreen = () => {
   )
 
   const renderItem = useCallback(
-    ({ item }: { item: MenuItems }) => (
+    ({ item }: LegendListRenderItemProps<MenuItems>) => (
       <TouchableOpacity
         key={item.id}
         onPress={() => handelPress(item)}
@@ -164,23 +152,16 @@ const AccountScreen = () => {
         {isLoading ? (
           <AccountScreenSkeleton />
         ) : (
-          <FlashList
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                tintColor={Colors.primary}
-                enabled={isAuthenticated}
-              />
-            }
+          <LegendList
             data={menuItems}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             ListHeaderComponent={ListHeaderComponent}
             ListFooterComponent={ListFooterComponent}
-            estimatedItemSize={50}
-            contentContainerClassName='pb-4'
+            recycleItems
             showsVerticalScrollIndicator={false}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
           />
         )}
         <AuthModal

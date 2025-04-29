@@ -17,12 +17,12 @@ axios.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
-      console.log('Request Details:', {
-        method: config.method?.toUpperCase(),
-        url: `${config.baseURL || ''}${config.url || ''}`,
-        headers: config.headers,
-        data: config.data,
-      })
+      // console.log('Request Details:', {
+      //   method: config.method?.toUpperCase(),
+      //   url: `${config.baseURL || ''}${config.url || ''}`,
+      //   headers: config.headers,
+      //   data: config.data,
+      // })
     } catch (error) {
       console.error('Error retrieving auth token:', error)
     }
