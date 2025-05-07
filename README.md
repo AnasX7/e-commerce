@@ -1,4 +1,4 @@
-# E-commerce Expo App
+# E-commerce Expo App 🚀
 
 Welcome to the E-commerce Expo app project! This application is built with [Expo](https://expo.dev) using [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -18,7 +18,7 @@ Follow these steps to install and open the project:
    Make sure you have [Node.js](https://nodejs.org/) Then run:
 
    ```bash
-   npx expo install
+   npm install
    ```
 
 3. **Start the Development Server**
@@ -26,23 +26,27 @@ Follow these steps to install and open the project:
    For Android:
 
    ```bash
-   expo run:android
+   npx expo run:android
    ```
 
    For iOS:
 
    ```bash
-   expo run:ios
+   npx expo run:ios
    ```
 
    For Web:
 
    ```bash
-   expo start --web
+   npx expo start --web
    ```
 
 4. **Open the App**
 
    You can open the app using the Expo Go app on your phone or an emulator/simulator on your computer.
+
+   ```bash
+   npx expo start
+   ```
 
 That's it! You are now ready to start working with the E-commerce Expo app.
