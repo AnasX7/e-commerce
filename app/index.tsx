@@ -19,7 +19,6 @@ import Animated, {
   FadeIn,
   FadeInDown,
 } from 'react-native-reanimated'
-import * as SecureStore from 'expo-secure-store'
 
 const WelcomeScreen = () => {
   const router = useRouter()
@@ -34,12 +33,7 @@ const WelcomeScreen = () => {
   }
 
   useEffect(() => {
-    // const clearAllStorage = async () => {
-    //   await AsyncStorage.clear()
-    //   await SecureStore.deleteItemAsync('auth_token')
-    // }
     setMounted(true)
-    // clearAllStorage()
   }, [])
 
   useEffect(() => {

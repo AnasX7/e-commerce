@@ -19,6 +19,7 @@ interface CartStore {
   updateTotal: (total: number) => void
   updateCouponCode: (couponCode: string) => void
   updateCouponDiscount: (couponDiscount: number) => void
+  clearItems: () => void
 }
 
 export const useCartStore = create<CartStore>((set) => ({
@@ -39,4 +40,6 @@ export const useCartStore = create<CartStore>((set) => ({
   updateTotal: (total) => set({ total }),
   updateCouponCode: (couponCode) => set({ couponCode }),
   updateCouponDiscount: (couponDiscount) => set({ couponDiscount }),
+  clearItems: () => set({ items: {}, count: 0, subtotal: 0, discount: 0, delivery: 0, service: 0, total: 0 }),
 }))
+

@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useAuth } from '@/hooks/useAuth'
@@ -16,7 +15,7 @@ const AccountInfo = () => {
     redirectIfAuthenticated: '/(tabs)/home',
   })
 
-  const handleDeleteAccount = useCallback(() => {
+  const handleDeleteAccount = () => {
     Alert.alert(
       'حذف الحساب',
       'هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
@@ -41,7 +40,7 @@ const AccountInfo = () => {
         },
       ]
     )
-  }, [deleteAccount])
+  }
 
   if (isLoading) return <AccountInfoSkeleton />
   if (!user) return null

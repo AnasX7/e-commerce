@@ -6,7 +6,6 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native'
-import { useState, useCallback } from 'react'
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router'
 import { useCart } from '@/hooks/useCart'
 import { useOrder } from '@/hooks/useOrder'
@@ -20,11 +19,9 @@ const checkout = () => {
   const { storeId } = useLocalSearchParams()
   const router = useRouter()
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   const {
     cartItems,
@@ -39,9 +36,9 @@ const checkout = () => {
 
   const { checkout, isLoading } = useOrder()
 
-  const handleCheckout = useCallback(() => {
+  const handleCheckout = () => {
     checkout(+storeId)
-  }, [storeId, checkout])
+  }
 
   const currency = cartItems?.[0]?.currency
   const currencySymbol =

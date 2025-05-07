@@ -362,7 +362,6 @@ export const useAuth = ({
 
     // Quick check using token first
     if (middleware === 'guest' && redirectIfAuthenticated && !!token) {
-      console.log('(token) Redirecting to:', redirectIfAuthenticated)
       router.dismissAll()
       router.push(redirectIfAuthenticated)
       return

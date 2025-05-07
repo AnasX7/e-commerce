@@ -1,14 +1,16 @@
+import { RefObject } from 'react'
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
-import Modal from 'react-native-modal'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
+import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
-import { updateLocation } from '@/services/location'
+import { addLocation } from '@/services/location'
 import { useForm } from '@/hooks/useForm'
-import { useLocationStore } from '@/stores/LocationStore'
 import FormInput from '@/components/FormInput'
-import { Location } from '@/types/location'
+import { Colors } from '@/constants/colors'
+import { Sheet } from '@/components/ui/Sheet'
 
+// Define validation schema
 const locationSchema = z.object({
   phoneNumber: z
     .string()
@@ -20,79 +22,60 @@ const locationSchema = z.object({
 
 type LocationFormData = z.infer<typeof locationSchema>
 
-interface EditLocationModalProps {
-  visible: boolean
-  onClose: () => void
-  location: Location
+type AddLocationModalProps = {
+  ref: RefObject<BottomSheetModal | null>
 }
 
-const EditLocationModal = ({
-  visible,
-  onClose,
-  location,
-}: EditLocationModalProps) => {
+const AddLocationModal = ({ ref }: AddLocationModalProps) => {
   const queryClient = useQueryClient()
-  const setMainLocation = useLocationStore((s) => s.setMainLocation)
 
   const { formData, errors, updateField, validateForm, setFormData } =
     useForm<LocationFormData>({
       initialData: {
-        phoneNumber: location.phoneNumber,
-        country: location.country,
-        location: location.location,
+        phoneNumber: '',
+        country: '',
+        location: '',
       },
       schema: locationSchema,
     })
 
-  const updateMutation = useMutation({
-    mutationFn: (data: LocationFormData) => updateLocation(location.id, data),
-    onSuccess: (updated: Location) => {
+  const addMutation = useMutation({
+    mutationFn: addLocation,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] })
-      setMainLocation(updated)
-      onClose()
+      setFormData({
+        phoneNumber: '',
+        country: '',
+        location: '',
+      })
+      ref.current?.close()
     },
   })
 
   const handleSubmit = () => {
     if (validateForm()) {
-      updateMutation.mutate(formData)
+      addMutation.mutate(formData)
     }
   }
 
   return (
-    <Modal
-      isVisible={visible}
-      onBackdropPress={onClose}
-      onSwipeComplete={onClose}
-      style={{ justifyContent: 'flex-end', margin: 0 }}
-      animationIn='slideInUp'
-      animationOut='slideOutDown'
-      swipeDirection='down'
-      backdropOpacity={0.2}
-      animationInTiming={300}
-      animationOutTiming={300}
-      useNativeDriver
-      useNativeDriverForBackdrop
-      hideModalContentWhileAnimating>
-      <View className='bg-white rounded-t-3xl pb-safe'>
-        <View className='p-6'>
-          <KeyboardAwareScrollView
-            bottomOffset={88}
-            className='flex-1'
-            contentContainerClassName='flex-grow'>
-          <View className='items-center mb-6'>
-            <View className='w-16 h-1 bg-gray-300 rounded-full' />
-          </View>
-
+    <Sheet ref={ref} snapPoints={[500]}>
+      <BottomSheetView className='flex-1 justify-center px-6 pb-16'>
+        <KeyboardAwareScrollView
+          bottomOffset={88}
+          className='flex-1'
+          contentContainerClassName='flex-grow'>
           <Text className='text-xl font-notoKufiArabic-bold text-center mb-6'>
-            تعديل العنوان
+            إضافة عنوان جديد
           </Text>
 
-          <View className='space-y-4'>
+          <View className='gap-y-4'>
             <FormInput
               label='رقم الهاتف'
               value={formData.phoneNumber}
               onChangeText={(text) => updateField('phoneNumber', text)}
+              placeholder='أدخل رقم الهاتف'
+              placeholderTextColor={Colors.text.quaternary}
               keyboardType='phone-pad'
               error={errors.phoneNumber}
               textAlign='right'
@@ -102,6 +85,8 @@ const EditLocationModal = ({
               label='الدولة'
               value={formData.country}
               onChangeText={(text) => updateField('country', text)}
+              placeholder='أدخل اسم الدولة'
+              placeholderTextColor={Colors.text.quaternary}
               error={errors.country}
               textAlign='right'
             />
@@ -110,6 +95,8 @@ const EditLocationModal = ({
               label='العنوان'
               value={formData.location}
               onChangeText={(text) => updateField('location', text)}
+              placeholder='أدخل العنوان بالتفصيل'
+              placeholderTextColor={Colors.text.quaternary}
               error={errors.location}
               textAlign='right'
             />
@@ -117,7 +104,7 @@ const EditLocationModal = ({
 
           <View className='flex-row gap-4 mt-6'>
             <TouchableOpacity
-              onPress={onClose}
+              onPress={() => ref.current?.close()}
               className='flex-1 py-3 bg-gray-100 rounded-xl'>
               <Text className='text-center font-notoKufiArabic text-gray-600'>
                 إلغاء
@@ -126,22 +113,21 @@ const EditLocationModal = ({
 
             <TouchableOpacity
               onPress={handleSubmit}
-              disabled={updateMutation.isPending}
+              disabled={addMutation.isPending}
               className='flex-1 py-3 rounded-xl bg-primary items-center justify-center'>
-              <Text className='text-center font-notoKufiArabic text-white'>
-                {updateMutation.isPending ? (
-                  <ActivityIndicator size='small' color='#fff' />
-                ) : (
-                  'تحديث'
-                )}
-              </Text>
+              {addMutation.isPending ? (
+                <ActivityIndicator size='small' color='#fff' />
+              ) : (
+                <Text className='text-center font-notoKufiArabic text-white'>
+                  إضافة
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
-          </KeyboardAwareScrollView>
-        </View>
-      </View>
-    </Modal>
+        </KeyboardAwareScrollView>
+      </BottomSheetView>
+    </Sheet>
   )
 }
 
-export default EditLocationModal
+export default AddLocationModal

@@ -1,7 +1,6 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'expo-router'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Product, ProductItem } from '@/types/product'
 import {
   useSharedValue,
   withSequence,
@@ -14,6 +13,8 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { useFavoritesStore } from '@/stores/FavoritesStore'
 import { useFullPath } from '@/hooks/useFullPath'
+import { useSheetRef } from '@/components/ui/Sheet'
+import { Product, ProductItem } from '@/types/product'
 import { CartItem } from '@/types/cart'
 
 type UseProductProps = {
@@ -25,17 +26,19 @@ export const useProduct = ({ item }: UseProductProps) => {
   const queryClient = useQueryClient()
   const scale = useSharedValue(1)
   const { isAuthenticated } = useAuth({ middleware: 'guest' })
-  const [showAuthModal, setShowAuthModal] = useState(false)
+  // const [showAuthModal, setShowAuthModal] = useState(false)
   const { setLiked, isLiked } = useFavoritesStore()
 
+  const bottomSheetModalRef = useSheetRef()
+
   // Get the image URL based on item type
-  const getImageUrl = useCallback(() => {
+  const getImageUrl = () => {
     if (!item) return ''
     if ('image' in item) {
       return useFullPath(item.image)
     }
     return useFullPath(item.images[0])
-  }, [item])
+  }
 
   // Initialize store with item's initial liked state
   useEffect(() => {
@@ -45,56 +48,52 @@ export const useProduct = ({ item }: UseProductProps) => {
   }, [item?.productID, item?.isLiked, setLiked])
 
   // Update all related queries with new isLiked state
-  const updateProductInQueries = useCallback(
-    (newIsLikedState: boolean) => {
-      if (!item?.productID) return
+  const updateProductInQueries = (newIsLikedState: boolean) => {
+    if (!item?.productID) return
 
-      // Update favorites first
-      queryClient.setQueryData(['favorites'], (old: ProductItem[] = []) => {
-        if (newIsLikedState) {
-          if (!item) return old
-          const favoriteItem: ProductItem = {
-            productID: item.productID,
-            name: item.name,
-            storeID: item.storeID,
-            storeName: item.storeName,
-            price: item.price,
-            currency: item.currency,
-            discount: item.discount,
-            averageRating: item.averageRating,
-            isLiked: true,
-            image: getImageUrl(),
-          }
-          return old.some((p) => p.productID === item.productID)
-            ? old
-            : [...old, favoriteItem]
-        } else {
-          return old.filter((p) => p.productID !== item.productID)
+    // Update favorites first
+    queryClient.setQueryData(['favorites'], (old: ProductItem[] = []) => {
+      if (newIsLikedState) {
+        if (!item) return old
+        const favoriteItem: ProductItem = {
+          productID: item.productID,
+          name: item.name,
+          storeID: item.storeID,
+          storeName: item.storeName,
+          price: item.price,
+          currency: item.currency,
+          discount: item.discount,
+          averageRating: item.averageRating,
+          isLiked: true,
+          image: getImageUrl(),
         }
-      })
+        return old.some((p) => p.productID === item.productID)
+          ? old
+          : [...old, favoriteItem]
+      } else {
+        return old.filter((p) => p.productID !== item.productID)
+      }
+    })
 
-      // Update other queries
-      queryClient.setQueriesData({ queryKey: ['products'] }, (old: any) => {
-        if (!old) return old
-        return {
-          ...old,
-          popular: old.popular?.map((p: ProductItem) =>
-            p.productID === item.productID
-              ? { ...p, isLiked: newIsLikedState }
-              : p
-          ),
-          new: old.new?.map((p: ProductItem) =>
-            p.productID === item.productID
-              ? { ...p, isLiked: newIsLikedState }
-              : p
-          ),
-        }
-      })
-
-      setLiked(item.productID, newIsLikedState)
-    },
-    [item, queryClient, getImageUrl, setLiked]
-  )
+    // Update other queries
+    queryClient.setQueriesData({ queryKey: ['products'] }, (old: any) => {
+      if (!old) return old
+      return {
+        ...old,
+        popular: old.popular?.map((p: ProductItem) =>
+          p.productID === item.productID
+            ? { ...p, isLiked: newIsLikedState }
+            : p
+        ),
+        new: old.new?.map((p: ProductItem) =>
+          p.productID === item.productID
+            ? { ...p, isLiked: newIsLikedState }
+            : p
+        ),
+      }
+    })
+    setLiked(item.productID, newIsLikedState)
+  }
 
   // Add to favorites mutation
   const { mutate: addToFavorites } = useMutation({
@@ -156,21 +155,21 @@ export const useProduct = ({ item }: UseProductProps) => {
     },
   })
 
-  const handleCardPress = useCallback(() => {
+  const handleCardPress = () => {
     if (!item?.productID || !item?.storeID) return
-    
+
     router.push({
       pathname: '/store/[storeId]/product/[productId]',
       params: { storeId: item.storeID, productId: item.productID },
     })
+  }
 
-  }, [router, item])
-
-  const handleLikePress = useCallback(() => {
+  const handleLikePress = () => {
     if (!item?.productID) return
 
     if (!isAuthenticated) {
-      setShowAuthModal(true)
+      // setShowAuthModal(true)
+      bottomSheetModalRef.current?.present()
       return
     }
 
@@ -184,37 +183,31 @@ export const useProduct = ({ item }: UseProductProps) => {
     } else {
       removeFromFavorites()
     }
-  }, [
-    isAuthenticated,
-    item?.productID,
-    scale,
-    isLiked,
-    addToFavorites,
-    removeFromFavorites,
-  ])
+  }
 
   // Add cleanup for modal state
-  useEffect(() => {
-    return () => {
-      setShowAuthModal(false) // Reset modal state on unmount
-    }
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     setShowAuthModal(false) // Reset modal state on unmount
+  //   }
+  // }, [])
 
-  const calculateDiscountedPrice = useCallback(() => {
+  const calculateDiscountedPrice = () => {
     if (!item?.price) return 0
     if (!item.discount) return item.price
 
     const discount = (item.price * item.discount) / 100
     return item.price - discount
-  }, [item?.price, item?.discount])
+  }
 
   return {
     scale,
     handleCardPress,
     handleLikePress,
     calculateDiscountedPrice,
-    showAuthModal,
-    setShowAuthModal,
+    // showAuthModal,
+    // setShowAuthModal,
+    bottomSheetModalRef,
     getImageUrl,
     isLiked: item?.productID ? isLiked(item.productID) : false,
   }

@@ -1,6 +1,6 @@
 import { View, TextInput, TouchableOpacity, StatusBar } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSearch } from '@/hooks/useSearch'
 import { Colors } from '@/constants/colors'
 import { useFocusEffect } from 'expo-router'
@@ -16,11 +16,9 @@ export const SearchBar = ({
   theme = 'default',
   autoFocus = false,
 }: SearchBarProps) => {
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   const [value, setValue] = useState(initialValue)
   const { performSearch } = useSearch()
@@ -52,7 +50,7 @@ export const SearchBar = ({
 
   return (
     <View
-      className={`flex-row items-center gap-1 px-3 rounded-xl border ${containerClass}`}>
+      className={`flex-row flex-1 items-center gap-1 px-3 rounded-xl border ${containerClass}`}>
       <TouchableOpacity onPress={handleSubmit}>
         <Ionicons name='search-outline' size={22} color={iconColor} />
       </TouchableOpacity>

@@ -1,20 +1,18 @@
 import { View, Text, TouchableOpacity, Platform } from 'react-native'
-import { useCallback, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import { User } from '@/types/user'
 
 type ListHeaderProps = {
-  user:  Record<string, any> | null
+  user: Record<string, any> | null
   isAuthenticated: boolean
 }
 
 const ListHeader = ({ user, isAuthenticated }: ListHeaderProps) => {
   const router = useRouter()
 
-  const handelBannerPress = useCallback(() => {
+  const handelBannerPress = () => {
     router.push('/(settings)/pro')
-  }, [router])
+  }
 
   return (
     <View className={`${Platform.OS === 'ios' ? '' : 'pt-safe'}`}>

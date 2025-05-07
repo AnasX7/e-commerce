@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
@@ -28,11 +28,9 @@ const StoreScreen = () => {
 
   const [activeTab, setActiveTab] = useState(1)
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   const { cartItems, count, total } = useCart({
     storeId: +storeId,
@@ -58,28 +56,28 @@ const StoreScreen = () => {
     queryFn: () => fetchStoreProductsByCategory(+storeId, activeTab),
   })
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true)
     await Promise.all([refetchStore, refetchProducts])
     setRefreshing(false)
-  }, [refetchStore, refetchProducts])
+  }
 
   // Refresh on screen focus
   useRefreshOnFocus(onRefresh)
 
-  const handleCartPress = useCallback(() => {
+  const handleCartPress = () => {
     router.push(`/store/${storeId}/cart`)
-  }, [router, storeId])
+  }
 
   // Memoize the setActiveTab to prevent unnecessary re-renders
-  const memoizedSetActiveTab = useCallback((id: number) => {
+  const memoizedSetActiveTab = (id: number) => {
     setActiveTab((prevTab) => {
       // Only update if the tab is different
       return prevTab !== id ? id : prevTab
     })
-  }, [])
+  }
 
-  const listHeaderComponent = useCallback(() => {
+  const listHeaderComponent = () => {
     return (
       <ListHeader
         data={store}
@@ -87,7 +85,7 @@ const StoreScreen = () => {
         setActiveTab={memoizedSetActiveTab}
       />
     )
-  }, [store, activeTab, memoizedSetActiveTab])
+  }
 
   if (storeError || productsError) {
     return (

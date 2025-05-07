@@ -15,27 +15,26 @@ const AdsCarousel = ({ data }: AdsCarouselProps) => {
   const imagesfullPaths = data.map((item) => useFullPath(item))
 
   return (
-    <View className='aspect-video'>
-      <Carousel
-        autoPlayInterval={3000}
-        data={imagesfullPaths}
-        loop={true}
-        pagingEnabled={true}
-        autoPlay={true}
-        snapEnabled={true}
-        width={width}
-        height={width * 0.5625} // 16:9 aspect ratio
-        defaultIndex={0}
-        mode='parallax'
-        modeConfig={{
-          parallaxScrollingScale: 0.9,
-          parallaxScrollingOffset: 50,
-        }}
-        scrollAnimationDuration={1000}
-        enabled={true}
-        renderItem={({ item }) => <CarouselItem imageUrl={item} />}
-      />
-    </View>
+    <Carousel
+      autoPlayInterval={3000}
+      data={imagesfullPaths}
+      loop={true}
+      pagingEnabled={true}
+      autoPlay={true}
+      autoPlayReverse={true}
+      snapEnabled={true}
+      width={width}
+      height={width / 2}
+      defaultIndex={0}
+      mode='parallax'
+      modeConfig={{
+        parallaxScrollingScale: 0.9,
+        parallaxScrollingOffset: 50,
+      }}
+      scrollAnimationDuration={1000}
+      enabled={true}
+      renderItem={({ item }) => <CarouselItem imageUrl={item} />}
+    />
   )
 }
 

@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react'
 import {
   View,
   Text,
@@ -6,6 +5,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native'
+import { ReactNode, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Href, useFocusEffect, useRouter } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -13,6 +13,7 @@ import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import ListHeader from '@/components/settings/ListHeader'
 import ListFooter from '@/components/settings/ListFooter'
 import { useAuth } from '@/hooks/useAuth'
+import { useSheetRef } from '@/components/ui/Sheet'
 import { Colors } from '@/constants/colors'
 import AuthModal from '@/components/AuthModal'
 import AccountScreenSkeleton from '@/components/skeletons/AccountScreenSkeleton'
@@ -21,7 +22,7 @@ type MenuItems = {
   id: number
   route: Href
   title: string
-  icon: JSX.Element
+  icon: ReactNode
   auth?: boolean
 }
 
@@ -64,14 +65,14 @@ const menuItems: MenuItems[] = [
     title: 'اشتراك pro',
     icon: <Ionicons name='flame-outline' size={22} color={Colors.primary} />,
   },
-  {
-    id: 6,
-    route: '/help',
-    title: 'احصل على المساعدة',
-    icon: (
-      <Ionicons name='help-circle-outline' size={22} color={Colors.primary} />
-    ),
-  },
+  // {
+  //   id: 6,
+  //   route: '/help',
+  //   title: 'احصل على المساعدة',
+  //   icon: (
+  //     <Ionicons name='help-circle-outline' size={22} color={Colors.primary} />
+  //   ),
+  // },
   {
     id: 7,
     route: '/about',
@@ -87,63 +88,54 @@ const menuItems: MenuItems[] = [
 ]
 
 const AccountScreen = () => {
-  const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState<
     (typeof menuItems)[0] | null
   >(null)
 
   const router = useRouter()
 
+  const bottomSheetModalRef = useSheetRef()
+
   const { user, isAuthenticated, isLoading, refetch, logout } = useAuth({
     middleware: 'guest',
   })
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
+
+  const ListHeaderComponent = () => (
+    <ListHeader user={user} isAuthenticated={isAuthenticated} />
   )
 
-  const ListHeaderComponent = useCallback(
-    () => <ListHeader user={user} isAuthenticated={isAuthenticated} />,
-    [user, isAuthenticated]
+  const ListFooterComponent = () => (
+    <ListFooter isAuthenticated={isAuthenticated} logout={logout} />
   )
 
-  const ListFooterComponent = useCallback(
-    () => <ListFooter isAuthenticated={isAuthenticated} logout={logout} />,
-    [isAuthenticated, logout]
-  )
+  const handelPress = (item: MenuItems) => {
+    if (!isAuthenticated && item.auth) {
+      setSelectedItem(item)
+      bottomSheetModalRef.current?.present()
+      return
+    }
+    router.push(item.route)
+  }
 
-  const handelPress = useCallback(
-    (item: MenuItems) => {
-      if (!isAuthenticated && item.auth) {
-        setSelectedItem(item)
-        setShowAuthModal(true)
-        return
-      }
-      router.push(item.route)
-    },
-    [isAuthenticated, router]
-  )
-
-  const renderItem = useCallback(
-    ({ item }: LegendListRenderItemProps<MenuItems>) => (
-      <TouchableOpacity
-        key={item.id}
-        onPress={() => handelPress(item)}
-        className='flex-row justify-between items-center px-6 py-4 border-b border-gray-100'>
-        <View className='flex-1 flex-row items-center'>
-          <View className='flex-row items-center gap-4'>
-            <View className='w-6 items-center'>{item.icon}</View>
-            <Text className='text-base text-right font-notoKufiArabic leading-loose'>
-              {item.title}
-            </Text>
-          </View>
+  const renderItem = ({ item }: LegendListRenderItemProps<MenuItems>) => (
+    <TouchableOpacity
+      key={item.id}
+      onPress={() => handelPress(item)}
+      className='flex-row justify-between items-center px-6 py-4 border-b border-gray-100'>
+      <View className='flex-1 flex-row items-center'>
+        <View className='flex-row items-center gap-4'>
+          <View className='w-6 items-center'>{item.icon}</View>
+          <Text className='text-base text-right font-notoKufiArabic leading-loose'>
+            {item.title}
+          </Text>
         </View>
-        <Ionicons name='chevron-back' size={18} />
-      </TouchableOpacity>
-    ),
-    [handelPress]
+      </View>
+      <Ionicons name='chevron-back' size={18} />
+    </TouchableOpacity>
   )
 
   return (
@@ -165,11 +157,7 @@ const AccountScreen = () => {
           />
         )}
         <AuthModal
-          visible={showAuthModal}
-          onClose={() => {
-            setShowAuthModal(false)
-            setSelectedItem(null)
-          }}
+          ref={bottomSheetModalRef}
           icon={{
             name: 'lock-closed-outline',
             size: 40,

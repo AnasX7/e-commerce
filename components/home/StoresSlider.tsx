@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { useCallback } from 'react'
 import { useRouter } from 'expo-router'
 import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import StoreCard from '@/components/home/StoreCard'
@@ -13,21 +12,15 @@ type StoresProps = {
 const StoresSlider = ({ title, data }: StoresProps) => {
   const router = useRouter()
 
-  const handleStorePress = useCallback(
-    (store: StoreCardType) => {
-      router.push({
-        pathname: '/store/[storeId]',
-        params: { storeId: store.id },
-      })
-    },
-    [router]
-  )
+  const handleStorePress = (store: StoreCardType) => {
+    router.push({
+      pathname: '/store/[storeId]',
+      params: { storeId: store.id },
+    })
+  }
 
-  const renderItem = useCallback(
-    ({ item }: LegendListRenderItemProps<StoreCardType>) => (
-      <StoreCard key={item.id} item={item} onPress={handleStorePress} />
-    ),
-    [handleStorePress]
+  const renderItem = ({ item }: LegendListRenderItemProps<StoreCardType>) => (
+    <StoreCard key={item.id} item={item} onPress={handleStorePress} />
   )
 
   return (

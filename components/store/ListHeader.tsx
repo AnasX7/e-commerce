@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { useCallback } from 'react'
 import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { Image } from 'expo-image'
 import { useFullPath } from '@/hooks/useFullPath'
@@ -16,25 +15,22 @@ const ListHeader = ({ data, activeTab, setActiveTab }: ListHeaderProps) => {
   const bannerImageURL = useFullPath(data?.banner)
   const storeImageURL = useFullPath(data?.image)
 
-  const renderTab = useCallback(
-    ({ item: tab }: LegendListRenderItemProps<category>) => (
-      <TouchableOpacity
-        key={tab.id}
-        className={`pb-2 ${
-          activeTab === tab.id ? 'border-b-2 border-black' : ''
-        }`}
-        onPress={() => setActiveTab(tab.id)}>
-        <Text
-          className={`text-base font-notoKufiArabic ${
-            activeTab === tab.id
-              ? 'font-notoKufiArabic-bold text-primary'
-              : 'text-gray-500'
-          }`}>
-          {tab.category}
-        </Text>
-      </TouchableOpacity>
-    ),
-    [activeTab, setActiveTab]
+  const renderTab = ({ item: tab }: LegendListRenderItemProps<category>) => (
+    <TouchableOpacity
+      key={tab.id}
+      className={`pb-2 ${
+        activeTab === tab.id ? 'border-b-2 border-black' : ''
+      }`}
+      onPress={() => setActiveTab(tab.id)}>
+      <Text
+        className={`text-base font-notoKufiArabic ${
+          activeTab === tab.id
+            ? 'font-notoKufiArabic-bold text-primary'
+            : 'text-gray-500'
+        }`}>
+        {tab.category}
+      </Text>
+    </TouchableOpacity>
   )
 
   return (

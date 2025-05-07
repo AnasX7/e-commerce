@@ -1,78 +1,27 @@
-import { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native'
+import { RefObject } from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
+import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-import Modal from 'react-native-modal'
-
-const deviceWidth = Dimensions.get('window').width
-const deviceHeight = Dimensions.get('window').height
+import { Sheet } from '@/components/ui/Sheet'
 
 type AuthModalProps = {
-  visible: boolean
-  onClose: () => void
-  icon?: {
+  icon: {
     name: keyof typeof Ionicons.glyphMap
     size?: number
     color?: string
   }
-  title?: string
-  message?: string
+  title: string
+  message: string
+  ref: RefObject<BottomSheetModal | null>
 }
 
-const AuthModal = ({
-  visible,
-  onClose,
-  icon = {
-    name: 'heart-outline',
-    size: 40,
-    color: '#EF4444',
-  },
-  title = 'تسجيل الدخول مطلوب',
-  message = 'يجب تسجيل الدخول لإضافة المنتج إلى المفضلة',
-}: AuthModalProps) => {
+const AuthModal = ({ icon, title, message, ref }: AuthModalProps) => {
   const router = useRouter()
-  const [isModalVisible, setModalVisible] = useState(visible)
-
-  useEffect(() => {
-    if (visible) {
-      setModalVisible(true)
-    } else {
-      const timer = setTimeout(() => {
-        setModalVisible(false)
-      }, 300)
-      return () => clearTimeout(timer)
-    }
-  }, [visible])
 
   return (
-    <Modal
-      isVisible={isModalVisible}
-      onBackdropPress={onClose}
-      onBackButtonPress={onClose}
-      style={{
-        justifyContent: 'flex-end',
-        margin: 0,
-      }}
-      animationIn='slideInUp'
-      animationOut='slideOutDown'
-      backdropOpacity={0.05}
-      animationInTiming={500}
-      animationOutTiming={500}
-      backdropTransitionInTiming={300}
-      backdropTransitionOutTiming={300}
-      useNativeDriver={true}
-      useNativeDriverForBackdrop={true}
-      hideModalContentWhileAnimating={true}
-      deviceWidth={deviceWidth}
-      deviceHeight={deviceHeight}>
-      <View className='bg-white w-full rounded-t-3xl px-6 pb-24 pt-6'>
-        {/* Close Button */}
-        <TouchableOpacity
-          onPress={onClose}
-          className='absolute left-4 top-4 z-10'>
-          <Ionicons name='close' size={24} color='#6B7280' />
-        </TouchableOpacity>
-
+    <Sheet ref={ref} snapPoints={[404]}>
+      <BottomSheetView className='flex-1 justify-center px-6 pb-16'>
         {/* Content */}
         <View className='items-center mb-4'>
           <Ionicons name={icon.name} size={icon.size} color={icon.color} />
@@ -88,7 +37,7 @@ const AuthModal = ({
         <View className='gap-4'>
           <TouchableOpacity
             onPress={() => {
-              onClose()
+              ref.current?.close()
               router.push('/login')
             }}
             className='bg-primary py-4 rounded-xl'>
@@ -99,7 +48,7 @@ const AuthModal = ({
 
           <TouchableOpacity
             onPress={() => {
-              onClose()
+              ref.current?.close()
               router.push('/register')
             }}
             className='bg-white py-4 rounded-xl border border-gray-300'>
@@ -108,8 +57,8 @@ const AuthModal = ({
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
+      </BottomSheetView>
+    </Sheet>
   )
 }
 

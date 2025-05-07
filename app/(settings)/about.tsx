@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
@@ -35,12 +35,15 @@ const About = () => {
       </View>
 
       {/* FAQ List */}
-      <FlashList
+      <LegendList
         data={faqData}
-        renderItem={({ item }) => <FAQItem item={item} />}
-        estimatedItemSize={100}
-        contentContainerStyle={{ padding: 16 }}
+        renderItem={({ item }: LegendListRenderItemProps<FAQItem>) => (
+          <FAQItem item={item} />
+        )}
+        recycleItems
         showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 16 }}
       />
     </View>
   )

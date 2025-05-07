@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { useState } from 'react'
 import { MotiView } from 'moti'
 import { Location } from '@/types/location'
 import { Colors } from '@/constants/colors'
 import { useLocationStore } from '@/stores/LocationStore'
 import EditLocationModal from './EditLocationModal'
+import { useSheetRef } from '@/components/ui/Sheet'
 
 type LocationCardProps = {
   location: Location
@@ -13,8 +13,9 @@ type LocationCardProps = {
 }
 
 const LocationCard = ({ location, onDelete }: LocationCardProps) => {
-  const [editModalVisible, setEditModalVisible] = useState(false)
   const { mainLocation, setMainLocation } = useLocationStore()
+
+  const bottomSheetModalRef = useSheetRef()
 
   const isMain = mainLocation?.id === location.id
 
@@ -70,7 +71,8 @@ const LocationCard = ({ location, onDelete }: LocationCardProps) => {
 
               {/* Actions */}
               <View className='flex-row gap-2'>
-                <TouchableOpacity onPress={() => setEditModalVisible(true)}>
+                <TouchableOpacity
+                  onPress={() => bottomSheetModalRef.current?.present()}>
                   <View className='flex-row gap-1 items-center'>
                     <Ionicons
                       name='pencil-outline'
@@ -101,11 +103,7 @@ const LocationCard = ({ location, onDelete }: LocationCardProps) => {
         )}
       </Pressable>
 
-      <EditLocationModal
-        visible={editModalVisible}
-        onClose={() => setEditModalVisible(false)}
-        location={location}
-      />
+      <EditLocationModal ref={bottomSheetModalRef} location={location} />
     </>
   )
 }
