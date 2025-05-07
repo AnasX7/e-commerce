@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useSearchStore } from '@/stores/SearchStore'
 import { searchProducts } from '@/services/search'
 import { SearchFilters } from '@/types/search'
@@ -16,29 +15,24 @@ export const useSearch = () => {
     resetFilters,
   } = useSearchStore()
 
-  const performSearch = useCallback(
-    async (newFilters?: Partial<SearchFilters>) => {
-      try {
-        setIsLoading(true)
-        if (newFilters) {
-          setFilters(newFilters)
-        }
-
-        const searchFilters = newFilters
-          ? { ...filters, ...newFilters }
-          : filters
-        const response = await searchProducts(searchFilters)
-
-        setProducts(response.products)
-        setCount(response.count)
-      } catch (error) {
-        console.error('Search error:', error)
-      } finally {
-        setIsLoading(false)
+  const performSearch = async (newFilters?: Partial<SearchFilters>) => {
+    try {
+      setIsLoading(true)
+      if (newFilters) {
+        setFilters(newFilters)
       }
-    },
-    [filters]
-  )
+
+      const searchFilters = newFilters ? { ...filters, ...newFilters } : filters
+      const response = await searchProducts(searchFilters)
+
+      setProducts(response.products)
+      setCount(response.count)
+    } catch (error) {
+      console.error('Search error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return {
     filters,

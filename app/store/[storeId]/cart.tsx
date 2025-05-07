@@ -2,14 +2,11 @@ import {
   View,
   Text,
   TouchableOpacity,
-  RefreshControl,
   StatusBar,
   ActivityIndicator,
 } from 'react-native'
-import { useState, useCallback } from 'react'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router'
-import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import { useCart } from '@/hooks/useCart'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
@@ -21,47 +18,27 @@ const CartScreen = () => {
   const { storeId } = useLocalSearchParams()
   const router = useRouter()
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
-
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   const { cartItems, updateCartItem, removeFromCart, isLoading, refetch } =
     useCart({ storeId: +storeId })
 
   const currency = cartItems?.[0]?.currency
 
-  // Handle refresh
-  const onRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-    try {
-      await refetch()
-    } finally {
-      setIsRefreshing(false)
-    }
-  }, [refetch])
-
-  useRefreshOnFocus(onRefresh)
-
-  const listFooterComponent = useCallback(
-    () => <ListFooter storeId={+storeId} currency={currency} />,
-    [storeId, currency]
+  const listFooterComponent = () => (
+    <ListFooter storeId={+storeId} currency={currency} />
   )
 
-  const renderItem = useCallback(
-    ({ item }: { item: CartItem }) => (
-      <CartItemCard
-        item={item}
-        onUpdateQuantity={(quantity) =>
-          updateCartItem({ productId: item.productID, quantity })
-        }
-        onRemove={() => removeFromCart(item.productID)}
-      />
-    ),
-    [updateCartItem, removeFromCart]
+  const renderItem = ({ item }: LegendListRenderItemProps<CartItem>) => (
+    <CartItemCard
+      item={item}
+      onUpdateQuantity={(quantity) =>
+        updateCartItem({ productId: item.productID, quantity })
+      }
+      onRemove={() => removeFromCart(item.productID)}
+    />
   )
 
   return (
@@ -90,21 +67,15 @@ const CartScreen = () => {
         </View>
       ) : (
         <>
-          <FlashList
+          <LegendList
             data={cartItems}
             renderItem={renderItem}
-            estimatedItemSize={150}
-            contentContainerStyle={{ padding: 16 }}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.productID.toString()}
             ListFooterComponent={listFooterComponent}
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={onRefresh}
-                tintColor={Colors.primary}
-              />
-            }
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            recycleItems
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: 16 }}
           />
 
           <View className='flex-row justify-between gap-4 p-4 pb-safe-offset-4 border-t border-gray-200'>

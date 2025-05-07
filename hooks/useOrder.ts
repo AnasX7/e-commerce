@@ -4,11 +4,12 @@ import { useRouter } from 'expo-router'
 import { useAuth } from '@/hooks/useAuth'
 import { useLocationStore } from '@/stores/LocationStore'
 import { checkout, fetchOrders } from '@/services/order'
-
+import { useCartStore } from '@/stores/CartStore'
 
 export const useOrder = () => {
   const queryClient = useQueryClient()
   const { mainLocation } = useLocationStore()
+  const { clearItems } = useCartStore()
   const router = useRouter()
 
   const { isAuthenticated } = useAuth({ middleware: 'guest' })
@@ -35,9 +36,11 @@ export const useOrder = () => {
 
   const checkoutMutation = useMutation({
     mutationFn: (storeId: number) => checkout(storeId, locationId),
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({ queryKey: ['checkout'] })
-    // },
+    onSuccess: ({ storeId }: { storeId: number }) => {
+      queryClient.invalidateQueries({ queryKey: ['cart', storeId] })
+      clearItems()
+      router.replace('/(tabs)/home')
+    },
   })
 
   return {

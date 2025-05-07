@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import * as Updates from 'expo-updates'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
 import { useAppState } from '@/hooks/useAppState'
@@ -63,18 +64,20 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <KeyboardProvider>
-          <StatusBar style='dark' />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='index' />
-            <Stack.Screen name='(auth)' />
-            <Stack.Screen name='(tabs)' />
-            <Stack.Screen name='(settings)' />
-            <Stack.Screen name='search/index' />
-            <Stack.Screen name='store/[storeId]' />
-            <Stack.Screen name='+not-found' />
-          </Stack>
+          <BottomSheetModalProvider>
+            <StatusBar style='dark' />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name='index' />
+              <Stack.Screen name='(auth)' />
+              <Stack.Screen name='(tabs)' />
+              <Stack.Screen name='(settings)' />
+              <Stack.Screen name='search/index' />
+              <Stack.Screen name='store/[storeId]' />
+              <Stack.Screen name='+not-found' />
+            </Stack>
+          </BottomSheetModalProvider>
         </KeyboardProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>

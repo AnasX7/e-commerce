@@ -5,18 +5,17 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native'
+import { useEffect, useState } from 'react'
 import { getAllFavorites } from '@/services/favorites'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
-import { ProductItem } from '@/types/product'
-import { useEffect } from 'react'
-import { useCallback, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useFocusEffect, useRouter } from 'expo-router'
-import { Colors } from '@/constants/colors'
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useFavoritesStore } from '@/stores/FavoritesStore'
+import { ProductItem } from '@/types/product'
+import { Colors } from '@/constants/colors'
 import FavoritesScreenSkeleton from '@/components/skeletons/FavoritesScreenSkeleton'
 import HorizontalProductCard from '@/components/HorizontalProductCard'
 
@@ -29,11 +28,9 @@ const FavoritesScreen = () => {
     middleware: 'guest',
   })
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   const { setFavorites } = useFavoritesStore()
   const queryClient = useQueryClient()
@@ -53,7 +50,7 @@ const FavoritesScreen = () => {
     }
   }, [data, setFavorites])
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     if (!isAuthenticated) return
 
     setRefreshing(true)
@@ -63,7 +60,7 @@ const FavoritesScreen = () => {
     } finally {
       setRefreshing(false)
     }
-  }, [refetch, isAuthenticated, queryClient])
+  }
 
   // Refresh on screen focus
   useRefreshOnFocus(onRefresh)

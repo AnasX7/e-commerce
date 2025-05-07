@@ -11,7 +11,7 @@ const Tabslayout = () => {
         headerShown: false,
         tabBarPosition: Platform.OS === 'web' ? 'bottom' : 'bottom',
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? 84 : 64,
+          height: Platform.OS === 'ios' ? 84 : 80,
         },
         tabBarLabelStyle: {
           fontSize: 12,

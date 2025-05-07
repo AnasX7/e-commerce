@@ -1,19 +1,21 @@
-import { useState } from 'react'
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { MotiView } from 'moti'
 import { fetchLocations, deleteLocation } from '@/services/location'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
+import { useSheetRef } from '@/components/ui/Sheet'
 import { Colors } from '@/constants/colors'
-import LocationCard from '@/components/LocationCard'
-import AddLocationModal from '@/components/AddLocationModal'
-import { FlashList } from '@shopify/flash-list'
+import { Location } from '@/types/location'
+import LocationCard from '@/components/locations/LocationCard'
+import AddLocationModal from '@/components/locations/AddLocationModal'
 
 const LocationsScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const router = useRouter()
   const queryClient = useQueryClient()
+
+  const bottomSheetModalRef = useSheetRef()
 
   const { data: locations, isLoading } = useQuery({
     queryKey: ['locations'],
@@ -49,19 +51,21 @@ const LocationsScreen = () => {
             <ActivityIndicator size='large' color={Colors.primary} />
           </View>
         ) : (
-          <FlashList
-            data={locations}
-            renderItem={({ item: location }) => (
+          <LegendList
+            data={locations || []}
+            renderItem={({
+              item: location,
+            }: LegendListRenderItemProps<Location>) => (
               <LocationCard
                 key={location.id}
                 location={location}
                 onDelete={() => deleteMutation.mutate(location.id)}
               />
             )}
-            estimatedItemSize={150}
-            contentContainerStyle={{ padding: 16 }}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            keyExtractor={(item) => item.id.toString()}
+            recycleItems
             showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
             ListEmptyComponent={() => (
               <View className='items-center py-8'>
                 <Ionicons
@@ -74,6 +78,8 @@ const LocationsScreen = () => {
                 </Text>
               </View>
             )}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ padding: 16 }}
           />
         )}
       </View>
@@ -85,7 +91,7 @@ const LocationsScreen = () => {
         transition={{ type: 'timing', duration: 300 }}
         className='h-24 px-4 mb-safe justify-center items-center border-t border-t-gray-200'>
         <TouchableOpacity
-          onPress={() => setModalVisible(true)}
+          onPress={() => bottomSheetModalRef.current?.present()}
           className='w-full py-4 bg-primary rounded-2xl'>
           <Text className='text-center text-white font-notoKufiArabic-bold'>
             إضافة عنوان جديد
@@ -93,10 +99,7 @@ const LocationsScreen = () => {
         </TouchableOpacity>
       </MotiView>
 
-      <AddLocationModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      <AddLocationModal ref={bottomSheetModalRef} />
     </View>
   )
 }

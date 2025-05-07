@@ -5,9 +5,9 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { useFocusEffect, useRouter } from 'expo-router'
-import { FlashList } from '@shopify/flash-list'
+import { LegendList, LegendListRenderItemProps } from '@legendapp/list'
 import { useOrder } from '@/hooks/useOrder'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
@@ -20,17 +20,15 @@ const orders = () => {
   const { orders, ordersIsLoading, refetchOrders } = useOrder()
   const [refreshing, setRefreshing] = useState(false)
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true)
     await refetchOrders()
     setRefreshing(false)
-  }, [refetchOrders()])
+  }
 
   useRefreshOnFocus(onRefresh)
 
@@ -65,14 +63,15 @@ const orders = () => {
           <Text className='text-gray-500 text-lg'>لا توجد طلبات</Text>
         </View>
       ) : (
-        <FlashList
+        <LegendList
           data={orders}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }: { item: Order }) => (
+          renderItem={({ item }: LegendListRenderItemProps<Order>) => (
             <OrderCard order={item} onPress={handleOrderPress} />
           )}
-          contentContainerClassName='pb-safe'
-          estimatedItemSize={200}
+          keyExtractor={(item) => item.id.toString()}
+          recycleItems
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 48 }}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />

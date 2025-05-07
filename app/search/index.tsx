@@ -25,8 +25,7 @@ const SearchScreen = () => {
     <SafeAreaProvider>
       <SafeAreaView className='flex-1 bg-white'>
         {/* Header */}
-        <View
-          className='px-4 pb-1'>
+        <View className='px-4 pb-1'>
           <View className='flex-row items-center justify-center'>
             <TouchableOpacity
               onPress={() => router.back()}
@@ -44,12 +43,8 @@ const SearchScreen = () => {
           </View>
         </View>
 
-        <View className='px-4 py-2'>
+        <View className='flex-row w-full gap-3 px-4 py-2'>
           <SearchBar initialValue={params.title as string} autoFocus={true} />
-        </View>
-
-        <View className='flex-row justify-between px-4 py-2'>
-          <FilterModal />
           <SortModal />
         </View>
 

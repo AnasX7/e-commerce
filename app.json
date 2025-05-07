@@ -22,6 +22,7 @@
         "foregroundImage": "./assets/images/app-adaptive-icon.png",
         "backgroundColor": "#4e148c"
       },
+      "edgeToEdgeEnabled": true,
       "package": "com.anasx7.ecommerce"
     },
     "web": {
@@ -57,7 +58,8 @@
       "expo-secure-store"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "extra": {
       "supportsRTL": true,

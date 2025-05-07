@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl, StatusBar } from 'react-native'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -24,11 +24,9 @@ import { Images } from '@/constants/images'
 import { Colors } from '@/constants/colors'
 
 const HomeScreen = () => {
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('light-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('light-content')
+  })
 
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -65,7 +63,7 @@ const HomeScreen = () => {
     queryFn: () => fetchProducts(8),
   })
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true)
     await Promise.all([
       refetchCarouselAds(),
@@ -73,10 +71,10 @@ const HomeScreen = () => {
       refetchProducts(),
     ])
     setRefreshing(false)
-  }, [refetchCarouselAds, refetchStores, refetchProducts])
+  }
 
   // Refresh on screen focus
-  useRefreshOnFocus(onRefresh)
+  // useRefreshOnFocus(onRefresh)
 
   const words = ['متاجر', 'منتاجات']
   const [word, setWord] = useState(words[0])
@@ -96,7 +94,7 @@ const HomeScreen = () => {
         colors={[Colors.primary, Colors.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ paddingTop: insets.top }}>
+        style={{ flex: 1, paddingTop: insets.top }}>
         <View className='mx-4 pb-6 gap-4'>
           <View className='flex-row-reverse justify-between items-center'>
             <View className='flex-row-reverse items-center gap-3'>
@@ -123,65 +121,69 @@ const HomeScreen = () => {
             theme='transparent'
           />
         </View>
+
+        <View className='flex-1 overflow-hidden bg-white rounded-t-[25px]'>
+          <ScrollView
+            className='flex-1 pt-1'
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={Colors.primary}
+              />
+            }>
+            {isLoadingAds || isLoadingStores || isLoadingProducts ? (
+              <HomeScreenSkeleton />
+            ) : carouselError || storesError || productsError ? (
+              <ErrorMessage message='حدث خطأ في الاتصال' onRetry={onRefresh} />
+            ) : (
+              <>
+                {carouselAdsData?.length > 0 ? (
+                  <AdsCarousel data={carouselAdsData} />
+                ) : (
+                  <NotFound message='لا توجد إعلانات متاحة' />
+                )}
+
+                {storesData?.length > 0 ? (
+                  <StoresSlider title='المتاجر' data={storesData} />
+                ) : (
+                  <NotFound message='لا توجد متاجر متاحة' />
+                )}
+
+                {productsData?.popular?.length > 0 ? (
+                  <ProuductsSlider
+                    title='المنتجات الشائعة'
+                    data={productsData.popular}
+                    sort='views'
+                  />
+                ) : (
+                  <NoProductsMessage />
+                )}
+
+                {/* Pro Banner */}
+                {true && (
+                  <View className='px-4 pb-3 my-3'>
+                    <ProBanner />
+                  </View>
+                )}
+
+                {productsData?.new?.length > 0 ? (
+                  <ProuductsSlider
+                    title='وصل حديثاً'
+                    data={productsData.new}
+                    sort='latest'
+                  />
+                ) : (
+                  <NoProductsMessage />
+                )}
+              </>
+            )}
+
+            <View className='h-8' />
+          </ScrollView>
+        </View>
       </LinearGradient>
-
-      <ScrollView
-        className='flex-1 pt-2'
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={Colors.primary}
-          />
-        }>
-        {isLoadingAds || isLoadingStores || isLoadingProducts ? (
-          <HomeScreenSkeleton />
-        ) : carouselError || storesError || productsError ? (
-          <ErrorMessage message='حدث خطأ في الاتصال' onRetry={onRefresh} />
-        ) : (
-          <>
-            {carouselAdsData?.length > 0 ? (
-              <AdsCarousel data={carouselAdsData} />
-            ) : (
-              <NotFound message='لا توجد إعلانات متاحة' />
-            )}
-
-            {storesData?.length > 0 ? (
-              <StoresSlider title='المتاجر' data={storesData} />
-            ) : (
-              <NotFound message='لا توجد متاجر متاحة' />
-            )}
-
-            {productsData?.popular?.length > 0 ? (
-              <ProuductsSlider
-                title='المنتجات الشائعة'
-                data={productsData.popular}
-                sort='views'
-              />
-            ) : (
-              <NoProductsMessage />
-            )}
-
-            {/* Pro Banner */}
-            {true && (
-              <View className='px-4 pb-3 my-3'>
-                <ProBanner />
-              </View>
-            )}
-
-            {productsData?.new?.length > 0 ? (
-              <ProuductsSlider
-                title='وصل حديثاً'
-                data={productsData.new}
-                sort='latest'
-              />
-            ) : (
-              <NoProductsMessage />
-            )}
-          </>
-        )}
-      </ScrollView>
     </View>
   )
 }

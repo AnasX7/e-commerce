@@ -1,15 +1,17 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useLocationStore } from '@/stores/LocationStore'
 import { useAuth } from '@/hooks/useAuth'
+import { useSheetRef } from '@/components/ui/Sheet'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
-import AuthModal from '../AuthModal'
+import AuthModal from '@/components/AuthModal'
 
 type LocationPickerProps = {
   theme?: 'light' | 'dark'
 }
+
 const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
   const mainLocation = useLocationStore((state) => state.mainLocation)
   const router = useRouter()
@@ -18,16 +20,17 @@ const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
     middleware: 'guest',
   })
 
-  const [showAuthModal, setShowAuthModal] = useState(false)
+  const bottomSheetModalRef = useSheetRef()
+
   const textColor = theme === 'light' ? 'text-white' : 'text-gray-800'
 
-  const onPress = useCallback(() => {
+  const onPress = () => {
     if (!isAuthenticated) {
-      setShowAuthModal(true)
+      bottomSheetModalRef.current?.present()
       return
     }
     router.push('/(settings)/locations')
-  }, [router])
+  }
 
   return (
     <>
@@ -41,7 +44,7 @@ const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
             />
             <Text
               className={`text-sm font-notoKufiArabic-semiBold leading-relaxed ${textColor}`}>
-              {mainLocation ? 'موقع التوصيل' : 'اختر موقع التوصيل'}
+              {mainLocation && isAuthenticated ? 'موقع التوصيل' : 'اختر موقع التوصيل'}
             </Text>
             <Ionicons
               name='chevron-down'
@@ -49,7 +52,7 @@ const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
               color={theme === 'light' ? '#fff' : Colors.text.primary}
             />
           </View>
-          {mainLocation && (
+          {mainLocation && isAuthenticated && (
             <Text
               className={`text-sm pl-4 font-notoKufiArabic leading-relaxed ${textColor}`}>
               {mainLocation.country}, {mainLocation.location}
@@ -58,10 +61,7 @@ const LocationPicker = ({ theme = 'dark' }: LocationPickerProps) => {
         </View>
       </TouchableOpacity>
       <AuthModal
-        visible={showAuthModal}
-        onClose={() => {
-          setShowAuthModal(false)
-        }}
+        ref={bottomSheetModalRef}
         icon={{
           name: 'location-outline',
           size: 44,

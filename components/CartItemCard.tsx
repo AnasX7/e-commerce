@@ -53,7 +53,7 @@ const CartItemCard = ({
             {item.discount > 0 ? (
               <View className='flex-row items-center gap-x-2'>
                 <Text className='text-sm font-notoKufiArabic-bold text-red-500'>
-                  {calculateDiscountedPrice()}{' '}
+                  {calculateDiscountedPrice() * item.quantity}{' '}
                   {item.currency === 'AED'
                     ? 'د.إ'
                     : item.currency === 'SAR'
@@ -61,7 +61,7 @@ const CartItemCard = ({
                     : 'ر.ي'}
                 </Text>
                 <Text className='text-xs font-notoKufiArabic line-through text-gray-400'>
-                  {item.price}{' '}
+                  {item.price * item.quantity}{' '}
                   {item.currency === 'AED'
                     ? 'د.إ'
                     : item.currency === 'SAR'

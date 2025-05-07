@@ -7,7 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import Carousel from 'react-native-reanimated-carousel'
 import { Image } from 'expo-image'
@@ -64,11 +64,9 @@ const ProductDetailScreen = () => {
 
   const prevTotalItems = useRef(count)
 
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle('dark-content')
-    }, [])
-  )
+  useFocusEffect(() => {
+    StatusBar.setBarStyle('dark-content')
+  })
 
   useEffect(() => {
     if (count > prevTotalItems.current) {
@@ -90,14 +88,13 @@ const ProductDetailScreen = () => {
     setQuantity((prev) => Math.max(prev - 1, 1))
   }
 
-  const handleAddToCart = useCallback(() => {
+  const handleAddToCart = () => {
     if (!isAuthenticated) {
       setShowCartAuthModal(true)
       return
     }
-
     addToCart({ productId, quantity })
-  }, [isAuthenticated, quantity, productId, addToCart])
+  }
 
   if (isLoading || !product) {
     return <ProductDetailsSkeleton />

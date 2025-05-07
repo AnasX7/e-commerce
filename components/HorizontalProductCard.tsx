@@ -1,5 +1,4 @@
-import { View, Text } from 'react-native'
-import {TouchableOpacity} from 'react-native-gesture-handler'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { Image } from 'expo-image'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { ProductItem } from '@/types/product'
@@ -19,8 +18,7 @@ const HorizontalProductCard = ({ item }: ProductProps) => {
     handleCardPress,
     handleLikePress,
     calculateDiscountedPrice,
-    showAuthModal,
-    setShowAuthModal,
+    bottomSheetModalRef,
     getImageUrl,
     isLiked,
   } = useProduct({ item: item })
@@ -133,11 +131,10 @@ const HorizontalProductCard = ({ item }: ProductProps) => {
         </View>
       </TouchableOpacity>
       <AuthModal
-        visible={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        ref={bottomSheetModalRef}
         icon={{
           name: 'heart-outline',
-          size: 40,
+          size: 48,
           color: '#EF4444',
         }}
         title='تسجيل الدخول مطلوب'
