@@ -1,10 +1,9 @@
-# Salaty | سلّتي E-commerce App 🛒
+# (Salaty | سلّتي) E-commerce App 🛒
 
 Welcome to Salaty, your ultimate mobile shopping destination! Salaty (meaning "my basket" in Arabic) offers a seamless and intuitive e-commerce experience, bringing your favorite products right to your fingertips. Browse, discover, and purchase with ease, all from the comfort of your device.
 
 ![mocks](./assets/readme-images/salaty-app.png)
 
------
 
 ## 🚀 Features
 
@@ -18,7 +17,6 @@ Welcome to Salaty, your ultimate mobile shopping destination! Salaty (meaning "m
   * **Personalized Recommendations:** Discover new products tailored to your preferences (feature coming soon\!).
   * **Search & Filter:** Quickly find exactly what you're looking for with powerful search and filtering options.
 
------
 
 ## 🏃 Getting Started
 
@@ -47,7 +45,6 @@ To get a local copy up and running, follow these simple steps.
     npm start # or npx expo start
     ```
 
------
 
 ## 🤝 Contributing
 
@@ -61,7 +58,8 @@ If you have a suggestion that would make this better, please fork the repo and c
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
 
------
 
 ## 🖼️ Screenshots
 
+![auth screens](./assets/readme-images/auth.png)
+![store screens](./assets/readme-images/store.png)
