@@ -1,52 +1,9 @@
-# E-commerce Expo App 🚀
+# ( Salaty | سلّتي ) E-commerce Expo App 🚀
 
-Welcome to the E-commerce Expo app project! This application is built with [Expo](https://expo.dev) using [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An innovative e-commerce app showcasing an expo of products with a seamless shopping experience.
 
-## Installation Guide
+---
 
-Follow these steps to install and open the project:
+## 🖼️ Screenshots
+![mocks](./assets/readme-images/salaty-app.png)
 
-1. **Clone the Repository**
-
-   ```bash
-   git clone <repository-url>
-   cd e-commerce
-   ```
-
-2. **Install Dependencies**
-
-   Make sure you have [Node.js](https://nodejs.org/) Then run:
-
-   ```bash
-   npm install
-   ```
-
-3. **Start the Development Server**
-
-   For Android:
-
-   ```bash
-   npx expo run:android
-   ```
-
-   For iOS:
-
-   ```bash
-   npx expo run:ios
-   ```
-
-   For Web:
-
-   ```bash
-   npx expo start --web
-   ```
-
-4. **Open the App**
-
-   You can open the app using the Expo Go app on your phone or an emulator/simulator on your computer.
-
-   ```bash
-   npx expo start
-   ```
-
-That's it! You are now ready to start working with the E-commerce Expo app.
