@@ -63,3 +63,4 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ![auth screens](./assets/readme-images/auth.png)
 ![store screens](./assets/readme-images/store.png)
+![other screens](./assets/readme-images/other.png)
