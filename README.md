@@ -1,52 +1,66 @@
-# E-commerce Expo App 🚀
+# (Salaty | سلّتي) E-commerce App 🛒
 
-Welcome to the E-commerce Expo app project! This application is built with [Expo](https://expo.dev) using [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to Salaty, your ultimate mobile shopping destination! Salaty (meaning "my basket" in Arabic) offers a seamless and intuitive e-commerce experience, bringing your favorite products right to your fingertips. Browse, discover, and purchase with ease, all from the comfort of your device.
 
-## Installation Guide
+![mocks](./assets/readme-images/salaty-app.png)
 
-Follow these steps to install and open the project:
 
-1. **Clone the Repository**
+## 🚀 Features
 
-   ```bash
-   git clone <repository-url>
-   cd e-commerce
-   ```
+  * **Extensive Product Catalog:** Explore a wide variety of products across multiple categories.
+  * **Intuitive User Interface:** Enjoy a clean, user-friendly design for effortless navigation.
+  * **Secure Authentication:** Create an account or log in securely to personalize your shopping journey.
+  * **Detailed Product Pages:** Get all the information you need with rich product descriptions, and images.
+  * **Effortless Cart Management:** Easily add, remove, and update items in your shopping cart.
+  * **Smooth Checkout Process:** Experience a streamlined and secure checkout for quick purchases.
+  * **Order History:** Keep track of all your past orders and their statuses.
+  * **Personalized Recommendations:** Discover new products tailored to your preferences (feature coming soon\!).
+  * **Search & Filter:** Quickly find exactly what you're looking for with powerful search and filtering options.
 
-2. **Install Dependencies**
 
-   Make sure you have [Node.js](https://nodejs.org/) Then run:
+## 🏃 Getting Started
 
-   ```bash
-   npm install
-   ```
+To get a local copy up and running, follow these simple steps.
 
-3. **Start the Development Server**
+### Prerequisites
 
-   For Android:
+ Node.js, npm, Android Studio or Xcode.
 
-   ```bash
-   npx expo run:android
-   ```
+### Installation
 
-   For iOS:
+1.  Clone the repo:
+    ```bash
+    git clone https://github.com/AnasX7/e-commerce.git
+    ```
+2.  Navigate to the project directory:
+    ```bash
+    cd e-commerce
+    ```
+3.  Install dependencies:
+    ```bash
+    npm install 
+    ```
+4.  Run the app:
+    ```bash
+    npm start # or npx expo start
+    ```
 
-   ```bash
-   npx expo run:ios
-   ```
 
-   For Web:
+## 🤝 Contributing
 
-   ```bash
-   npx expo start --web
-   ```
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-4. **Open the App**
+If you have a suggestion that would make this better, please fork the repo and create a pull request. Don't forget to give the project a star\! Thanks\!
 
-   You can open the app using the Expo Go app on your phone or an emulator/simulator on your computer.
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-   ```bash
-   npx expo start
-   ```
 
-That's it! You are now ready to start working with the E-commerce Expo app.
+## 🖼️ Screenshots
+
+![auth screens](./assets/readme-images/auth.png)
+![store screens](./assets/readme-images/store.png)
+![other screens](./assets/readme-images/other.png)
